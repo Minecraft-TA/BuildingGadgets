@@ -2,14 +2,14 @@ package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import net.minecraftforge.fml.relauncher.Side;
 
 /**
  * Packet containing a {@link NBTTagCompound} representing the serialized Config Data, to be updated on the Client.
@@ -44,7 +44,7 @@ public class PacketSyncConfig implements IMessage {
 
         @Override
         public IMessage onMessage(PacketSyncConfig message, MessageContext ctx) {
-            if (ctx.side!=Side.CLIENT)
+            if (ctx.side!= Side.CLIENT)
                 return null;
             Minecraft.getMinecraft().addScheduledTask(() -> {
                 NBTTagCompound compound = message.getTagCompound();
