@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
 public class BlockPos extends Vec3i {
-    protected BlockPos(double x, double y, double z) {
+    public BlockPos(double x, double y, double z) {
         super(x, y, z);
     }
 

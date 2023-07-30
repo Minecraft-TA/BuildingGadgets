@@ -1,10 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.google.common.base.MoreObjects;
+import com.direwolf20.buildinggadgets.common.tools.Vec3i;
 import com.google.common.collect.PeekingIterator;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.Vec3i;
 
 import java.util.Objects;
 import java.util.Spliterator;
@@ -319,7 +318,7 @@ public final class Region implements IPlacementSequence {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
+        return com.google.common.base.Objects.toStringHelper(this)
                 .add("minX", minX)
                 .add("minY", minY)
                 .add("minZ", minZ)
