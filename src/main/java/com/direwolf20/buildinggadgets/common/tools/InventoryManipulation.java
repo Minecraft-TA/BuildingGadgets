@@ -208,7 +208,7 @@ public class InventoryManipulation {
             IItemHandler remoteInventory = GadgetUtils.getRemoteInventory(tool, world, player);
             if(remoteInventory instanceof IItemAccess)
     			return ((IItemAccess) remoteInventory).getItemsForExtraction(stack, player);
-            return remoteInventory == null ? 0 : countInContainer(remoteInventory, stack.getItem(), stack.getMetadata());
+            return remoteInventory == null ? 0 : countInContainer(remoteInventory, stack.getItem(), stack.getItemDamage());
         });
     }
 
@@ -402,7 +402,7 @@ public class InventoryManipulation {
 
         for (int i = 0; i < itemHandler.getSlots(); i++) {
             ItemStack stack = itemHandler.getStackInSlot(i);
-            if (!stack.isEmpty() && stack.getItem() == item && meta == stack.getMetadata())
+            if (!stack.isEmpty() && stack.getItem() == item && meta == stack.getItemDamage())
                 slots.add(i);
         }
         return slots;
