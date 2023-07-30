@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Logic is backed with {@link ExclusiveAxisChasing} where no attempt will be made at the ending (player) position.

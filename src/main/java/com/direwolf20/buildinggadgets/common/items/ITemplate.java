@@ -7,7 +7,7 @@ import com.google.common.collect.Multiset;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.World;
 
 import javax.annotation.Nonnull;

@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Horizontal column mode for Building Gadget.

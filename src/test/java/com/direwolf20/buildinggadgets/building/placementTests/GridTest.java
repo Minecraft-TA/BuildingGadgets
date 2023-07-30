@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.building.placementTests;
 
 import com.direwolf20.buildinggadgets.common.building.placement.Grid;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Iterator;

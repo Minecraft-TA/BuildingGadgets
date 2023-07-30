@@ -1,12 +1,11 @@
 package com.direwolf20.buildinggadgets.toolsTest;
 
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
 
-import static net.minecraft.util.EnumFacing.Axis;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class VectorToolsTest {

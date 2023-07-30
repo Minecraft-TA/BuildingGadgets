@@ -6,7 +6,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;

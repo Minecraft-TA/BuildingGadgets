@@ -7,7 +7,7 @@ import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;

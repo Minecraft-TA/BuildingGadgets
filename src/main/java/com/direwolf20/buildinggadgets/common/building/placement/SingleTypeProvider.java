@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Immutable block provider that always return the same block state regardless of which position is requested.

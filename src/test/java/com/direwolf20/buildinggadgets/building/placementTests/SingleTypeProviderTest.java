@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.SingleTypeProvid
 import com.direwolf20.buildinggadgets.util.UniqueBlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

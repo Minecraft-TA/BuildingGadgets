@@ -7,7 +7,7 @@ import com.direwolf20.buildinggadgets.util.CasedBlockView;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

@@ -34,7 +34,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -403,7 +403,7 @@ public class TemplateManagerGUI extends GuiContainer {
 
     private void drawSlotOverlay(Slot slot) {
         GlStateManager.translate(0, 0, 1000);
-        drawRect(slot.xPos, slot.yPos, slot.xPos + 16, slot.yPos + 16, -1660903937);
+        drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, -1660903937);
         GlStateManager.translate(0, 0, -1000);
     }
 

@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.util;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import java.util.Iterator;
 import java.util.Random;
