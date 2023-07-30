@@ -26,7 +26,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.Side;
 
 import static com.direwolf20.buildinggadgets.common.items.ModItems.gadgetBuilding;
 

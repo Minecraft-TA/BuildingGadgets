@@ -1,19 +1,20 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
 import com.google.common.primitives.Floats;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.nio.*;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Comparator;
 
 /**
  * This class differs from {@link BufferBuilder BufferBuilder} only in that the Comparator arguments of {@link Arrays#sort(Integer[], Comparator) Arrays#sort}

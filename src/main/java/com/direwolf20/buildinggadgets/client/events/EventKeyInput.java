@@ -20,7 +20,7 @@ import net.minecraftforge.client.settings.KeyModifier;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.Side;
 
 @EventBusSubscriber(Side.CLIENT)
 public class EventKeyInput {

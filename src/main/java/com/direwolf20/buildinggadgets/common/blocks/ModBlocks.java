@@ -6,8 +6,8 @@ import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.BlockColors;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @GameRegistry.ObjectHolder(BuildingGadgets.MODID)
 public class ModBlocks {
