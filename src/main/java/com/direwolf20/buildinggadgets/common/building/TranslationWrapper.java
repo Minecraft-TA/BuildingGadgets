@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 /**
  * Wraps an {@link IBlockProvider} such that all access to the provider will be translated by the given amount as the

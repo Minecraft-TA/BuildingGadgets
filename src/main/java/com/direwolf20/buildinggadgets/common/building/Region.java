@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.building;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 import net.minecraft.util.math.Vec3i;
 
 import java.util.Objects;

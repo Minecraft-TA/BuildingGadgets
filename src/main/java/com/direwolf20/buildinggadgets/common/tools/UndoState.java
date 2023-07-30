@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import java.util.List;
 

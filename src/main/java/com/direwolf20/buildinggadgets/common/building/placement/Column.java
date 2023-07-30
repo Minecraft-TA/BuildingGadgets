@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;

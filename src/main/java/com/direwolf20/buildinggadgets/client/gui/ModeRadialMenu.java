@@ -29,7 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import com.direwolf20.buildinggadgets.common.tools.Vec3d;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -522,35 +522,35 @@ public class ModeRadialMenu extends GuiScreen {
     }
 
     private static final class NameDisplayData {
-    
+
         private final int x;
         private final int y;
         private final boolean selected;
         private final boolean centralize;
-    
+
         private NameDisplayData(int x, int y, boolean selected, boolean centralize) {
             this.x = x;
             this.y = y;
             this.selected = selected;
             this.centralize = centralize;
         }
-    
+
         private int getX() {
             return x;
         }
-    
+
         private int getY() {
             return y;
         }
-    
+
         private boolean isSelected() {
             return selected;
         }
-    
+
         private boolean isCentralized() {
             return centralize;
         }
-    
+
     }
 
 }

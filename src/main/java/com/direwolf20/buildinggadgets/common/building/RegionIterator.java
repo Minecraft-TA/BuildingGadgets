@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.PeekingIterator;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 class RegionIterator extends AbstractIterator<BlockPos> implements PeekingIterator<BlockPos> {
 

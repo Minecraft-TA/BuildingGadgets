@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import it.unimi.dsi.fastutil.doubles.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import java.util.*;
 

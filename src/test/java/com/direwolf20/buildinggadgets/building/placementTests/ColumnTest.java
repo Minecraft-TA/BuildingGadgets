@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.building.placementTests;
 
 import com.direwolf20.buildinggadgets.common.building.placement.Column;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 import net.minecraft.util.math.MathHelper;
 import org.junit.jupiter.api.*;
 

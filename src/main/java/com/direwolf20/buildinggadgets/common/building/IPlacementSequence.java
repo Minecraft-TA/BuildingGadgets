@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import javax.annotation.Nonnull;
 import java.util.Collection;

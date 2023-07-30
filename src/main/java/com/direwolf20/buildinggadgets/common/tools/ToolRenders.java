@@ -23,9 +23,9 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
+import com.direwolf20.buildinggadgets.common.tools.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;

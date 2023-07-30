@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.tools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import javax.annotation.Nullable;
 

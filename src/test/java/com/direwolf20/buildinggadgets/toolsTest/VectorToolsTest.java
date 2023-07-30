@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.toolsTest;
 
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 import java.util.Comparator;
 import java.util.Spliterator;

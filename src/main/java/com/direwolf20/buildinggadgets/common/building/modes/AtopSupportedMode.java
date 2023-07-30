@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.BlockPos;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos
 
 /**
  * Base class for modes want to support "Place on Top" modifier.
