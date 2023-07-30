@@ -8,7 +8,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import com.direwolf20.buildinggadgets.common.tools.Vec3d;
+import com.direwolf20.buildinggadgets.common.tools.Vec3;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -23,10 +23,10 @@ public class VectorTools {
 
     public static RayTraceResult getLookingAt(EntityPlayer player, boolean rayTraceFluid) {
         World world = player.worldObj;
-        Vec3d look = player.getLookVec();
-        Vec3d start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        Vec3 look = player.getLookVec();
+        Vec3 start = new Vec3(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         //rayTraceRange here refers to SyncedConfig.rayTraceRange
-        Vec3d end = new Vec3d(player.posX + look.x * rayTraceRange, player.posY + player.getEyeHeight() + look.y * rayTraceRange, player.posZ + look.z * rayTraceRange);
+        Vec3 end = new Vec3(player.posX + look.x * rayTraceRange, player.posY + player.getEyeHeight() + look.y * rayTraceRange, player.posZ + look.z * rayTraceRange);
         return world.rayTraceBlocks(start, end, rayTraceFluid, false, false);
     }
 

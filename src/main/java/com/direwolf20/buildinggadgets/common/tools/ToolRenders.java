@@ -25,7 +25,7 @@ import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import com.direwolf20.buildinggadgets.common.tools.Vec3d;
+import com.direwolf20.buildinggadgets.common.tools.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -69,7 +69,7 @@ public class ToolRenders {
     public static void renderBuilderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
 
         // Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
@@ -156,7 +156,7 @@ public class ToolRenders {
 
     public static void renderExchangerOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         // Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
         renderLinkedInventoryOutline(heldItem, playerPos, player);
@@ -329,7 +329,7 @@ public class ToolRenders {
 
     public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         //Calculate the players current position, which is needed later
-        Vec3d playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
 
         renderLinkedInventoryOutline(stack, playerPos, player);
         if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null)
@@ -434,7 +434,7 @@ public class ToolRenders {
         }
     }
 
-    private static void renderLinkedInventoryOutline(ItemStack item, Vec3d playerPos, EntityPlayer player) {
+    private static void renderLinkedInventoryOutline(ItemStack item, Vec3 playerPos, EntityPlayer player) {
         Integer dim = GadgetUtils.getDIMFromNBT(item, "boundTE");
         BlockPos pos = GadgetUtils.getPOSFromNBT(item, "boundTE");
 
@@ -544,8 +544,8 @@ public class ToolRenders {
          * Returns a Vec3i of the players position based on partial tick.
          * Used for Render translation.
          */
-        private static Vec3d getPlayerTranslate(EntityPlayer player, float partialTick) {
-            return new Vec3d(
+        private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
+            return new Vec3(
                     player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
                     player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
                     player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick
@@ -581,7 +581,7 @@ public class ToolRenders {
         /**
          * Prepares our render using base properties
          */
-        private static void stateManagerPrepare(Vec3d playerPos, BlockPos blockPos, Float shift) {
+        private static void stateManagerPrepare(Vec3 playerPos, BlockPos blockPos, Float shift) {
             GlStateManager.translate(blockPos.getX()-playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
             // Rotate it because i'm not sure why but we need to
             GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
