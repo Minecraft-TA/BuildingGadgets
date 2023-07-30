@@ -311,8 +311,8 @@ public class GadgetDestruction extends GadgetGeneric {
             boolean isPaste;
 
             IBlockState blockState = world.getBlockState(voidPos);
-            IBlockState pasteState = Blocks.AIR.getDefaultState();
-            if( blockState == Blocks.AIR.getDefaultState() )
+            IBlockState pasteState = Blocks.air.getDefaultState();
+            if( blockState == Blocks.air.getDefaultState() )
                 continue;
 
             if (blockState.getBlock() == ModBlocks.constructionBlock) {
@@ -321,7 +321,7 @@ public class GadgetDestruction extends GadgetGeneric {
                     pasteState = ((ConstructionBlockTileEntity) te).getActualBlockState();
             }
 
-            isPaste = pasteState != Blocks.AIR.getDefaultState() && pasteState != null;
+            isPaste = pasteState != Blocks.air.getDefaultState() && pasteState != null;
             if (!destroyBlock(world, voidPos, player))
                 continue;
 
@@ -405,7 +405,7 @@ public class GadgetDestruction extends GadgetGeneric {
 
         this.applyDamage(tool, player);
 
-        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, world.getBlockState(voidPos), 2, Blocks.AIR.getDefaultState(), false));
+        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, world.getBlockState(voidPos), 2, Blocks.air.getDefaultState(), false));
         return true;
     }
 

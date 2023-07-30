@@ -9,7 +9,7 @@ import com.direwolf20.buildinggadgets.common.tools.BlockPos;
  * <p>
  * "abstract" means such block provider can be used for constant mapper (fill with certain type), or some sort of
  * complex structure. It does not specify a boundary and implementation should return {@code
- * Blocks.AIR.getDefaultState()} when the given position is out of boundary. All positions passed as parameter will be
+ * Blocks.air.getDefaultState()} when the given position is out of boundary. All positions passed as parameter will be
  * translated by a specific vector which can be accessed by {@link #getTranslation()}.
  *
  * @param <T>

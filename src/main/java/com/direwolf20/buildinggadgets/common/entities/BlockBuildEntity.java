@@ -75,7 +75,7 @@ public class BlockBuildEntity extends Entity {
                 }
                 setSetBlock(setBlock);
             } else {
-                setBlock = Blocks.AIR.getDefaultState();
+                setBlock = Blocks.air.getDefaultState();
                 setSetBlock(setBlock);
             }
         }
@@ -168,7 +168,7 @@ public class BlockBuildEntity extends Entity {
                     world.getBlockState(setPos).getBlock().neighborChanged(setBlock, world, setPos, world.getBlockState(setPos.up()).getBlock(), setPos.up());
                 }
             } else if (setPos != null && setBlock != null && getToolMode() == 2) {
-                world.setBlockState(setPos, Blocks.AIR.getDefaultState());
+                world.setBlockState(setPos, Blocks.air.getDefaultState());
             } else if (setPos != null && setBlock != null && getToolMode() == 3) {
                 world.spawnEntity(new BlockBuildEntity(world, setPos, spawnedBy, originalSetBlock, 1, actualSetBlock, getUsingConstructionPaste()));
             }

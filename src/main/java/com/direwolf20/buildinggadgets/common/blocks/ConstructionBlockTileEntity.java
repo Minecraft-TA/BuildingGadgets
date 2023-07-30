@@ -28,7 +28,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
 
     @Nullable
     public IBlockState getBlockState() {
-        if (blockState == null || blockState == Blocks.AIR.getDefaultState()) {
+        if (blockState == null || blockState == Blocks.air.getDefaultState()) {
             return null;
         }
         return blockState;
@@ -36,7 +36,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
 
     @Nullable
     public IBlockState getActualBlockState() {
-        if (actualBlockState == null || actualBlockState == Blocks.AIR.getDefaultState()) {
+        if (actualBlockState == null || actualBlockState == Blocks.air.getDefaultState()) {
             return null;
         }
         return actualBlockState;

@@ -16,7 +16,7 @@ public final class CapabilityBlockProvider {
     @CapabilityInject(IBlockProvider.class)
     public static Capability<IBlockProvider> BLOCK_PROVIDER = null;
 
-    static IBlockProvider DEFAULT_AIR_PROVIDER = new SingleTypeProvider(Blocks.AIR.getDefaultState());
+    static IBlockProvider DEFAULT_AIR_PROVIDER = new SingleTypeProvider(Blocks.air.getDefaultState());
 
     private CapabilityBlockProvider() {
     }

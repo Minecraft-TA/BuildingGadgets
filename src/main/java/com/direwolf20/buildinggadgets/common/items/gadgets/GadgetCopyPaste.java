@@ -400,7 +400,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 for (int z = iStartZ; z <= iEndZ; z++) {
                     BlockPos tempPos = new BlockPos(x, y, z);
                     IBlockState tempState = world.getBlockState(tempPos);
-                    if (!(tempState.getBlock() instanceof EffectBlock) && tempState != Blocks.AIR.getDefaultState() && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
+                    if (!(tempState.getBlock() instanceof EffectBlock) && tempState != Blocks.air.getDefaultState() && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
                         TileEntity te = world.getTileEntity(tempPos);
                         IBlockState assignState = InventoryManipulation.getSpecificStates(tempState, world, player, tempPos, stack);
                         IBlockState actualState = assignState.getActualState(world, tempPos);
@@ -501,7 +501,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 (!SyncedConfig.canOverwriteBlocks && testState.getBlock().isAir(testState, world, pos)))
             return;
 
-        if (pos.getY() < 0 || state.equals(Blocks.AIR.getDefaultState()) || !player.isAllowEdit())
+        if (pos.getY() < 0 || state.equals(Blocks.air.getDefaultState()) || !player.isAllowEdit())
             return;
 
         ItemStack heldItem = getGadget(player);

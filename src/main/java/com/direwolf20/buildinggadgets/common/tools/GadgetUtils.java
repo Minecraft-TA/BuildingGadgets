@@ -229,7 +229,7 @@ public class GadgetUtils {
             tagCompound = new NBTTagCompound();
         }
         if (state == null) {
-            state = Blocks.AIR.getDefaultState();
+            state = Blocks.air.getDefaultState();
         }
         NBTTagCompound stateTag = new NBTTagCompound();
         NBTUtil.writeBlockState(stateTag, state);
@@ -244,7 +244,7 @@ public class GadgetUtils {
             tagCompound = new NBTTagCompound();
         }
         if (state == null) {
-            state = Blocks.AIR.getDefaultState();
+            state = Blocks.air.getDefaultState();
         }
         NBTTagCompound stateTag = new NBTTagCompound();
         NBTUtil.writeBlockState(stateTag, state);
@@ -255,8 +255,8 @@ public class GadgetUtils {
     public static IBlockState getToolBlock(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
-            setToolBlock(stack, Blocks.AIR.getDefaultState());
-            return Blocks.AIR.getDefaultState();
+            setToolBlock(stack, Blocks.air.getDefaultState());
+            return Blocks.air.getDefaultState();
         }
         return NBTUtil.readBlockState(tagCompound.getCompoundTag("blockstate"));
     }
@@ -264,9 +264,9 @@ public class GadgetUtils {
     public static IBlockState getToolActualBlock(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
-            setToolBlock(stack, Blocks.AIR.getDefaultState());
+            setToolBlock(stack, Blocks.air.getDefaultState());
             tagCompound = stack.getTagCompound();
-            return Blocks.AIR.getDefaultState();
+            return Blocks.air.getDefaultState();
         }
         return NBTUtil.readBlockState(tagCompound.getCompoundTag("actualblockstate"));
     }
@@ -321,7 +321,7 @@ public class GadgetUtils {
             }
             BlockPos startBlock = lookingAt.getBlockPos();
             EnumFacing sideHit = lookingAt.sideHit;
-            if (startBlock == null || world.getBlockState(startBlock) == Blocks.AIR.getDefaultState()) { //If we are looking at air, exit
+            if (startBlock == null || world.getBlockState(startBlock) == Blocks.air.getDefaultState()) { //If we are looking at air, exit
                 return false;
             }
             List<BlockPos> coords = new ArrayList<BlockPos>();

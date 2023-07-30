@@ -166,8 +166,8 @@ public class GadgetExchanger extends GadgetGeneric {
 
         IBlockState blockState = getToolBlock(heldItem);
 
-        if (blockState != Blocks.AIR.getDefaultState()) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
-            IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
+        if (blockState != Blocks.air.getDefaultState()) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
+            IBlockState state = Blocks.air.getDefaultState(); //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
@@ -281,7 +281,7 @@ public class GadgetExchanger extends GadgetGeneric {
      * @param originalBlock the block we need to put back on failure
      */
     private static boolean canPlaceBlockAt(World world, BlockPos pos, IBlockState setBlock, IBlockState originalBlock) {
-        world.setBlockState(pos, Blocks.AIR.getDefaultState());
+        world.setBlockState(pos, Blocks.air.getDefaultState());
         boolean canPlace = setBlock.getBlock().canPlaceBlockAt(world, pos);
         world.setBlockState(pos, originalBlock);
 

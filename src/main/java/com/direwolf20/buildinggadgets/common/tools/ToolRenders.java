@@ -54,9 +54,9 @@ public class ToolRenders {
             expireAfterWrite(1, TimeUnit.SECONDS).removalListener(removal -> GLAllocation.deleteDisplayLists((int) removal.getValue())).build();
 
     // We use these as highlighters
-    private static final IBlockState stainedGlassYellow = Blocks.STAINED_GLASS.getDefaultState().withProperty(COLOR, EnumDyeColor.YELLOW);
-    private static final IBlockState stainedGlassRed    = Blocks.STAINED_GLASS.getDefaultState().withProperty(COLOR, EnumDyeColor.RED);
-    private static final IBlockState stainedGlassWhite  = Blocks.STAINED_GLASS.getDefaultState().withProperty(COLOR, EnumDyeColor.WHITE);
+    private static final IBlockState stainedGlassYellow = Blocks.stained_glass.getDefaultState().withProperty(COLOR, EnumDyeColor.YELLOW);
+    private static final IBlockState stainedGlassRed    = Blocks.stained_glass_pane.getDefaultState().withProperty(COLOR, EnumDyeColor.RED);
+    private static final IBlockState stainedGlassWhite  = Blocks.stained_glass_pane.getDefaultState().withProperty(COLOR, EnumDyeColor.WHITE);
 
     public static void setInventoryCache(Multiset<UniqueItem> cache) {
         ToolRenders.cacheInventory.setCache(cache);
@@ -88,7 +88,7 @@ public class ToolRenders {
         IBlockState renderBlockState = getToolBlock(heldItem);
 
         //Don't render anything if there is no block selected (Air)
-        if (renderBlockState == Blocks.AIR.getDefaultState())
+        if (renderBlockState == Blocks.air.getDefaultState())
             return;
 
         //Build a list of coordinates based on the tool mode and range
@@ -117,7 +117,7 @@ public class ToolRenders {
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, null);
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
-            IBlockState state = Blocks.AIR.getDefaultState();
+            IBlockState state = Blocks.air.getDefaultState();
             if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES)
                 state = renderBlockState.getActualState(fakeWorld, coordinate);
 
@@ -162,7 +162,7 @@ public class ToolRenders {
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
-        IBlockState state = Blocks.AIR.getDefaultState();
+        IBlockState state = Blocks.air.getDefaultState();
         List<BlockPos> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
@@ -175,7 +175,7 @@ public class ToolRenders {
         IBlockState renderBlockState = getToolBlock(heldItem);
         Minecraft mc = Minecraft.getMinecraft();
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        if (renderBlockState == Blocks.AIR.getDefaultState()) {//Don't render anything if there is no block selected (Air)
+        if (renderBlockState == Blocks.air.getDefaultState()) {//Don't render anything if there is no block selected (Air)
             return;
         }
         if (coordinates.size() == 0 && lookingAt != null) { //Build a list of coordinates based on the tool mode and range
@@ -523,7 +523,7 @@ public class ToolRenders {
     private static class Utils {
 
         private static IBlockState getStartBlock(RayTraceResult lookingAt, EntityPlayer player) {
-            IBlockState startBlock = Blocks.AIR.getDefaultState();
+            IBlockState startBlock = Blocks.air.getDefaultState();
             if (lookingAt != null)
                 startBlock = player.world.getBlockState(lookingAt.getBlockPos());
 

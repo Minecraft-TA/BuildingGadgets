@@ -162,8 +162,8 @@ public class GadgetBuilding extends GadgetGeneric {
 
         IBlockState blockState = getToolBlock(heldItem);
 
-        if (blockState != Blocks.AIR.getDefaultState()) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
-            IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
+        if (blockState != Blocks.air.getDefaultState()) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
+            IBlockState state = Blocks.air.getDefaultState(); //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
@@ -202,7 +202,7 @@ public class GadgetBuilding extends GadgetGeneric {
         }
         World world = player.worldObj;
         if (!world.isRemote) {
-            IBlockState currentBlock = Blocks.AIR.getDefaultState();
+            IBlockState currentBlock = Blocks.air.getDefaultState();
             List<BlockPos> undoCoords = undoState.coordinates; //Get the Coords to undo
             int dimension = undoState.dimension; //Get the Dimension to undo
             List<BlockPos> failedRemovals = new ArrayList<BlockPos>(); //Build a list of removals that fail
@@ -217,7 +217,7 @@ public class GadgetBuilding extends GadgetGeneric {
                 boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, coord, currentBlock, player);
 
                 if (distance < 64 && sameDim && currentBlock != ModBlocks.effectBlock.getDefaultState() && !cancelled) { //Don't allow us to undo a block while its still being placed or too far away
-                    if (currentBlock != Blocks.AIR.getDefaultState()) {
+                    if (currentBlock != Blocks.air.getDefaultState()) {
                         if( !player.capabilities.isCreativeMode )
                             currentBlock.getBlock().harvestBlock(world, player, coord, currentBlock, world.getTileEntity(coord), silkTool);
                         world.spawnEntity(new BlockBuildEntity(world, coord, player, currentBlock, 2, getToolActualBlock(heldItem), false));
