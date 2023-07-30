@@ -13,7 +13,7 @@ public abstract class GuiBase extends GuiScreen {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         super.keyTyped(typedChar, keyCode);
         if (keyCode == KEY_CLOSE_GUI) {
-            mc.player.closeScreen();
+            mc.thePlayer.closeScreen();
         }
     }
 

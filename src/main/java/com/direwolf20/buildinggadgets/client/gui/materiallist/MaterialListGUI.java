@@ -189,7 +189,7 @@ public class MaterialListGUI extends GuiBase {
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
                 else
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.player.sendStatusMessage(new TextComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
+                mc.thePlayer.sendStatusMessage(new TextComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
                 return;
         }
         this.scrollingList.actionPerformed(button);

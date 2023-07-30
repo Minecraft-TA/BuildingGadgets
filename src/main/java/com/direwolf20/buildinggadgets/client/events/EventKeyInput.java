@@ -36,7 +36,7 @@ public class EventKeyInput {
         if (KeyBindings.menuSettings.isKeyDown() && ((KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) || KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE)) {
             //PacketHandler.INSTANCE.sendToServer(new PacketToggleMode());
             Minecraft mc = Minecraft.getMinecraft();
-            ItemStack tool = GadgetGeneric.getGadget(mc.player);
+            ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (!tool.isEmpty())
                 mc.displayGuiScreen(new ModeRadialMenu(tool));
         } else if (KeyBindings.range.isPressed())

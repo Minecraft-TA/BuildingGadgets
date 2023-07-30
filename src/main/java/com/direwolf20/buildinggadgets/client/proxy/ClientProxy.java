@@ -23,6 +23,7 @@ import net.minecraft.util.SoundEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.sound.SoundEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.ModelLoaderRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -82,7 +83,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void renderWorldLastEvent(RenderWorldLastEvent evt) {
         Minecraft mc = Minecraft.getMinecraft();
-        EntityPlayer player = mc.player;
+        EntityPlayer player = mc.thePlayer;
         ItemStack heldItem = GadgetGeneric.getGadget(player);
         if (heldItem.isEmpty())
             return;

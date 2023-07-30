@@ -139,7 +139,7 @@ public class ModeRadialMenu extends GuiScreen {
                 if( !send )
                     return false;
 
-                mc.player.closeScreen();
+                mc.thePlayer.closeScreen();
                 if( GadgetCopyPaste.getToolMode(tool) == GadgetCopyPaste.ToolMode.Copy )
                     mc.displayGuiScreen(new CopyPasteGUI(tool));
                 else
@@ -436,7 +436,7 @@ public class ModeRadialMenu extends GuiScreen {
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].toString();
 
-            mc.player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
+            mc.thePlayer.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
             PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(slotSelected));
             ModSounds.BEEP.playSound();
         }
