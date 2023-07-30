@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import com.direwolf20.buildinggadgets.common.tools.Vec3;
+import net.minecraft.util.math.MovingObjectPosition;
+
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -74,7 +74,7 @@ public class ToolRenders {
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         List<BlockPos> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
@@ -161,7 +161,7 @@ public class ToolRenders {
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, heldItem);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         IBlockState state = Blocks.air.getDefaultState();
         List<BlockPos> coordinates = getAnchor(heldItem);
 
@@ -249,7 +249,7 @@ public class ToolRenders {
     }
 
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
         if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) return;
         World world = player.worldObj;
         BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
@@ -522,7 +522,7 @@ public class ToolRenders {
 
     private static class Utils {
 
-        private static IBlockState getStartBlock(RayTraceResult lookingAt, EntityPlayer player) {
+        private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
             IBlockState startBlock = Blocks.air.getDefaultState();
             if (lookingAt != null)
                 startBlock = player.world.getBlockState(lookingAt.getBlockPos());

@@ -30,7 +30,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -274,7 +274,7 @@ public class GadgetUtils {
     public static void selectBlock(ItemStack stack, EntityPlayer player) {
         //Used to find which block the player is looking at, and store it in NBT on the tool.
         World world = player.worldObj;
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, false);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, false);
         if (lookingAt == null)
             return;
 
@@ -315,7 +315,7 @@ public class GadgetUtils {
         World world = player.worldObj;
         List<BlockPos> currentCoords = getAnchor(stack);
         if (currentCoords.size() == 0) {  //If we don't have an anchor, find the block we're supposed to anchor to
-            RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {  //If we aren't looking at anything, exit
                 return false;
             }

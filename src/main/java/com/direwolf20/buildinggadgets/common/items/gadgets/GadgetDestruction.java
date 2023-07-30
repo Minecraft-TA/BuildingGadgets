@@ -27,7 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumHand;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
@@ -209,7 +209,7 @@ public class GadgetDestruction extends GadgetGeneric {
         player.setActiveHand(hand);
         if (!world.isRemote) {
             if (!player.isSneaking()) {
-                RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+                MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
                 if (lookingAt == null && getAnchor(stack) == null) { //If we aren't looking at anything, exit
                     return new ActionResult<>(EnumActionResult.FAIL, stack);
                 }
@@ -234,7 +234,7 @@ public class GadgetDestruction extends GadgetGeneric {
     public static void anchorBlocks(EntityPlayer player, ItemStack stack) {
         BlockPos currentAnchor = getAnchor(stack);
         if (currentAnchor == null) {
-            RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
+            MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {
                 return;
             }

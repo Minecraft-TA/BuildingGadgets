@@ -6,9 +6,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import com.direwolf20.buildinggadgets.common.tools.Vec3;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -17,26 +17,26 @@ import static com.direwolf20.buildinggadgets.common.config.SyncedConfig.rayTrace
 
 public class VectorTools {
 
-    public static RayTraceResult getLookingAt(EntityPlayer player, ItemStack tool) {
+    public static MovingObjectPosition getLookingAt(EntityPlayer player, ItemStack tool) {
         return getLookingAt(player, GadgetGeneric.shouldRayTraceFluid(tool));
     }
 
-    public static RayTraceResult getLookingAt(EntityPlayer player, boolean rayTraceFluid) {
+    public static MovingObjectPosition getLookingAt(EntityPlayer player, boolean rayTraceFluid) {
         World world = player.worldObj;
         Vec3 look = player.getLookVec();
-        Vec3 start = new Vec3(player.posX, player.posY + player.getEyeHeight(), player.posZ);
+        Vec3 start = Vec3.createVectorHelper(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         //rayTraceRange here refers to SyncedConfig.rayTraceRange
-        Vec3 end = new Vec3(player.posX + look.x * rayTraceRange, player.posY + player.getEyeHeight() + look.y * rayTraceRange, player.posZ + look.z * rayTraceRange);
-        return world.rayTraceBlocks(start, end, rayTraceFluid, false, false);
+        Vec3 end = Vec3.createVectorHelper(player.posX + look.xCoord * rayTraceRange, player.posY + player.getEyeHeight() + look.yCoord * rayTraceRange, player.posZ + look.zCoord * rayTraceRange);
+        return world.func_147447_a(start, end, rayTraceFluid, false, false);
     }
 
     @Nullable
     public static BlockPos getPosLookingAt(EntityPlayer player, ItemStack tool) {
-        RayTraceResult lookingAt = VectorTools.getLookingAt(player, tool);
+        MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, tool);
         if (lookingAt == null)
             return null;
 
-        return lookingAt.getBlockPos();
+        return new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ);
     }
 
     public static int getAxisValue(BlockPos pos, Axis axis) {
