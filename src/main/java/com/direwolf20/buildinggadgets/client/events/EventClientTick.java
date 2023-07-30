@@ -5,13 +5,13 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 import com.direwolf20.buildinggadgets.common.network.PacketRequestBlockMap;
 import com.direwolf20.buildinggadgets.common.tools.PasteToolBufferBuilder;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientConnectedToServerEvent;
 import cpw.mods.fml.relauncher.Side;
 
 @EventBusSubscriber(Side.CLIENT)
@@ -47,7 +47,7 @@ public class EventClientTick {
     }
 
     @SubscribeEvent
-    public static void onJoinWorld(@SuppressWarnings("unused") ClientConnectedToServerEvent event) {
+    public static void onJoinWorld(@SuppressWarnings("unused") FMLNetworkEvent.ClientConnectedToServerEvent event) {
         joinedWorld = false;
     }
 }

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -27,7 +28,7 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
     }
 
     @Override
-    public void doRender(BlockBuildEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
+    public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getMinecraft();
         GlStateManager.pushMatrix();
@@ -157,7 +158,7 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
 
     @Nullable
     @Override
-    protected ResourceLocation getEntityTexture(BlockBuildEntity entity) {
+    protected ResourceLocation getEntityTexture(Entity entity) {
         return null;
     }
 
