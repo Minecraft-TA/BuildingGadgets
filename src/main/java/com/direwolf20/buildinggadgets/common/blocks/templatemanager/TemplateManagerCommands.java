@@ -46,7 +46,7 @@ public class TemplateManagerCommands {
         }
         ITemplate template = (ITemplate) itemStack0.getItem();
         if (itemStack1.getItem().equals(Items.PAPER)) return;
-        World world = player.world;
+        World world = player.worldObj;
 
         BlockPos startPos = template.getStartPos(itemStack1);
         BlockPos endPos = template.getEndPos(itemStack1);
@@ -95,7 +95,7 @@ public class TemplateManagerCommands {
             return;
         }
         ITemplate template = (ITemplate) itemStack0.getItem();
-        World world = player.world;
+        World world = player.worldObj;
         ItemStack templateStack;
         if (itemStack1.getItem().equals(Items.PAPER)) {
             templateStack = new ItemStack(ModItems.template, 1);
@@ -146,7 +146,7 @@ public class TemplateManagerCommands {
             return;
         }
 
-        World world = player.world;
+        World world = player.worldObj;
         ItemStack templateStack;
         if (itemStack1.getItem().equals(Items.PAPER)) {
             templateStack = new ItemStack(ModItems.template, 1);

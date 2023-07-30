@@ -93,10 +93,10 @@ public class ToolRenders {
 
         //Build a list of coordinates based on the tool mode and range
         if (coordinates.size() == 0 && lookingAt != null)
-            coordinates = BuildingModes.collectPlacementPos(player.world, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
+            coordinates = BuildingModes.collectPlacementPos(player.worldObj, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
 
         // Figure out how many of the block we're rendering are in the player inventory.
-        ItemStack itemStack = ToolRenders.Utils.getSilkDropIfPresent(player.world, renderBlockState, player);
+        ItemStack itemStack = ToolRenders.Utils.getSilkDropIfPresent(player.worldObj, renderBlockState, player);
 
         // Check if we have the blocks required
         long hasBlocks = InventoryManipulation.countItem(itemStack, player, cacheInventory);
@@ -106,7 +106,7 @@ public class ToolRenders {
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
         Set<BlockPos> coords =  new HashSet<>(coordinates);
-        fakeWorld.setWorldAndState(player.world, renderBlockState, coords);
+        fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
         GlStateManager.pushMatrix();
         ToolRenders.Utils.stateManagerPrepareBlend();
@@ -179,11 +179,11 @@ public class ToolRenders {
             return;
         }
         if (coordinates.size() == 0 && lookingAt != null) { //Build a list of coordinates based on the tool mode and range
-            coordinates = ExchangingModes.collectPlacementPos(player.world, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
+            coordinates = ExchangingModes.collectPlacementPos(player.worldObj, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
         }
 
         // Figure out how many of the block we're rendering we have in the inventory of the player.
-        ItemStack itemStack = ToolRenders.Utils.getSilkDropIfPresent(player.world, renderBlockState, player);
+        ItemStack itemStack = ToolRenders.Utils.getSilkDropIfPresent(player.worldObj, renderBlockState, player);
 
         long hasBlocks = InventoryManipulation.countItem(itemStack, player, cacheInventory);
         hasBlocks = hasBlocks + InventoryManipulation.countPaste(player);
@@ -191,7 +191,7 @@ public class ToolRenders {
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
         Set<BlockPos> coords =  new HashSet<>(coordinates);
-        fakeWorld.setWorldAndState(player.world, renderBlockState, coords);
+        fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
         GlStateManager.pushMatrix();
         ToolRenders.Utils.stateManagerPrepareBlend();
@@ -251,7 +251,7 @@ public class ToolRenders {
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         RayTraceResult lookingAt = VectorTools.getLookingAt(player, stack);
         if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) return;
-        World world = player.world;
+        World world = player.worldObj;
         BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
         EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
         if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
@@ -337,7 +337,7 @@ public class ToolRenders {
 
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         String UUID = ModItems.gadgetCopyPaste.getUUID(stack);
-        World world = player.world;
+        World world = player.worldObj;
         if (GadgetCopyPaste.getToolMode(stack) == GadgetCopyPaste.ToolMode.Paste) {
             //First check if we have an anchor, if not check if we're looking at a block, if not, exit
             BlockPos startPos = GadgetCopyPaste.getAnchor(stack);

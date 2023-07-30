@@ -42,7 +42,7 @@ public class PacketTemplateManagerLoad implements IMessage {
 
         private void handle(PacketTemplateManagerLoad message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
-            World world = player.world;
+            World world = player.worldObj;
             BlockPos pos = message.pos;
             TileEntity te = world.getTileEntity(pos);
             if (!(te instanceof TemplateManagerTileEntity)) return;

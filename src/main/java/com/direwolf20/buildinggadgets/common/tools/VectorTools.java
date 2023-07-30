@@ -22,7 +22,7 @@ public class VectorTools {
     }
 
     public static RayTraceResult getLookingAt(EntityPlayer player, boolean rayTraceFluid) {
-        World world = player.world;
+        World world = player.worldObj;
         Vec3d look = player.getLookVec();
         Vec3d start = new Vec3d(player.posX, player.posY + player.getEyeHeight(), player.posZ);
         //rayTraceRange here refers to SyncedConfig.rayTraceRange

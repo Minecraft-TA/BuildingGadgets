@@ -53,7 +53,7 @@ public class PacketTemplateManagerPaste_old implements IMessage {
                 return;
             }
             EntityPlayerMP player = ctx.getServerHandler().player;
-            World world = player.world;
+            World world = player.worldObj;
             BlockPos pos = message.pos;
             TileEntity te = world.getTileEntity(pos);
             if (!(te instanceof TemplateManagerTileEntity)) return;

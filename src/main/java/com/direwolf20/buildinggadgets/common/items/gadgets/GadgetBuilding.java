@@ -139,7 +139,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
     private boolean build(EntityPlayer player, ItemStack stack) {
         //Build the blocks as shown in the visual render
-        World world = player.world;
+        World world = player.worldObj;
         List<BlockPos> coords = getAnchor(stack);
 
         if (coords.size() == 0) {  //If we don't have an anchor, build in the current spot
@@ -164,7 +164,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
         if (blockState != Blocks.AIR.getDefaultState()) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
             IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
-            fakeWorld.setWorldAndState(player.world, blockState, coordinates); // Initialize the fake world's blocks
+            fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try { //Get the state of the block in the fake world (This lets fences be connected, etc)
@@ -200,7 +200,7 @@ public class GadgetBuilding extends GadgetGeneric {
             player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.nothingtoundo").getUnformattedComponentText()), true);
             return false;
         }
-        World world = player.world;
+        World world = player.worldObj;
         if (!world.isRemote) {
             IBlockState currentBlock = Blocks.AIR.getDefaultState();
             List<BlockPos> undoCoords = undoState.coordinates; //Get the Coords to undo

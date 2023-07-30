@@ -304,7 +304,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         }
         GadgetCopyPaste tool = ModItems.gadgetCopyPaste;
         List<BlockMap> blockMapList = new ArrayList<BlockMap>();
-        WorldSave worldSave = WorldSave.getWorldSave(player.world);
+        WorldSave worldSave = WorldSave.getWorldSave(player.worldObj);
         NBTTagCompound tagCompound = worldSave.getCompoundFromUUID(tool.getUUID(stack));
         BlockPos startPos = tool.getStartPos(stack);
         if (startPos == null) return;
@@ -577,8 +577,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
     public void undoBuild(EntityPlayer player, ItemStack heldItem) {
 //        long time = System.nanoTime();
-        NBTTagCompound tagCompound = WorldSave.getWorldSave(player.world).getCompoundFromUUID(ModItems.gadgetCopyPaste.getUUID(heldItem));
-        World world = player.world;
+        NBTTagCompound tagCompound = WorldSave.getWorldSave(player.worldObj).getCompoundFromUUID(ModItems.gadgetCopyPaste.getUUID(heldItem));
+        World world = player.worldObj;
         if (world.isRemote) {
             return;
         }

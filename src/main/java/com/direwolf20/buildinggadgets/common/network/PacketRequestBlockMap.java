@@ -44,7 +44,7 @@ public class PacketRequestBlockMap implements IMessage {
 
         private void handle(PacketRequestBlockMap message, MessageContext ctx) {
             EntityPlayerMP player = ctx.getServerHandler().player;
-            NBTTagCompound tagCompound = (message.isTemplate ? WorldSave.getTemplateWorldSave(player.world) : WorldSave.getWorldSave(player.world)).getCompoundFromUUID(message.UUID);
+            NBTTagCompound tagCompound = (message.isTemplate ? WorldSave.getTemplateWorldSave(player.worldObj) : WorldSave.getWorldSave(player.worldObj)).getCompoundFromUUID(message.UUID);
             if (tagCompound != null) {
                 PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), player);
                 //System.out.println("Sending BlockMap Packet");

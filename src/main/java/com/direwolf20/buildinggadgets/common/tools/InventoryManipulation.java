@@ -249,7 +249,7 @@ public class InventoryManipulation {
     public static IntList countItems(List<ItemStack> items, EntityPlayer player) {
         IntList result = new IntArrayList();
         for (ItemStack item : items) {
-            result.add(countItem(item, player, player.world));
+            result.add(countItem(item, player, player.worldObj));
         }
         return result;
     }

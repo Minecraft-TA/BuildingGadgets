@@ -143,7 +143,7 @@ public class GadgetExchanger extends GadgetGeneric {
     }
 
     private boolean exchange(EntityPlayer player, ItemStack stack) {
-        World world = player.world;
+        World world = player.worldObj;
         List<BlockPos> coords = getAnchor(stack);
 
         if (coords.size() == 0) { //If we don't have an anchor, build in the current spot
@@ -168,7 +168,7 @@ public class GadgetExchanger extends GadgetGeneric {
 
         if (blockState != Blocks.AIR.getDefaultState()) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
             IBlockState state = Blocks.AIR.getDefaultState(); //Initialize a new State Variable for use in the fake world
-            fakeWorld.setWorldAndState(player.world, blockState, coordinates); // Initialize the fake world's blocks
+            fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {

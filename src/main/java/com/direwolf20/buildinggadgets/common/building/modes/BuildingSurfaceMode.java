@@ -36,8 +36,8 @@ public class BuildingSurfaceMode extends AtopSupportedMode {
         int range = GadgetUtils.getToolRange(tool) / 2;
         boolean fuzzy = GadgetGeneric.getFuzzy(tool);
         if (GadgetGeneric.getConnectedArea(tool))
-            return ConnectedSurface.create(player.world, transformed, sideHit.getOpposite(), range , fuzzy);
-        return Surface.create(player.world, transformed, sideHit.getOpposite(), range, fuzzy);
+            return ConnectedSurface.create(player.worldObj, transformed, sideHit.getOpposite(), range , fuzzy);
+        return Surface.create(player.worldObj, transformed, sideHit.getOpposite(), range, fuzzy);
     }
 
     @Override
