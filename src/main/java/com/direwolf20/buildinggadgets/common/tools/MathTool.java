@@ -44,12 +44,21 @@ public final class MathTool {
         return addForNonOdd(i, 1);
     }
 
-    public static int longToInt(long count)
-    {
+    public static int longToInt(long count) {
         try {
             return Math.toIntExact(count);
         } catch (ArithmeticException e) {
             return Integer.MAX_VALUE;
         }
+    }
+
+    public static int smallestEncompassingPowerOfTwo(int value) {
+        int i = value - 1;
+        i = i | i >> 1;
+        i = i | i >> 2;
+        i = i | i >> 4;
+        i = i | i >> 8;
+        i = i | i >> 16;
+        return i + 1;
     }
 }
