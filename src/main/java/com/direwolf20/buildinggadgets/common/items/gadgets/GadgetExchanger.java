@@ -8,6 +8,7 @@ import com.direwolf20.buildinggadgets.common.tools.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -79,7 +80,7 @@ public class GadgetExchanger extends GadgetGeneric {
 
     @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack, net.minecraft.enchantment.Enchantment enchantment) {
-        if (enchantment == Enchantments.SILK_TOUCH) {
+        if (enchantment == Enchantment.silkTouch) {
             return true;
         }
         return super.canApplyAtEnchantingTable(stack, enchantment);

@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.math.MovingObjectPosition;
 
 import net.minecraft.world.World;
@@ -545,7 +546,7 @@ public class ToolRenders {
          * Used for Render translation.
          */
         private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
-            return new Vec3(
+            return Vec3.createVectorHelper(
                     player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
                     player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
                     player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick
