@@ -64,18 +64,17 @@ public class Template extends ItemModBase implements ITemplate {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        // Open GUI
-        onItemRightClick(world, player, hand);
-        return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int p_77648_4_, int p_77648_5_, int p_77648_6_, int p_77648_7_, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
+        onItemRightClick(stack, world, player);
+        return super.onItemUse(stack, player, world, p_77648_4_, p_77648_5_, p_77648_6_, p_77648_7_, p_77648_8_, p_77648_9_, p_77648_10_);
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
         if (world.isRemote) {
             player.openGui(BuildingGadgets.instance, GuiProxy.MaterialListID, world, (int) player.posX, (int) player.posY, (int) player.posZ);
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, player.getHeldItem(hand));
+        return itemStack; //TODO: Check if this is correct
     }
 
 }

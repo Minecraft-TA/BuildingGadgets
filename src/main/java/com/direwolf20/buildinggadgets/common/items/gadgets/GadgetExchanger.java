@@ -109,9 +109,7 @@ public class GadgetExchanger extends GadgetGeneric {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        ItemStack itemstack = player.getHeldItem(hand);
-        player.setActiveHand(hand);
+    public ItemStack onItemRightClick(ItemStack itemstack, World world, EntityPlayer player) {
         if (!world.isRemote) {
             if (player.isSneaking()) {
                 selectBlock(itemstack, player);
@@ -121,7 +119,7 @@ public class GadgetExchanger extends GadgetGeneric {
         } else if (!player.isSneaking()) {
             ToolRenders.updateInventoryCache();
         }
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+        return itemstack; //TODO: Check if this is correct
     }
 
     public void setMode(ItemStack heldItem, int modeInt) {

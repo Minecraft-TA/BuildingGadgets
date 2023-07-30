@@ -98,24 +98,22 @@ public class GadgetBuilding extends GadgetGeneric {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
+    public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
         //On item use, if sneaking, select the block clicked on, else build -- This is called when you right click a tool NOT on a block.
-        ItemStack itemstack = player.getHeldItem(hand);
         /*NBTTagCompound tagCompound = itemstack.getTagCompound();
         ByteBuf buf = Unpooled.buffer(16);
         ByteBufUtils.writeTag(buf,tagCompound);
         System.out.println(buf.readableBytes());*/
-        player.setActiveHand(hand);
         if (!world.isRemote) {
             if (player.isSneaking()) {
-                selectBlock(itemstack, player);
+                selectBlock(itemStack, player);
             } else {
-                build(player, itemstack);
+                build(player, itemStack);
             }
         } else if (!player.isSneaking()) {
             ToolRenders.updateInventoryCache();
         }
-        return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
+        return itemStack;
     }
 
     public void setMode(ItemStack heldItem, int modeInt) {

@@ -8,9 +8,6 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -54,9 +51,7 @@ public class ConstructionPasteContainer extends GenericPasteContainer {
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) {
-        ItemStack heldItem = player.getHeldItem(hand);
-        player.setActiveHand(hand);
+    public ItemStack onItemRightClick(ItemStack heldItem, World world, EntityPlayer player) {
         InventoryPlayer inv = player.inventory;
         if (!world.isRemote) {
             for (int i = 0; i < 36; ++i) {
@@ -66,7 +61,7 @@ public class ConstructionPasteContainer extends GenericPasteContainer {
                 }
             }
         }
-        return new ActionResult<>(EnumActionResult.SUCCESS, heldItem);
+        return heldItem; //TODO: Check if this is correct
     }
 
     @Override
