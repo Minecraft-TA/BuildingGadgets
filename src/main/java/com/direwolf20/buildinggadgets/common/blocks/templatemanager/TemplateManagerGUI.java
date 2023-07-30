@@ -33,11 +33,10 @@ import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
@@ -304,7 +303,7 @@ public class TemplateManagerGUI extends GuiContainer {
             //System.out.println("CBString Length: " + CBString.length());
             //System.out.println(CBString);
             if (GadgetUtils.mightBeLink(CBString)) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastefailed.linkcopied").getUnformattedComponentText()),false);
+                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastefailed.linkcopied").getUnformattedComponentText()),false);
                 return;
             }
             try {
@@ -312,13 +311,13 @@ public class TemplateManagerGUI extends GuiContainer {
                 ByteArrayOutputStream pasteStream = GadgetUtils.getPasteStream(JsonToNBT.getTagFromJson(CBString), nameField.getText());
                 if (pasteStream != null) {
                     PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerPaste(pasteStream, te.getPos(), nameField.getText()));
-                    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.pastesuccess").getUnformattedComponentText()), false);
+                    Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.pastesuccess").getUnformattedComponentText()), false);
                 } else {
-                    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastetoobig").getUnformattedComponentText()), false);
+                    Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastetoobig").getUnformattedComponentText()), false);
                 }
             } catch (Throwable t) {
                 BuildingGadgets.logger.error(t);
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastefailed").getUnformattedComponentText()), false);
+                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastefailed").getUnformattedComponentText()), false);
             }
         }
     }

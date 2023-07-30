@@ -27,12 +27,11 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Vec3;
 
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -436,14 +435,14 @@ public class ModeRadialMenu extends GuiScreen {
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].toString();
 
-            mc.thePlayer.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
+            mc.thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
             PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(slotSelected));
             ModSounds.BEEP.playSound();
         }
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         changeMode();
     }

@@ -14,10 +14,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
 
 import java.io.IOException;
 
@@ -122,8 +121,7 @@ public class PasteGUI extends GuiScreen {
         if (Integer.parseInt(Y.getText()) < -16) return false;
         if (Integer.parseInt(Y.getText()) > 16) return false;
         if (Integer.parseInt(X.getText()) < -16) return false;
-        if (Integer.parseInt(X.getText()) > 16) return false;
-        return true;
+        return Integer.parseInt(X.getText()) <= 16;
     }
 
     @Override
@@ -134,7 +132,7 @@ public class PasteGUI extends GuiScreen {
                 PacketHandler.INSTANCE.sendToServer(new PacketPasteGUI(Integer.parseInt(X.getText()), Integer.parseInt(Y.getText()), Integer.parseInt(Z.getText())));
                 this.mc.displayGuiScreen(null);
             } else {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
+                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
             }
 
         } else if (b.id == 2) {

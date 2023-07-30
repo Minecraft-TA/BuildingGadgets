@@ -15,12 +15,10 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
-
 import java.io.IOException;
 
 public class CopyPasteGUI extends GuiScreen {
@@ -198,7 +196,7 @@ public class CopyPasteGUI extends GuiScreen {
                 }
                 PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(startPos, endPos));
             } catch (Throwable t) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.copyguierror").getUnformattedComponentText()), true);
+                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.copyguierror").getUnformattedComponentText()), true);
             }
             this.mc.displayGuiScreen(null);
         } else if (b.id == 2) {

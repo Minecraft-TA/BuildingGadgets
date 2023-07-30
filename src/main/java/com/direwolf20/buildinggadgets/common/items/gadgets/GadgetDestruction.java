@@ -23,7 +23,7 @@ import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.math.MovingObjectPosition;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.ChatComponentText;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
@@ -176,7 +176,7 @@ public class GadgetDestruction extends GadgetGeneric {
     public void switchOverlay(EntityPlayer player, ItemStack stack) {
         boolean overlay = !getOverlay(stack);
         setOverlay(stack, overlay);
-        player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedComponentText() + ": " + overlay), true);
+        player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedComponentText() + ": " + overlay), true);
     }
 
     private static List<EnumFacing> assignDirections(EnumFacing side, EntityPlayer player) {
@@ -212,7 +212,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 if (getAnchor(stack) != null) {
                     setAnchor(stack, null);
                     setAnchorSide(stack, null);
-                    player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+                    player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
                 }
             }
         } else {
@@ -234,11 +234,11 @@ public class GadgetDestruction extends GadgetGeneric {
             currentAnchor = lookingAt.getBlockPos();
             setAnchor(stack, currentAnchor);
             setAnchorSide(stack, lookingAt.sideHit);
-            player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
         } else {
             setAnchor(stack, null);
             setAnchorSide(stack, null);
-            player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
         }
     }
 
