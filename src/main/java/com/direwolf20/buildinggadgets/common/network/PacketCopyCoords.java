@@ -55,7 +55,7 @@ public class PacketCopyCoords implements IMessage {
             if (startPos.equals(BlockPos.ORIGIN) && endPos.equals(BlockPos.ORIGIN)) {
                 tool.setStartPos(heldItem, null);
                 tool.setEndPos(heldItem, null);
-                playerEntity.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
+                playerEntity.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
             } else {
                 tool.setStartPos(heldItem, startPos);
                 tool.setEndPos(heldItem, endPos);

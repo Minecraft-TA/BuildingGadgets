@@ -30,7 +30,7 @@ import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
@@ -73,11 +73,11 @@ public class GadgetDestruction extends GadgetGeneric {
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
         super.addInformation(stack, world, list, b);
-        list.add(TextFormatting.RED + I18n.format("tooltip.gadget.destroywarning"));
-        list.add(TextFormatting.AQUA + I18n.format("tooltip.gadget.destroyshowoverlay") + ": " + getOverlay(stack));
-        list.add(TextFormatting.YELLOW + I18n.format("tooltip.gadget.connected_area") + ": " + getConnectedArea(stack));
+        list.add(EnumChatFormatting.RED + I18n.format("tooltip.gadget.destroywarning"));
+        list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.gadget.destroyshowoverlay") + ": " + getOverlay(stack));
+        list.add(EnumChatFormatting.YELLOW + I18n.format("tooltip.gadget.connected_area") + ": " + getConnectedArea(stack));
         if (SyncedConfig.nonFuzzyEnabledDestruction)
-            list.add(TextFormatting.GOLD + I18n.format("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
+            list.add(EnumChatFormatting.GOLD + I18n.format("tooltip.gadget.fuzzy") + ": " + getFuzzy(stack));
 
         addInformationRayTraceFluid(list, stack);
         addEnergyInformation(list,stack);
@@ -181,7 +181,7 @@ public class GadgetDestruction extends GadgetGeneric {
     public void switchOverlay(EntityPlayer player, ItemStack stack) {
         boolean overlay = !getOverlay(stack);
         setOverlay(stack, overlay);
-        player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedComponentText() + ": " + overlay), true);
+        player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedComponentText() + ": " + overlay), true);
     }
 
     private static List<EnumFacing> assignDirections(EnumFacing side, EntityPlayer player) {
@@ -219,7 +219,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 if (getAnchor(stack) != null) {
                     setAnchor(stack, null);
                     setAnchorSide(stack, null);
-                    player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+                    player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
                 }
             }
         } else {
@@ -241,11 +241,11 @@ public class GadgetDestruction extends GadgetGeneric {
             currentAnchor = lookingAt.getBlockPos();
             setAnchor(stack, currentAnchor);
             setAnchorSide(stack, lookingAt.sideHit);
-            player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
         } else {
             setAnchor(stack, null);
             setAnchorSide(stack, null);
-            player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
         }
     }
 

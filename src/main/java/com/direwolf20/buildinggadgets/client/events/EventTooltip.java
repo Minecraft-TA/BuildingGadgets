@@ -162,7 +162,7 @@ public class EventTooltip {
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
         render.renderItemIntoGUI(itemStack, x, y);
 
-        //String s1 = req == Integer.MAX_VALUE ? "\u221E" : TextFormatting.BOLD + Integer.toString((int) ((float) req));
+        //String s1 = req == Integer.MAX_VALUE ? "\u221E" : EnumChatFormatting.BOLD + Integer.toString((int) ((float) req));
         String s1 = req == Integer.MAX_VALUE ? "\u221E" : Integer.toString(req);
         int w1 = mc.fontRenderer.getStringWidth(s1);
         int color = 0xFFFFFF;
@@ -187,7 +187,7 @@ public class EventTooltip {
             }*/
             if (count < req) {
                 String fs = Integer.toString(req - count);
-                //String s2 = TextFormatting.BOLD + "(" + fs + ")";
+                //String s2 = EnumChatFormatting.BOLD + "(" + fs + ")";
                 String s2 = "(" + fs + ")";
                 int w2 = mc.fontRenderer.getStringWidth(s2);
 

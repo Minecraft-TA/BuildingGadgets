@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.items.pastes;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -17,7 +17,7 @@ public class ConstructionPasteContainerCreative extends GenericPasteContainer {
 
     @Override
     public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-        list.add(TextFormatting.WHITE + I18n.format("tooltip.pasteContainer.creative.amountMsg"));
+        list.add(EnumChatFormatting.WHITE + I18n.format("tooltip.pasteContainer.creative.amountMsg"));
     }
 
     @Override

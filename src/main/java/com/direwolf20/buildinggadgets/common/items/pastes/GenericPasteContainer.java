@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 
 public abstract class GenericPasteContainer extends ItemModBase {
 
@@ -40,7 +40,7 @@ public abstract class GenericPasteContainer extends ItemModBase {
     }
 
     protected static String getAmountDisplayLocalized() {
-        return TextFormatting.WHITE + I18n.format("tooltip.pasteContainer.amount");
+        return EnumChatFormatting.WHITE + I18n.format("tooltip.pasteContainer.amount");
     }
 
     /**

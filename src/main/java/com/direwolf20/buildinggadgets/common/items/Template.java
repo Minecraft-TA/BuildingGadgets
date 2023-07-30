@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.*;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -59,7 +59,7 @@ public class Template extends ItemModBase implements ITemplate {
     public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
         //Add tool information to the tooltip
         super.addInformation(stack, world, list, b);
-        list.add(TextFormatting.AQUA + I18n.format("tooltip.template.name") + ": " + getName(stack));
+        list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.template.name") + ": " + getName(stack));
         EventTooltip.addTemplatePadding(stack, list);
     }
 

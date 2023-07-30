@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -55,7 +55,7 @@ public abstract class CommandAlterBlockMaps extends CommandBase {
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length > 0) {
             if (!(sender.canUseCommand(4, this.getName()))) {
-                sender.sendMessage(new TextComponentString(TextFormatting.RED + "Only OPS can use this command with an argument."));
+                sender.sendMessage(new TextComponentString(EnumChatFormatting.RED + "Only OPS can use this command with an argument."));
                 return;
             }
         }

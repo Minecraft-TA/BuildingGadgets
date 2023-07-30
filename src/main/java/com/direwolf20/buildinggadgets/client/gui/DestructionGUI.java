@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -74,7 +74,7 @@ public class DestructionGUI extends GuiScreen {
                 this.mc.displayGuiScreen(null);
             }
             else
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
+                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
         }
         else if (b.id == 2)
             this.mc.displayGuiScreen(null);

@@ -32,7 +32,7 @@ import net.minecraft.util.math.MathHelper;
 
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -436,7 +436,7 @@ public class ModeRadialMenu extends GuiScreen {
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].toString();
 
-            mc.thePlayer.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
+            mc.thePlayer.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
             PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(slotSelected));
             ModSounds.BEEP.playSound();
         }

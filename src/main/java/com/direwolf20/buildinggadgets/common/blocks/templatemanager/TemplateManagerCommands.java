@@ -23,7 +23,7 @@ import net.minecraft.util.NonNullList;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import java.io.IOException;
@@ -221,7 +221,7 @@ public class TemplateManagerCommands {
         if (itemStack0.getItem() instanceof ITemplate) {
             NBTTagCompound tagCompound = PasteToolBufferBuilder.getTagFromUUID(ModItems.gadgetCopyPaste.getUUID(itemStack0));
             if (tagCompound == null) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.copyfailed").getUnformattedComponentText()), false);
+                Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.copyfailed").getUnformattedComponentText()), false);
                 return;
             }
             NBTTagCompound newCompound = new NBTTagCompound();
@@ -237,7 +237,7 @@ public class TemplateManagerCommands {
                 if (GadgetUtils.getPasteStream(newCompound, tagCompound.getString("name")) != null) {
                     String jsonTag = newCompound.toString();
                     setClipboardString(jsonTag);
-                    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.AQUA + new TextComponentTranslation("message.gadget.copysuccess").getUnformattedComponentText()), false);
+                    Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.copysuccess").getUnformattedComponentText()), false);
                 } else {
                     pasteIsTooLarge();
                 }
@@ -249,6 +249,6 @@ public class TemplateManagerCommands {
     }
 
     private static void pasteIsTooLarge() {
-        Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(TextFormatting.RED + new TextComponentTranslation("message.gadget.pastetoobig").getUnformattedComponentText()), false);
+        Minecraft.getMinecraft().player.sendStatusMessage(new TextComponentString(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastetoobig").getUnformattedComponentText()), false);
     }
 }
