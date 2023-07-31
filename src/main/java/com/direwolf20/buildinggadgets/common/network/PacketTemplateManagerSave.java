@@ -47,10 +47,10 @@ public class PacketTemplateManagerSave implements IMessage {
         }
 
         private void handle(PacketTemplateManagerSave message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             World world = player.worldObj;
             BlockPos pos = message.pos;
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
             TemplateManagerCommands.saveTemplate(container, player, message.name);

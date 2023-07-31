@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
@@ -105,7 +104,7 @@ public enum ExchangingModes {
             if( SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock().getDefaultState().getBlock()) )
                 return false;
 
-            TileEntity tile = world.getTileEntity(pos);
+            TileEntity tile = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
             // Only replace construction block with same block state
             if (tile instanceof ConstructionBlockTileEntity && ((ConstructionBlockTileEntity) tile).getBlockState() == state)
                 return false;

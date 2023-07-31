@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -52,10 +53,10 @@ public class PacketTemplateManagerPaste_old implements IMessage {
             if (message.tag.equals(new NBTTagCompound())) {
                 return;
             }
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             World world = player.worldObj;
             BlockPos pos = message.pos;
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
             TemplateManagerCommands.pasteTemplate(container, player, message.tag, "");

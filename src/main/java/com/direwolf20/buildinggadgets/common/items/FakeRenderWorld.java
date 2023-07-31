@@ -27,14 +27,14 @@ public class FakeRenderWorld implements IBlockAccess {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public int getCombinedLight(BlockPos pos, int lightValue) {
-        return realWorld.getCombinedLight(pos, lightValue);
+    public int getLightBrightnessForSkyBlocks(int p_72802_1_, int p_72802_2_, int p_72802_3_, int p_72802_4_) {
+        return realWorld.getLightBrightnessForSkyBlocks(p_72802_1_, p_72802_2_, p_72802_3_, p_72802_4_);
     }
 
     @Nullable
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
-        return realWorld.getTileEntity(pos);
+    public TileEntity getTileEntity(int x, int y, int z) {
+        return realWorld.getTileEntity(x, y, z);
     }
 
 

@@ -472,13 +472,13 @@ public class InventoryManipulation {
      * @return {@link ItemStack#EMPTY} when neither hands met the parameter.
      */
     public static ItemStack getStackInEitherHand(EntityPlayer player, Class<?> itemClass) {
-        ItemStack mainHand = player.getHeldItemMainhand();
+        ItemStack mainHand = player.getHeldItem();
         if (itemClass.isInstance(mainHand.getItem()))
             return mainHand;
-        ItemStack offhand = player.getHeldItemOffhand();
+        /*ItemStack offhand = player.getHeldItemOffhand();
         if (itemClass.isInstance(offhand.getItem()))
-            return offhand;
-        return ItemStack.EMPTY;
+            return offhand;*/
+        return null;
     }
 
     public static String formatItemCount(int maxSize, int count) {

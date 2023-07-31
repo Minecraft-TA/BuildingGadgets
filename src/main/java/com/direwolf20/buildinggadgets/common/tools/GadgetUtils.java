@@ -28,10 +28,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Mirror;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Rotation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -292,7 +290,7 @@ public class GadgetUtils {
     }
 
     public static EnumActionResult setRemoteInventory(ItemStack stack, EntityPlayer player, World world, BlockPos pos, boolean setTool) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
         if (te == null)
             return EnumActionResult.PASS;
 
@@ -393,7 +391,7 @@ public class GadgetUtils {
 
     @Nullable
     public static IItemHandler getRemoteInventory(BlockPos pos, World world, EntityPlayer player, NetworkIO.Operation operation) {
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
         if (te == null) return null;
         IItemHandler network = NetworkProvider.getWrappedNetwork(te, player, operation);
         if (network != null) return network;

@@ -8,12 +8,12 @@ import com.direwolf20.buildinggadgets.common.items.ITemplate;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
+import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.IGuiHandler;
 
 public class GuiProxy implements IGuiHandler {
 
@@ -25,7 +25,7 @@ public class GuiProxy implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z);
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
         if (te instanceof TemplateManagerTileEntity) {
             return new TemplateManagerContainer(player.inventory, (TemplateManagerTileEntity) te);
         }
@@ -35,36 +35,29 @@ public class GuiProxy implements IGuiHandler {
 
     @Override
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-        BlockPos pos = new BlockPos(x, y, z);
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(x, y, z);
         if (te instanceof TemplateManagerTileEntity) {
             TemplateManagerTileEntity containerTileEntity = (TemplateManagerTileEntity) te;
             return new TemplateManagerGUI(containerTileEntity, new TemplateManagerContainer(player.inventory, containerTileEntity));
         }
         if (ID == CopyPasteID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetCopyPaste)
-                return new CopyPasteGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste)
-                return new CopyPasteGUI(player.getHeldItemOffhand());
+            if (player.getHeldItem().getItem() instanceof GadgetCopyPaste)
+                return new CopyPasteGUI(player.getHeldItem());
             else
                 return null;
         } else if (ID == DestructionID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetDestruction)
-                return new DestructionGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetDestruction)
-                return new DestructionGUI(player.getHeldItemOffhand());
+            if (player.getHeldItem().getItem() instanceof GadgetDestruction)
+                return new DestructionGUI(player.getHeldItem());
             else
                 return null;
         } else if (ID == PasteID) {
-            if (player.getHeldItemMainhand().getItem() instanceof GadgetCopyPaste)
-                return new PasteGUI(player.getHeldItemMainhand());
-            else if (player.getHeldItemOffhand().getItem() instanceof GadgetCopyPaste)
-                return new PasteGUI(player.getHeldItemOffhand());
+            if (player.getHeldItem().getItem() instanceof GadgetCopyPaste)
+                return new PasteGUI(player.getHeldItem());
             else
                 return null;
         } else if (ID == MaterialListID) {
             ItemStack template = InventoryManipulation.getStackInEitherHand(player, ITemplate.class);
-            if (! template.isEmpty())
+            if (template != null)
                 return new MaterialListGUI(template);
             return null;
         }

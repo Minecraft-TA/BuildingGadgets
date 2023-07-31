@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.common.network;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerCommands;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerContainer;
 import com.direwolf20.buildinggadgets.common.blocks.templatemanager.TemplateManagerTileEntity;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
@@ -41,10 +42,10 @@ public class PacketTemplateManagerLoad implements IMessage {
         }
 
         private void handle(PacketTemplateManagerLoad message, MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             World world = player.worldObj;
             BlockPos pos = message.pos;
-            TileEntity te = world.getTileEntity(pos);
+            TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
             TemplateManagerCommands.loadTemplate(container, player);

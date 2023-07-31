@@ -157,12 +157,12 @@ public class BlockBuildEntity extends Entity {
             if (setPos != null && setBlock != null && (getToolMode() == 1)) {
                 if (getUsingConstructionPaste()) {
                     world.setBlockState(setPos, ModBlocks.constructionBlock.getDefaultState());
-                    TileEntity te = world.getTileEntity(setPos);
+                    TileEntity te = world.getTileEntity(setPos.getX(), setPos.getY(), setPos.getZ());
                     if (te instanceof ConstructionBlockTileEntity) {
                         ((ConstructionBlockTileEntity) te).setBlockState(setBlock);
                         ((ConstructionBlockTileEntity) te).setActualBlockState(actualSetBlock);
                     }
-                    world.spawnEntity(new ConstructionBlockEntity(world, setPos, false));
+                    world.spawnEntityInWorld(new ConstructionBlockEntity(world, setPos, false));
                 } else {
                     world.setBlockState(setPos, setBlock);
                     world.getBlockState(setPos).getBlock().neighborChanged(setBlock, world, setPos, world.getBlockState(setPos.up()).getBlock(), setPos.up());
