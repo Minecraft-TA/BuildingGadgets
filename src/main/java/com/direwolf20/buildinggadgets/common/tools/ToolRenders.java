@@ -12,7 +12,7 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Multiset;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.math.MovingObjectPosition;
 

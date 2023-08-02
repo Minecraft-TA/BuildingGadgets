@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.building.modes;
 import com.direwolf20.buildinggadgets.common.building.Context;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;

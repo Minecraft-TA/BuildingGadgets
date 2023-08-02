@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.blocks.Models;
 
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class BlockstateProperty implements IUnlistedProperty<IBlockState> {

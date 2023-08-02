@@ -9,7 +9,7 @@ import it.unimi.dsi.fastutil.doubles.Double2ObjectArrayMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
 import it.unimi.dsi.fastutil.doubles.DoubleSortedSet;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;

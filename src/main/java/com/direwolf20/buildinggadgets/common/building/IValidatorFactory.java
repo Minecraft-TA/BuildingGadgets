@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;

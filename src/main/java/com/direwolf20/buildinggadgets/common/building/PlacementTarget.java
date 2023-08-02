@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.World;
 

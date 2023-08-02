@@ -14,7 +14,7 @@ import com.direwolf20.buildinggadgets.common.tools.*;
 import com.google.common.collect.Multiset;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;

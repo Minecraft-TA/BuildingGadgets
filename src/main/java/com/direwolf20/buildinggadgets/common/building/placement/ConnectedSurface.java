@@ -5,7 +5,8 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -54,8 +55,10 @@ public final class ConnectedSurface implements IPlacementSequence {
     private ConnectedSurface(IBlockAccess world, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, BlockPos searchingCenter, @Nullable EnumFacing side, boolean fuzzy) {
         this(world, searchingRegion, searching2referenceMapper, searchingCenter, side,
                 (filter, pos) -> {
-                    IBlockState reference = world.getBlockState(searching2referenceMapper.apply(pos));
-                    boolean isAir = reference.getBlock().isAir(reference, world, pos);
+                    BlockPos apply = searching2referenceMapper.apply(pos);
+                    Block block = world.getBlock(apply.getX(), apply.getY(), apply.getZ());
+                    IBlockState reference = new IBlockState(world.getBlockMetadata(apply.getX(), apply.getY(), apply.getZ()));
+                    boolean isAir = block.isAir(world, apply.getX(), apply.getY(), apply.getZ()); // TODO This seems rather inefficient
                     // If fuzzy=true, we ignore the block for reference
                     return ! isAir && (fuzzy || filter == reference);
                 });
@@ -154,7 +157,8 @@ public final class ConnectedSurface implements IPlacementSequence {
     }
 
     private IBlockState getReferenceFor(BlockPos pos) {
-        return world.getBlockState(searching2referenceMapper.apply(pos));
+        BlockPos referencePos = searching2referenceMapper.apply(pos);
+        return new IBlockState(world.getBlockMetadata(referencePos.getX(), referencePos.getY(), referencePos.getZ()));
     }
 
 }

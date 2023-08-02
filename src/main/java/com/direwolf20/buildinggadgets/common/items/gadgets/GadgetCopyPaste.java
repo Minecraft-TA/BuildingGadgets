@@ -16,7 +16,7 @@ import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;

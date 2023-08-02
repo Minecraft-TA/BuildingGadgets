@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.google.common.base.Optional;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockNewLeaf;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;

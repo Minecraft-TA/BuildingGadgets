@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.common.items.capability;
 import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
 import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;

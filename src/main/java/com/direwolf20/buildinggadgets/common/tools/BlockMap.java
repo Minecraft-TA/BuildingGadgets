@@ -1,6 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 
 public class BlockMap {
 

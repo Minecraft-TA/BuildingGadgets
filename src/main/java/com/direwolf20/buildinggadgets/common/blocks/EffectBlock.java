@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
 import net.minecraft.block.material.EnumPushReaction;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockRenderLayer;

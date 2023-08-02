@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.item.Item;
 
 public class ConstructionBlockDense extends BlockModBase {

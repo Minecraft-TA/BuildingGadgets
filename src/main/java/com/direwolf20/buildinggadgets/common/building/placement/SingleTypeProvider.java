@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building.placement;
 
 import com.direwolf20.buildinggadgets.common.building.IBlockProvider;
 import com.direwolf20.buildinggadgets.common.building.TranslationWrapper;
-import net.minecraft.block.state.IBlockState;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
