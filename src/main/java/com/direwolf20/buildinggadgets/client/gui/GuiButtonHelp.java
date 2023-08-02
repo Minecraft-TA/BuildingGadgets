@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +22,7 @@ public class GuiButtonHelp extends GuiButtonSelect {
         if (!visible)
             return;
 
-        GlStateManager.color(1, 1, 1, 1);
+        GL11.color(1, 1, 1, 1);
         hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
 
         float x = this.x + 5.5F;
@@ -37,10 +37,10 @@ public class GuiButtonHelp extends GuiButtonSelect {
         }
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GL11.enableBlend();
+        GL11.disableTexture2D();
+        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA,
+                GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
         buffer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
         buffer.pos(x, y, 0).color(red, green, blue, 255).endVertex();
         double s = 30;
@@ -49,8 +49,8 @@ public class GuiButtonHelp extends GuiButtonSelect {
             buffer.pos(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0).color(red, green, blue, 255).endVertex();
         }
         tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
+        GL11.enableTexture2D();
+        GL11.disableBlend();
 
         mouseDragged(mc, mouseX, mouseY);
         int colorText = -1;

@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -31,7 +31,7 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
     public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getMinecraft();
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
 
         int toolMode = entity.getToolMode();
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -48,10 +48,10 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
             scale = (float) (maxLife - teCounter) / maxLife;
         }
         float trans = (1 - scale) / 2;
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(trans, trans, trans);
-        GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.scale(scale, scale, scale);
+        GL11.translate(x, y, z);
+        GL11.translate(trans, trans, trans);
+        GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+        GL11.scale(scale, scale, scale);
 
 
         //IBlockState renderBlockState = blocks.COBBLESTONE.getDefaultState();
@@ -76,16 +76,16 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
                 BuildingGadgets.logger.error(getClass().getSimpleName() + ": Error within rendering method -> " + ex);
             }
         }
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
 
 
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+        GL11.glPushMatrix();
+        GL11.pushAttrib();
 
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.disableTexture2D();
-        GlStateManager.depthMask(false);
+        GL11.enableBlend();
+        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.disableTexture2D();
+        GL11.depthMask(false);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder bufferBuilder = t.getBuffer();
         bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
@@ -147,12 +147,12 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
         bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
         t.draw();
 
-        GlStateManager.disableBlend();
-        GlStateManager.enableTexture2D();
-        GlStateManager.depthMask(true);
+        GL11.disableBlend();
+        GL11.enableTexture2D();
+        GL11.depthMask(true);
 
-        GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+        GL11.glPopMatrix();
+        GL11.popAttrib();
 
     }
 

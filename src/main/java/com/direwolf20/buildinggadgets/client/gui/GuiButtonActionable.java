@@ -7,7 +7,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -96,17 +96,17 @@ public class GuiButtonActionable extends GuiButton {
         if( !visible )
             return;
 
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GL11.enableBlend();
+        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.glBlendFunc(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-        GlStateManager.disableTexture2D();
-        GlStateManager.color(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
+        GL11.disableTexture2D();
+        GL11.color(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
         drawTexturedModalRect(this.x, this.y, 0, 0, this.width, this.height);
-        GlStateManager.enableTexture2D();
+        GL11.enableTexture2D();
 
-        GlStateManager.color(1, 1, 1, alpha);
+        GL11.color(1, 1, 1, alpha);
         Minecraft.getMinecraft().getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
         drawModalRectWithCustomSizedTexture(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);

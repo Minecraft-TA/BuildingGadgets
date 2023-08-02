@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -95,9 +96,9 @@ class ScrollingMaterialList extends GuiScrollingList {
             int lineXStart = itemNameX + widthItemName + LINE_SIDE_MARGIN;
             int lineXEnd = right - widthAmount - LINE_SIDE_MARGIN;
             int lineY = AlignmentUtil.getYForAlignedCenter(1, top, bottom) - 1;
-            GlStateManager.enableAlpha();
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            GL11.enableAlpha();
+            GL11.enableBlend();
+            GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             parent.drawHorizontalLine(lineXStart, lineXEnd, lineY, 0x22FFFFFF);
         }
     }
@@ -109,12 +110,12 @@ class ScrollingMaterialList extends GuiScrollingList {
     }
 
     private void drawIcon(ItemStack item, int slotX, int slotY) {
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(item, slotX, slotY);
-        GlStateManager.disableLighting();
-        GlStateManager.color(1, 1, 1);
-        GlStateManager.popMatrix();
+        GL11.disableLighting();
+        GL11.glColor3f(1f, 1f, 1f);
+        GL11.glPopMatrix();
     }
 
 }

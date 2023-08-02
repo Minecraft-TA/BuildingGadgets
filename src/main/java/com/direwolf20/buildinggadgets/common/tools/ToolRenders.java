@@ -110,12 +110,12 @@ public class ToolRenders {
         Set<BlockPos> coords =  new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
         ToolRenders.Utils.stateManagerPrepareBlend();
 
         // Render all the raw blocks
         coordinates.forEach(coordinate -> {
-            GlStateManager.pushMatrix();
+            GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, null);
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
@@ -124,14 +124,14 @@ public class ToolRenders {
                 state = renderBlockState.getActualState(fakeWorld, coordinate);
 
             mc.getBlockRendererDispatcher().renderBlockBrightness(state, 1f);//Render the defined block
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         });
 
         // Render if the block can be built or not
         for (BlockPos coordinate : coordinates) {
-            GlStateManager.pushMatrix();
+            GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.01f);
-            GlStateManager.scale(1.006f, 1.006f, 1.006f);
+            GL11.scale(1.006f, 1.006f, 1.006f);
             GL14.glBlendColor(1F, 1F, 1F, 0.35f);
 
             hasBlocks--;
@@ -144,16 +144,16 @@ public class ToolRenders {
                 mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassRed, 1f);
 
             // Move the render position back to where it was
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         }
 
         //Set blending back to the default mode
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
         //Disable blend
-        GlStateManager.disableBlend();
+        GL11.disableBlend();
         //Pop from the original push in this method
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 
     public static void renderExchangerOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
@@ -195,11 +195,11 @@ public class ToolRenders {
         Set<BlockPos> coords =  new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
         ToolRenders.Utils.stateManagerPrepareBlend();
 
         for (BlockPos coordinate : coordinates) {
-            GlStateManager.pushMatrix();
+            GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.001f);
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
@@ -217,17 +217,17 @@ public class ToolRenders {
                     BuildingGadgets.logger.error(ToolRenders.class.getSimpleName() + ": Error within overlay rendering -> " + ex);
                 }
 
-                GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
+                GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
             }
 
             GL14.glBlendColor(1F, 1F, 1F, 0.1f); //Set the alpha of the blocks we are rendering
             dispatcher.renderBlockBrightness(stainedGlassWhite, 1f);//Render the defined block - White glass to show non-full block renders (Example: Torch)
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
 
-            GlStateManager.pushMatrix();
+            GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.002f);
 
-            GlStateManager.scale(1.02f, 1.02f, 1.02f); //Slightly Larger block to avoid z-fighting.
+            GL11.scale(1.02f, 1.02f, 1.02f); //Slightly Larger block to avoid z-fighting.
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
             hasBlocks--;
 
@@ -240,14 +240,14 @@ public class ToolRenders {
                 dispatcher.renderBlockBrightness(stainedGlassRed, 1f);
 
             // Move the render position back to where it was
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         }
 
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        GL11.disableBlend();
+        GL11.glPopMatrix();
     }
 
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
@@ -259,24 +259,24 @@ public class ToolRenders {
         if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
 
         if (!GadgetDestruction.getOverlay(stack)) return;
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
         double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
         double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
-        GlStateManager.translate(-doubleX, -doubleY, -doubleZ);
+        GL11.translate(-doubleX, -doubleY, -doubleZ);
         try {
-            GlStateManager.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
+            GL11.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
                 int displayList = GLAllocation.generateDisplayLists(1);
-                GlStateManager.glNewList(displayList, GL11.GL_COMPILE);
+                GL11.glNewList(displayList, GL11.GL_COMPILE);
                 renderDestructionOverlay(player, world, startBlock, facing, stack);
-                GlStateManager.glEndList();
+                GL11.glEndList();
                 return displayList;
             }));
         } catch (ExecutionException e) {
             BuildingGadgets.logger.error("Error encountered while rendering destruction gadget overlay", e);
         }
-        GlStateManager.enableLighting();
-        GlStateManager.popMatrix();
+        GL11.enableLighting();
+        GL11.glPopMatrix();
     }
 
     private static void renderDestructionOverlay(EntityPlayer player, World world, BlockPos startBlock, EnumFacing facing, ItemStack heldItem) {
@@ -284,9 +284,9 @@ public class ToolRenders {
 
         Set<BlockPos> coordinates = GadgetDestruction.getArea(world, startBlock, facing, player, heldItem);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GL11.glPushMatrix();
+        GL11.enableBlend();
+        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
 
         List<BlockPos> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); //Sort the coords by distance to player.
 
@@ -306,27 +306,27 @@ public class ToolRenders {
             if (invisible)
                 continue;
 
-            GlStateManager.pushMatrix();//Push matrix again just because
-            GlStateManager.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
-            GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
-            GlStateManager.translate(-0.005f, -0.005f, 0.005f);
-            GlStateManager.scale(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
+            GL11.glPushMatrix();//Push matrix again just because
+            GL11.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
+            GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
+            GL11.translate(-0.005f, -0.005f, 0.005f);
+            GL11.scale(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
 
-            GlStateManager.disableLighting();
-            GlStateManager.disableTexture2D();
+            GL11.disableLighting();
+            GL11.disableTexture2D();
 
             renderBoxSolid(t, bufferBuilder, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
 
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableLighting();
-            GlStateManager.popMatrix();
+            GL11.enableTexture2D();
+            GL11.enableLighting();
+            GL11.glPopMatrix();
         }
 
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        GL11.disableBlend();
+        GL11.glPopMatrix();
     }
 
     public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
@@ -371,27 +371,27 @@ public class ToolRenders {
             if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
 
             //Save the current position that is being rendered
-            GlStateManager.pushMatrix();
+            GL11.glPushMatrix();
 
             //Enable Blending (So we can have transparent effect)
-            GlStateManager.enableBlend();
+            GL11.enableBlend();
 
             //This blend function allows you to use a constant alpha, which is defined later
-            GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+            GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
-            GlStateManager.pushMatrix();//Push matrix again just because
-            GlStateManager.translate(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GL11.glPushMatrix();//Push matrix again just because
+            GL11.translate(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
-            GlStateManager.translate(0.0005f, 0.0005f, -0.0005f);
-            GlStateManager.scale(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
+            GL11.translate(0.0005f, 0.0005f, -0.0005f);
+            GL11.scale(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
             PasteToolBufferBuilder.draw(player, playerPos.x, playerPos.y, playerPos.z, startPos, UUID); //Draw the cached buffer in the world.
 
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
 
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.disableBlend();
-            GlStateManager.popMatrix();
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.disableBlend();
+            GL11.glPopMatrix();
 
         } else {
             BlockPos startPos = ModItems.gadgetCopyPaste.getStartPos(stack);
@@ -416,23 +416,23 @@ public class ToolRenders {
             Tessellator tessellator = Tessellator.getInstance();
             BufferBuilder bufferbuilder = tessellator.getBuffer();
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(-playerPos.x, -playerPos.y, -playerPos.z);//The render starts at the player, so we subtract the player coords and move the render to 0,0,0
+            GL11.glPushMatrix();
+            GL11.translate(-playerPos.x, -playerPos.y, -playerPos.z);//The render starts at the player, so we subtract the player coords and move the render to 0,0,0
 
-            GlStateManager.disableLighting();
-            GlStateManager.disableTexture2D();
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+            GL11.disableLighting();
+            GL11.disableTexture2D();
+            GL11.enableBlend();
+            GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
 
             renderBox(tessellator, bufferbuilder, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks we've copied.
 
-            GlStateManager.glLineWidth(1.0F);
-            GlStateManager.enableLighting();
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableDepth();
-            GlStateManager.depthMask(true);
+            GL11.glLineWidth(1.0F);
+            GL11.enableLighting();
+            GL11.enableTexture2D();
+            GL11.enableDepth();
+            GL11.depthMask(true);
 
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         }
     }
 
@@ -446,18 +446,18 @@ public class ToolRenders {
         if( player.dimension != dim )
             return;
 
-        GlStateManager.pushMatrix();
+        GL11.glPushMatrix();
         ToolRenders.Utils.stateManagerPrepare(playerPos, pos, 0.0005f);
         ToolRenders.Utils.stateManagerPrepareBlend();
         GL14.glBlendColor(1F, 1F, 1F, 0.35f);
 
         // Render the overlay
         mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassYellow, 1f);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 
     private static void renderBox(Tessellator tessellator, BufferBuilder bufferBuilder, double startX, double startY, double startZ, double endX, double endY, double endZ, int R, int G, int B) {
-        GlStateManager.glLineWidth(2.0F);
+        GL11.glLineWidth(2.0F);
         bufferBuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
         bufferBuilder.pos(startX, startY, startZ).color(G, G, G, 0.0F).endVertex();
         bufferBuilder.pos(startX, startY, startZ).color(G, G, G, R).endVertex();
@@ -478,7 +478,7 @@ public class ToolRenders {
         bufferBuilder.pos(endX, startY, startZ).color(G, G, G, R).endVertex();
         bufferBuilder.pos(endX, startY, startZ).color(G, G, G, 0.0F).endVertex();
         tessellator.draw();
-        GlStateManager.glLineWidth(1.0F);
+        GL11.glLineWidth(1.0F);
     }
 
     private static void renderBoxSolid(Tessellator tessellator, BufferBuilder bufferBuilder, double startX, double startY, double startZ, double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
@@ -576,23 +576,23 @@ public class ToolRenders {
         }
 
         private static void stateManagerPrepareBlend() {
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+            GL11.enableBlend();
+            GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
         }
 
         /**
          * Prepares our render using base properties
          */
         private static void stateManagerPrepare(Vec3 playerPos, BlockPos blockPos, Float shift) {
-            GlStateManager.translate(blockPos.getX()-playerPos.x, blockPos.getY() - playerPos.y, blockPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GL11.glTranslated(blockPos.getX()-playerPos.xCoord, blockPos.getY() - playerPos.yCoord, blockPos.getZ() - playerPos.zCoord);//Now move the render position to the coordinates we want to render at
             // Rotate it because i'm not sure why but we need to
-            GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-            GlStateManager.scale(1f, 1f, 1f);
+            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
+            GL11.glScalef(1f, 1f, 1f);
 
             // Slightly Larger block to avoid z-fighting.
             if( shift != null ) {
-                GlStateManager.translate(-shift, -shift, shift);
-                GlStateManager.scale(1.005f, 1.005f, 1.005f);
+                GL11.glTranslatef(-shift, -shift, shift);
+                GL11.glScalef(1.005f, 1.005f, 1.005f);
             }
         }
     }

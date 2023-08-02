@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -27,9 +27,9 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
     public void doRender(ConstructionBlockEntity entity, double x, double y, double z, float entityYaw, float partialTicks) {
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getMinecraft();
-        GlStateManager.pushMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
+        GL11.glPushMatrix();
+        GL11.enableBlend();
+        GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         int teCounter = entity.getTicksExisted();
@@ -41,10 +41,10 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
         if (entity.getMakingPaste()) {
             scale = (float) teCounter / maxLife;
         }
-        GlStateManager.translate(x, y, z);
-        GlStateManager.translate(-0.0005f, -0.0005f, -0.0005f);
-        GlStateManager.scale(1.001f, 1.001f, 1.001f);//Slightly Larger block to avoid z-fighting.
-        GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+        GL11.translate(x, y, z);
+        GL11.translate(-0.0005f, -0.0005f, -0.0005f);
+        GL11.scale(1.001f, 1.001f, 1.001f);//Slightly Larger block to avoid z-fighting.
+        GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 
         GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
         IBlockState renderBlockState = ModBlocks.constructionBlockDense.getDefaultState();
@@ -53,9 +53,9 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
         }
 
         blockrendererdispatcher.renderBlockBrightness(renderBlockState, 1.0f);
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.disableBlend();
-        GlStateManager.popMatrix();
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.disableBlend();
+        GL11.glPopMatrix();
     }
 
     @Nullable

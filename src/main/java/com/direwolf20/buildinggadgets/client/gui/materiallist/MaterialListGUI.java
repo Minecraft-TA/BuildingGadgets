@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
@@ -155,7 +155,7 @@ public class MaterialListGUI extends GuiBase {
         if (hoveringText != null) {
             RenderHelper.enableGUIStandardItemLighting();
             drawHoveringText(hoveringText, hoveringTextX, hoveringTextY);
-            GlStateManager.disableLighting();
+            GL11.disableLighting();
             hoveringText = null;
         }
     }

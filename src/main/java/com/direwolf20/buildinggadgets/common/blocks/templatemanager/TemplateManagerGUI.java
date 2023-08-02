@@ -24,7 +24,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -89,12 +88,12 @@ public class TemplateManagerGUI extends GuiContainer {
         drawDefaultBackground();
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (buttonHelp.isSelected()) {
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.disableLighting();
+            GL11.glColor4f(1, 1, 1, 1);
+             //TODO Recheck all opengl calls because I have no idea what I'm doing
             for (IHoverHelpText helpTextProvider : helpTextProviders)
                 helpTextProvider.drawRect(this, HELP_TEXT_BACKGROUNG_COLOR);
 
-            GlStateManager.enableLighting();
+            GL11.enableLighting();
             for (IHoverHelpText helpTextProvider : helpTextProviders) {
                 if (helpTextProvider.isHovered(mouseX, mouseY))
                     drawHoveringText(helpTextProvider.getHoverHelpText(), mouseX, mouseY);
@@ -135,7 +134,7 @@ public class TemplateManagerGUI extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        GlStateManager.color(1, 1, 1, 1);
+        GL11.color(1, 1, 1, 1);
         mc.getTextureManager().bindTexture(background);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
         if (!buttonCopy.isMouseOver() && !buttonPaste.isMouseOver())
@@ -168,7 +167,7 @@ public class TemplateManagerGUI extends GuiContainer {
         drawRect(guiLeft + panel.getX() - 1, guiTop + panel.getY() - 1, guiLeft + panel.getX() + panel.getWidth() + 1, guiTop + panel.getY() + panel.getHeight() + 1, 0xFF8A8A8A);
         ItemStack itemstack = this.container.getSlot(0).getStack();
 //        BlockRendererDispatcher dispatcher = this.mc.getBlockRendererDispatcher();
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.color(1.0F, 1.0F, 1.0F, 1.0F);
 
         //float rotX = 165, rotY = 0, zoom = 1;
         if (!itemstack.isEmpty()) {
@@ -200,41 +199,41 @@ public class TemplateManagerGUI extends GuiContainer {
                 }
 
                 //System.out.println(distance);
-                GlStateManager.pushMatrix();
-                //GlStateManager.translate(panel.getX() + (panel.getWidth() / 2), panel.getY() + (panel.getHeight() / 2), 100);
+                GL11.glPushMatrix();
+                //GL11.translate(panel.getX() + (panel.getWidth() / 2), panel.getY() + (panel.getHeight() / 2), 100);
 
-                GlStateManager.matrixMode(GL11.GL_PROJECTION);
-                GlStateManager.pushMatrix();
-                GlStateManager.loadIdentity();
+                GL11.matrixMode(GL11.GL_PROJECTION);
+                GL11.glPushMatrix();
+                GL11.loadIdentity();
                 //int scale = new ScaledResolution(mc).getScaleFactor();
                 Project.gluPerspective(60, (float) panel.getWidth() / panel.getHeight(), 0.01F, 4000);
-                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                //GlStateManager.translate(-panel.getX() - panel.getWidth() / 2, -panel.getY() - panel.getHeight() / 2, 0);
-                GlStateManager.viewport((guiLeft + panel.getX()) * scale, mc.displayHeight - (guiTop + panel.getY() + panel.getHeight()) * scale, panel.getWidth() * scale, panel.getHeight() * scale);
-                GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+                GL11.matrixMode(GL11.GL_MODELVIEW);
+                //GL11.translate(-panel.getX() - panel.getWidth() / 2, -panel.getY() - panel.getHeight() / 2, 0);
+                GL11.viewport((guiLeft + panel.getX()) * scale, mc.displayHeight - (guiTop + panel.getY() + panel.getHeight()) * scale, panel.getWidth() * scale, panel.getHeight() * scale);
+                GL11.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
                 //double sc = 300 + 8 * 0.0125 * (Math.sqrt(zoom + 99) - 9);
                 sc = (293 * sc) + zoom / zoomScale;
-                GlStateManager.scale(sc, sc, sc);
+                GL11.scale(sc, sc, sc);
                 int moveX = startPos.getX() - endPos.getX();
 
-                //GlStateManager.rotate(30, 0, 1, 0);
+                //GL11.rotate(30, 0, 1, 0);
                 if (startPos.getX() >= endPos.getX()) {
                     moveX--;
-                    //GlStateManager.rotate(90, 0, -1, 0);
+                    //GL11.rotate(90, 0, -1, 0);
                 }
 
-                GlStateManager.translate((moveX) / 1.75, -Math.abs(startPos.getY() - endPos.getY()) / 1.75, 0);
-                GlStateManager.translate(panX, panY, 0);
+                GL11.translate((moveX) / 1.75, -Math.abs(startPos.getY() - endPos.getY()) / 1.75, 0);
+                GL11.translate(panX, panY, 0);
 //System.out.println(((startPos.getX() - endPos.getX()) / 2) * -1 + ":" + ((startPos.getY() - endPos.getY()) / 2) * -1 + ":" + ((startPos.getZ() - endPos.getZ()) / 2) * -1);
-                GlStateManager.translate(((startPos.getX() - endPos.getX()) / 2) * -1, ((startPos.getY() - endPos.getY()) / 2) * -1, ((startPos.getZ() - endPos.getZ()) / 2) * -1);
-                GlStateManager.rotate(rotX, 1, 0, 0);
-                GlStateManager.rotate(rotY, 0, 1, 0);
-                GlStateManager.translate(((startPos.getX() - endPos.getX()) / 2), ((startPos.getY() - endPos.getY()) / 2), ((startPos.getZ() - endPos.getZ()) / 2));
+                GL11.translate(((startPos.getX() - endPos.getX()) / 2) * -1, ((startPos.getY() - endPos.getY()) / 2) * -1, ((startPos.getZ() - endPos.getZ()) / 2) * -1);
+                GL11.rotate(rotX, 1, 0, 0);
+                GL11.rotate(rotY, 0, 1, 0);
+                GL11.translate(((startPos.getX() - endPos.getX()) / 2), ((startPos.getY() - endPos.getY()) / 2), ((startPos.getZ() - endPos.getZ()) / 2));
 
                 mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
                 if ((startPos.getX() - endPos.getX()) == 0) {
-                    //GlStateManager.rotate(270, 0, 1, 0);
+                    //GL11.rotate(270, 0, 1, 0);
                 }
                 //Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
                 //dispatcher.renderBlockBrightness(Blocks.GLASS.getDefaultState(), 1f);
@@ -257,7 +256,7 @@ public class TemplateManagerGUI extends GuiContainer {
                         vertexformatelement.getUsage().preDraw(vertexformat, j, i, bytebuffer);
                     }
 
-                    GlStateManager.glDrawArrays(bufferBuilder.getDrawMode(), 0, bufferBuilder.getVertexCount());
+                    GL11.glDrawArrays(bufferBuilder.getDrawMode(), 0, bufferBuilder.getVertexCount());
                     int i1 = 0;
 
                     for (int j1 = list.size(); i1 < j1; ++i1) {
@@ -270,11 +269,11 @@ public class TemplateManagerGUI extends GuiContainer {
                     }
                 }
 
-                GlStateManager.popMatrix();
-                GlStateManager.matrixMode(GL11.GL_PROJECTION);
-                GlStateManager.popMatrix();
-                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+                GL11.glPopMatrix();
+                GL11.matrixMode(GL11.GL_PROJECTION);
+                GL11.glPopMatrix();
+                GL11.matrixMode(GL11.GL_MODELVIEW);
+                GL11.viewport(0, 0, mc.displayWidth, mc.displayHeight);
 
             }
         } else {
@@ -401,9 +400,9 @@ public class TemplateManagerGUI extends GuiContainer {
     }
 
     private void drawSlotOverlay(Slot slot) {
-        GlStateManager.translate(0, 0, 1000);
+        GL11.translate(0, 0, 1000);
         drawRect(slot.xDisplayPosition, slot.yDisplayPosition, slot.xDisplayPosition + 16, slot.yDisplayPosition + 16, -1660903937);
-        GlStateManager.translate(0, 0, -1000);
+        GL11.translate(0, 0, -1000);
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
@@ -261,24 +261,24 @@ public class ModeRadialMenu extends GuiScreen {
                     ((ZeroButton) button).setFaded(inRange);
             }
         }
-        GlStateManager.pushMatrix();
-        GlStateManager.translate((1 - fract) * x, (1 - fract) * y, 0);
-        GlStateManager.scale(fract, fract, fract);
+        GL11.glPushMatrix();
+        GL11.translate((1 - fract) * x, (1 - fract) * y, 0);
+        GL11.scale(fract, fract, fract);
         super.drawScreen(mx, my, partialTicks);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
         if (segments == 0) {
             renderHoverHelpText(mx, my);
             return;
         }
-        GlStateManager.pushMatrix();
-        GlStateManager.disableTexture2D();
+        GL11.glPushMatrix();
+        GL11.disableTexture2D();
 
         float angle = mouseAngle(x, y, mx, my);
 
 //        int highlight = 5;
 
-        GlStateManager.enableBlend();
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GL11.enableBlend();
+        GL11.shadeModel(GL11.GL_SMOOTH);
         float totalDeg = 0;
         float degPer = 360F / segments;
 
@@ -326,7 +326,7 @@ public class ModeRadialMenu extends GuiScreen {
                 r = g = b = 1F;
             }
 
-            GlStateManager.color(r, g, b, a);
+            GL11.color(r, g, b, a);
 
             for (float i = degPer; i >= 0; i--) {
                 float rad = (float) ((i + totalDeg) / 180F * Math.PI);
@@ -345,8 +345,8 @@ public class ModeRadialMenu extends GuiScreen {
 //            if (mouseInSector)
 //                radius -= highlight;
         }
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.enableTexture2D();
+        GL11.shadeModel(GL11.GL_FLAT);
+        GL11.enableTexture2D();
 
         for (int i = 0; i < nameData.size(); i++) {
             NameDisplayData data = nameData.get(i);
@@ -379,27 +379,27 @@ public class ModeRadialMenu extends GuiScreen {
             int ydp = (int) ((yp - y) * mod + y);
 
             mc.renderEngine.bindTexture(signs.get(i));
-            GlStateManager.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+            GL11.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
             mc.renderEngine.bindTexture(signs.get(i));
             drawModalRectWithCustomSizedTexture(xdp - 8, ydp - 8, 0, 0, 16, 16, 16, 16);
 
         }
 
-        GlStateManager.enableRescaleNormal();
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GL11.enableRescaleNormal();
+        GL11.enableBlend();
+        GL11.tryglBlendFuncSeparate(770, 771, 1, 0);
         RenderHelper.enableGUIStandardItemLighting();
 
         float s = 2.25F * fract;
-        GlStateManager.scale(s, s, s);
-        GlStateManager.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
+        GL11.scale(s, s, s);
+        GL11.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
         mc.getRenderItem().renderItemAndEffectIntoGUI(tool, 0, 0);
 
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.disableBlend();
-        GlStateManager.disableRescaleNormal();
+        GL11.disableBlend();
+        GL11.disableRescaleNormal();
 
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
         renderHoverHelpText(mx, my);
     }
 

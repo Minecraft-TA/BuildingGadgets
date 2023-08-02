@@ -17,7 +17,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -130,8 +130,8 @@ public class EventTooltip {
                 by += 10;
             }
 
-            GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.enableBlend();
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             //Gui.drawRect(bx, by, bx + width, by + height, 0x55000000);
 
             int j = 0;
@@ -156,7 +156,7 @@ public class EventTooltip {
 
     private static int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
         Minecraft mc = Minecraft.getMinecraft();
-        GlStateManager.disableDepth();
+        GL11.disableDepth();
         RenderItem render = mc.getRenderItem();
 
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
@@ -169,11 +169,11 @@ public class EventTooltip {
 
         boolean hasReq = req > 0;
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 8 - w1 / 4, y + (hasReq ? 12 : 14), 0);
-        GlStateManager.scale(0.5F, 0.5F, 0.5F);
+        GL11.glPushMatrix();
+        GL11.translate(x + 8 - w1 / 4, y + (hasReq ? 12 : 14), 0);
+        GL11.scale(0.5F, 0.5F, 0.5F);
         mc.fontRenderer.drawStringWithShadow(s1, 0, 0, color);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
 
         int missingCount = 0;
 
@@ -181,9 +181,9 @@ public class EventTooltip {
             //The commented out code will draw a red box around any items that you don't have enough of
             //I personally didn't like it.
             /*if (count < req) {
-                GlStateManager.enableDepth();
+                GL11.enableDepth();
                 Gui.drawRect(x - 1, y - 1, x + 17, y + 17, 0x44FF0000);
-                GlStateManager.disableDepth();
+                GL11.disableDepth();
             }*/
             if (count < req) {
                 String fs = Integer.toString(req - count);
@@ -191,15 +191,15 @@ public class EventTooltip {
                 String s2 = "(" + fs + ")";
                 int w2 = mc.fontRenderer.getStringWidth(s2);
 
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(x + 8 - w2 / 4, y + 17, 0);
-                GlStateManager.scale(0.5F, 0.5F, 0.5F);
+                GL11.glPushMatrix();
+                GL11.translate(x + 8 - w2 / 4, y + 17, 0);
+                GL11.scale(0.5F, 0.5F, 0.5F);
                 mc.fontRenderer.drawStringWithShadow(s2, 0, 0, 0xFF0000);
-                GlStateManager.popMatrix();
+                GL11.glPopMatrix();
                 missingCount = (req - count);
             }
         }
-        GlStateManager.enableDepth();
+        GL11.enableDepth();
         return missingCount;
     }
 
