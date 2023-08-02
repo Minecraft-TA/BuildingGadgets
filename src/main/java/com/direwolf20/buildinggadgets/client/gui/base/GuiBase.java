@@ -10,7 +10,7 @@ public abstract class GuiBase extends GuiScreen {
     public static final char KEY_CLOSE_GUI = Keyboard.KEY_E;
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         super.keyTyped(typedChar, keyCode);
         if (keyCode == KEY_CLOSE_GUI) {
             mc.thePlayer.closeScreen();

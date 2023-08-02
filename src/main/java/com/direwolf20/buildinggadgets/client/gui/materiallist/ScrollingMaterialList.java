@@ -2,14 +2,13 @@ package com.direwolf20.buildinggadgets.client.gui.materiallist;
 
 import com.direwolf20.buildinggadgets.client.util.AlignmentUtil;
 import com.direwolf20.buildinggadgets.client.util.RenderUtil;
+import cpw.mods.fml.client.GuiScrollingList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraftforge.fml.client.GuiScrollingList;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -35,9 +34,7 @@ class ScrollingMaterialList extends GuiScrollingList {
                 parent.getWindowTopY() + TOP,
                 parent.getWindowBottomY() - BOTTOM,
                 parent.getWindowLeftX(),
-                ENTRY_HEIGHT,
-                parent.width,
-                parent.height);
+                ENTRY_HEIGHT);
         this.parent = parent;
     }
 
@@ -81,7 +78,7 @@ class ScrollingMaterialList extends GuiScrollingList {
         // -1 because the bottom x coordinate is exclusive
         RenderUtil.renderTextVerticalCenter(itemName, itemNameX, top, bottom - 1, Color.WHITE.getRGB());
 
-        int required = item.getCount();
+        int required = item.stackSize;
         int available = MathHelper.clamp(parent.getAvailable().getInt(index), 0, required);
         boolean fulfilled = available == required;
         int color = fulfilled ? Color.GREEN.getRGB() : Color.RED.getRGB();

@@ -5,6 +5,7 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -44,7 +45,8 @@ public final class Surface implements IPlacementSequence {
     @VisibleForTesting
     private Surface(IBlockAccess world, BlockPos center, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, boolean fuzzy) {
         this.world = world;
-        this.selectedBase = world.getBlockState(searching2referenceMapper.apply(center));
+        BlockPos reference = searching2referenceMapper.apply(center);
+        this.selectedBase = new IBlockState(world.getBlockMetadata(reference.getX(), reference.getY(), reference.getZ()));
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
         this.fuzzy = fuzzy;
@@ -91,9 +93,11 @@ public final class Surface implements IPlacementSequence {
                 while (it.hasNext()) {
                     BlockPos pos = it.next();
                     BlockPos referencePos = searching2referenceMapper.apply(pos);
-                    IBlockState baseBlock = world.getBlockState(referencePos);
-                    if ((fuzzy || baseBlock == selectedBase) && !baseBlock.getBlock().isAir(baseBlock, world, referencePos))
+                    Block block = world.getBlock(referencePos.getX(), referencePos.getY(), referencePos.getZ());
+                    IBlockState baseBlock = IBlockState.getStateFromWorld(world, referencePos);
+                    if ((fuzzy || baseBlock.equals(selectedBase)) && !block.isAir(world, referencePos.getX(), referencePos.getY(), referencePos.getZ())) { //TODO I dont think this works but BlockState has no implementation
                         return pos;
+                    }
                 }
                 return endOfData();
             }
