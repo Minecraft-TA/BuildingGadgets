@@ -11,16 +11,14 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextComponentTranslation;
 import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,12 +94,12 @@ public class MaterialListGUI extends GuiBase {
         this.backgroundY = AlignmentUtil.getYForAlignedCenter(BACKGROUND_HEIGHT, 0, height);
 
         this.title = I18n.format("gui.buildinggadgets.materialList.title");
-        this.titleTop = AlignmentUtil.getYForAlignedCenter(fontRenderer.FONT_HEIGHT, backgroundY, getWindowTopY() + ScrollingMaterialList.TOP);
-        this.titleLeft = AlignmentUtil.getXForAlignedCenter(fontRenderer.getStringWidth(title), backgroundX, getWindowRightX());
+        this.titleTop = AlignmentUtil.getYForAlignedCenter(fontRendererObj.FONT_HEIGHT, backgroundY, getWindowTopY() + ScrollingMaterialList.TOP);
+        this.titleLeft = AlignmentUtil.getXForAlignedCenter(fontRendererObj.getStringWidth(title), backgroundX, getWindowRightX());
 
         this.materials = item.getItemCountMap(template).entrySet().stream()
-                .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
-                .collect(Collectors.toList());
+            .map(e -> new ItemStack(e.getElement().item, e.getCount(), e.getElement().meta))
+            .collect(Collectors.toList());
         this.sortMaterialList();
         this.updateAvailableMaterials();
         this.scrollingList = new ScrollingMaterialList(this, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
@@ -125,20 +123,20 @@ public class MaterialListGUI extends GuiBase {
 
     private String stringifyDetailed() {
         return materials.stream()
-                .map(item -> String.format(PATTERN_DETAILED,
-                        item.getDisplayName(),
-                        item.getCount(),
-                        item.getItem().getRegistryName(),
-                        InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.getCount())))
-                .collect(Collectors.joining("\n"));
+            .map(item -> String.format(PATTERN_DETAILED,
+                item.getDisplayName(),
+                item.stackSize,
+                item.getItem().getUnlocalizedName(), //TODO check if this is correct
+                InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.getCount())))
+            .collect(Collectors.joining("\n"));
     }
 
     private String stringifySimple() {
         return materials.stream()
-                .map(item -> String.format(PATTERN_SIMPLE,
-                        item.getDisplayName(),
-                        item.getCount()))
-                .collect(Collectors.joining("\n"));
+            .map(item -> String.format(PATTERN_SIMPLE,
+                item.getDisplayName(),
+                item.stackSize))
+            .collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -149,19 +147,19 @@ public class MaterialListGUI extends GuiBase {
         RenderUtil.drawTexturedModalRect(backgroundX, backgroundY, BACKGROUND_WIDTH, BACKGROUND_HEIGHT);
 
         this.scrollingList.drawScreen(mouseX, mouseY, particleTicks);
-        this.drawString(fontRenderer, title, titleLeft, titleTop, Color.WHITE.getRGB());
+        this.drawString(fontRendererObj, title, titleLeft, titleTop, Color.WHITE.getRGB());
         super.drawScreen(mouseX, mouseY, particleTicks);
 
         if (hoveringText != null) {
             RenderHelper.enableGUIStandardItemLighting();
-            drawHoveringText(hoveringText, hoveringTextX, hoveringTextY);
+            drawHoveringText(hoveringText, hoveringTextX, hoveringTextY, fontRendererObj);
             GL11.disableLighting();
             hoveringText = null;
         }
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput() {
         super.handleMouseInput();
 
         int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
@@ -170,10 +168,10 @@ public class MaterialListGUI extends GuiBase {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case BUTTON_CLOSE_ID:
-                Minecraft.getMinecraft().player.closeScreen();
+                Minecraft.getMinecraft().thePlayer.closeScreen();
                 return;
             case BUTTON_SORTING_MODES_ID:
                 sortingMode = sortingMode.next();
@@ -189,7 +187,7 @@ public class MaterialListGUI extends GuiBase {
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
                 else
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.thePlayer.sendStatusMessage(new TextComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
+                mc.thePlayer.sendStatusMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
                 return;
         }
         this.scrollingList.actionPerformed(button);
@@ -218,9 +216,10 @@ public class MaterialListGUI extends GuiBase {
         // Align the box of buttons in the center, and start from the left
         int nextX = getWindowLeftX();
 
-        for (GuiButton button : buttonList) {
+        for (Object object : buttonList) {
+            GuiButton button = (GuiButton) object;
             button.width = buttonWidth;
-            button.x = nextX;
+            button.xPosition = nextX;
             nextX += buttonWidth + BUTTONS_PADDING;
         }
     }
