@@ -2,8 +2,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.util.SoundEvent;
+import net.minecraftforge.client.event.sound.SoundEvent;
 
 public class GuiButtonSound extends GuiButtonSelect {
     private SoundEvent soundSelect, soundDeselect;
@@ -32,11 +31,11 @@ public class GuiButtonSound extends GuiButtonSelect {
     }
 
     @Override
-    public void playPressSound(SoundHandler soundHandler) {
+    public void func_146113_a(SoundHandler soundHandler) {
         if (silent)
             return;
 
-        SoundEvent sound = soundSelect == null ? SoundEvents.UI_BUTTON_CLICK : (selected ? soundDeselect : soundSelect);
-        soundHandler.playSound(PositionedSoundRecord.getMasterRecord(sound, selected ? pitchDeselect : pitchSelect));
+        SoundEvent sound = soundSelect == null ? SoundEvents.UI_BUTTON_CLICK : (selected ? soundDeselect : soundSelect); //TODO How do sounds work?
+        soundHandler.playSound(PositionedSoundRecord.func_147674_a(sound, selected ? pitchDeselect : pitchSelect));
     }
 }

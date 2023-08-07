@@ -15,10 +15,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-
-import java.io.IOException;
 
 public class PasteGUI extends GuiScreen {
     public static final int WIDTH = 256;
@@ -50,15 +49,15 @@ public class PasteGUI extends GuiScreen {
     public void initGui() {
         super.initGui();
 
-        X = new GuiTextField(0, this.fontRenderer, this.guiLeft + 80, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        X = new GuiTextField(this.fontRendererObj, this.guiLeft + 80, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT); //TODO Check if I can remove the first argument
         X.setMaxStringLength(50);
         X.setVisible(true);
 
-        Y = new GuiTextField(1, this.fontRenderer, this.guiLeft + 200, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        Y = new GuiTextField(this.fontRendererObj, this.guiLeft + 200, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT);
         Y.setMaxStringLength(50);
         Y.setVisible(true);
 
-        Z = new GuiTextField(2, this.fontRenderer, this.guiLeft + 320, this.guiTop + 100, 40, this.fontRenderer.FONT_HEIGHT);
+        Z = new GuiTextField(this.fontRendererObj, this.guiLeft + 320, this.guiTop + 100, 40, this.fontRendererObj.FONT_HEIGHT);
         Z.setMaxStringLength(50);
         Z.setVisible(true);
 
@@ -97,9 +96,9 @@ public class PasteGUI extends GuiScreen {
         this.X.drawTextBox();
         this.Y.drawTextBox();
         this.Z.drawTextBox();
-        fontRenderer.drawStringWithShadow("X", this.guiLeft + 55, this.guiTop + 100, 0xFFFFFF);
-        fontRenderer.drawStringWithShadow("Y", this.guiLeft + 175, this.guiTop + 100, 0xFFFFFF);
-        fontRenderer.drawStringWithShadow("Z", this.guiLeft + 296, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("X", this.guiLeft + 55, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Y", this.guiLeft + 175, this.guiTop + 100, 0xFFFFFF);
+        fontRendererObj.drawStringWithShadow("Z", this.guiLeft + 296, this.guiTop + 100, 0xFFFFFF);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
@@ -132,7 +131,7 @@ public class PasteGUI extends GuiScreen {
                 PacketHandler.INSTANCE.sendToServer(new PacketPasteGUI(Integer.parseInt(X.getText()), Integer.parseInt(Y.getText()), Integer.parseInt(Z.getText())));
                 this.mc.displayGuiScreen(null);
             } else {
-                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
+                Minecraft.getMinecraft().thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
             }
 
         } else if (b.id == 2) {
@@ -164,7 +163,7 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         if (this.X.textboxKeyTyped(typedChar, keyCode) || this.Y.textboxKeyTyped(typedChar, keyCode) || this.Z.textboxKeyTyped(typedChar, keyCode)) {
 
         } else {
@@ -173,7 +172,7 @@ public class PasteGUI extends GuiScreen {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 1) {
             if (this.X.mouseClicked(mouseX, mouseY, 0)) {
                 X.setText("");
@@ -199,18 +198,13 @@ public class PasteGUI extends GuiScreen {
         }
     }
 
-    @Override
-    protected void mouseReleased(int mouseX, int mouseY, int state) {
-        super.mouseReleased(mouseX, mouseY, state);
-    }
-
+    //TODO: Check if I can remove this
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput() {
         super.handleMouseInput();
         //System.out.println(Mouse.getEventDWheel());
         //System.out.println(zoom);
-
     }
 
     @Override

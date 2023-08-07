@@ -103,11 +103,11 @@ public class ClientProxy extends CommonProxy {
     }
 
     private static void registerSprite(TextureStitchEvent.Pre event, String loc) {
-        event.getMap().registerSprite(new ResourceLocation(loc));
+        event.map.registerSprite(new ResourceLocation(loc));
     }
 
     public static void playSound(SoundEvent sound, float pitch) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(sound, pitch));
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(sound, pitch)); //TODO Check resource location
     }
 
     public static Color getColor(Color color, int alpha) {

@@ -12,7 +12,7 @@ public interface IHoverHelpText {
 
     void drawRect(Gui gui, int color);
 
-    public static String get(String key) {
+    static String get(String key) {
         return I18n.format("help.gui." + BuildingGadgets.MODID + "." + key);
     }
 

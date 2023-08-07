@@ -7,8 +7,8 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GL11;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.function.Predicate;
@@ -23,8 +23,8 @@ public class GuiButtonActionable extends GuiButton {
     private boolean selected;
     private boolean isSelectable;
 
-    private Color selectedColor     = Color.GREEN;
-    private Color deselectedColor   = new Color(255, 255, 255);
+    private Color selectedColor = Color.GREEN;
+    private Color deselectedColor = new Color(255, 255, 255);
     private Color activeColor;
 
     private ResourceLocation selectedTexture;
@@ -73,14 +73,14 @@ public class GuiButtonActionable extends GuiButton {
 
     @Override
     public void playPressSound(SoundHandler soundHandlerIn) {
-        soundHandlerIn.playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BEEP.getSound(), selected ? .6F: 1F));
+        soundHandlerIn.playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BEEP.getSound(), selected ? .6F : 1F));
     }
 
     @Override
     public boolean mousePressed(Minecraft mc, int mouseX, int mouseY) {
         super.mousePressed(mc, mouseX, mouseY);
 
-        if( !(mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height) )
+        if (!(mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height))
             return false;
 
         this.action.test(true);
@@ -93,7 +93,7 @@ public class GuiButtonActionable extends GuiButton {
 
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
-        if( !visible )
+        if (!visible)
             return;
 
         GL11.enableBlend();
@@ -109,10 +109,10 @@ public class GuiButtonActionable extends GuiButton {
         GL11.color(1, 1, 1, alpha);
         Minecraft.getMinecraft().getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
-        drawModalRectWithCustomSizedTexture(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
+        drawModalRectWithCustomSizedTexture(this.xPosition, this.yPosition, 0, 0, this.width, this.height, this.width, this.height);
 
-        ScaledResolution scaledresolution = new ScaledResolution(mc);
-        if( mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height )
-            drawString(Minecraft.getMinecraft().fontRenderer, this.displayString, mouseX > (scaledresolution.getScaledWidth() / 2) ?  mouseX + 2 : mouseX - Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayString), mouseY - 10, activeColor.getRGB());
+        ScaledResolution scaledresolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        if (mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height)
+            drawString(Minecraft.getMinecraft().fontRenderer, this.displayString, mouseX > (scaledresolution.getScaledWidth() / 2) ? mouseX + 2 : mouseX - Minecraft.getMinecraft().fontRenderer.getStringWidth(this.displayString), mouseY - 10, activeColor.getRGB());
     }
 }

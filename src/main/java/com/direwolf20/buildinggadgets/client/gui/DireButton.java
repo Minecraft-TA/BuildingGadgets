@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GL11;
+import org.lwjgl.opengl.GL11;
 
 public class DireButton extends GuiButtonHelpText {
 
@@ -15,7 +15,7 @@ public class DireButton extends GuiButtonHelpText {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (this.visible) {
             FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(BUTTON_TEXTURES);

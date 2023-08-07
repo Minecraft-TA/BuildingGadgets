@@ -8,7 +8,7 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
-import com.direwolf20.buildinggadgets.common.tools.*;State;
+import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;

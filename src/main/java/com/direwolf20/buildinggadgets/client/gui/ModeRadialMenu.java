@@ -15,22 +15,19 @@ import com.direwolf20.buildinggadgets.common.network.*;
 import com.direwolf20.buildinggadgets.common.tools.BuildingModes;
 import com.direwolf20.buildinggadgets.common.tools.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
+import com.direwolf20.buildinggadgets.common.tools.Vec3i;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
@@ -78,20 +75,20 @@ public class ModeRadialMenu extends GuiScreen {
         ScreenPosition right = isDestruction ? ScreenPosition.TOP : ScreenPosition.RIGHT;
         ScreenPosition left = isDestruction ? ScreenPosition.BOTTOM : ScreenPosition.LEFT;
         if (isDestruction) {
-            addButton(new ZeroButton(right, "destroy.overlay", "destroy_overlay", send -> {
+            this.buttonList.add(new ZeroButton(right, "destroy.overlay", "destroy_overlay", send -> {
                 if (send)
                     PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());
 
                 return GadgetDestruction.getOverlay(getGadget());
             }));
         } else {
-            addButton(new ZeroButton(left, "rotate", "rotate", false, send -> {
+            this.buttonList.add(new ZeroButton(left, "rotate", "rotate", false, send -> {
                 if (send)
                     PacketHandler.INSTANCE.sendToServer(new PacketRotateMirror(PacketRotateMirror.Operation.ROTATE));
 
                 return false;
             }));
-            addButton(new ZeroButton(left, "mirror", "mirror", false, send -> {
+            this.buttonList.add(new ZeroButton(left, "mirror", "mirror", false, send -> {
                 if (send)
                     PacketHandler.INSTANCE.sendToServer(new PacketRotateMirror(PacketRotateMirror.Operation.MIRROR));
 
@@ -106,7 +103,7 @@ public class ModeRadialMenu extends GuiScreen {
 
                     return GadgetGeneric.getFuzzy(getGadget());
                 });
-                addButton(button);
+                this.buttonList.add(button);
                 conditionalButtons.add(button);
             }
             GuiButton button = new ZeroButton(right, "connected_" + (isDestruction ? "area" : "surface"), "connected_area", send -> {
@@ -115,7 +112,7 @@ public class ModeRadialMenu extends GuiScreen {
 
                 return GadgetGeneric.getConnectedArea(getGadget());
             });
-            addButton(button);
+            this.buttonList.add(button);
             conditionalButtons.add(button);
             if (!isDestruction) {
                 int widthSlider = 82;
@@ -130,11 +127,11 @@ public class ModeRadialMenu extends GuiScreen {
                         slider.updateSlider();
                     });
                 sliderRange.precision = 1;
-                sliderRange.getComponents().forEach(this::addButton);
+                sliderRange.getComponents().forEach(this::this.buttonList.add);
             }
         } else {
             // Copy Paste specific
-            addButton(new ZeroButton(right, "copypaste.opengui", "copypaste_opengui", false, send -> {
+            this.buttonList.add(new ZeroButton(right, "copypaste.opengui", "copypaste_opengui", false, send -> {
                 if( !send )
                     return false;
 
@@ -146,21 +143,21 @@ public class ModeRadialMenu extends GuiScreen {
                 return true;
             }));
         }
-        addButton(new ZeroButton(right,"raytrace_fluid", "raytrace_fluid", send -> {
+        this.buttonList.add(new ZeroButton(right,"raytrace_fluid", "raytrace_fluid", send -> {
             if (send)
                 PacketHandler.INSTANCE.sendToServer(new PacketToggleRayTraceFluid());
 
             return GadgetGeneric.shouldRayTraceFluid(getGadget());
         }));
         if (tool.getItem() instanceof GadgetBuilding) {
-            addButton(new ZeroButton(right, "building.place_atop", "building_place_atop", send -> {
+            this.buttonList.add(new ZeroButton(right, "building.place_atop", "building_place_atop", send -> {
                 if (send)
                     PacketHandler.INSTANCE.sendToServer(new PacketToggleBlockPlacement());
 
                 return GadgetBuilding.shouldPlaceAtop(getGadget());
             }));
         }
-        addButton(new ZeroButton(left, "anchor", "anchor", send -> {
+        this.buttonList.add(new ZeroButton(left, "anchor", "anchor", send -> {
             if (send)
                 PacketHandler.INSTANCE.sendToServer(new PacketAnchor());
 
@@ -173,7 +170,7 @@ public class ModeRadialMenu extends GuiScreen {
             return !GadgetUtils.getAnchor(stack).isEmpty();
         }));
         if (!(tool.getItem() instanceof GadgetExchanger)) {
-            addButton(new ZeroButton(left, "undo", "undo", false, send -> {
+            this.buttonList.add(new ZeroButton(left, "undo", "undo", false, send -> {
                 if (send)
                     PacketHandler.INSTANCE.sendToServer(new PacketUndo());
 
@@ -209,9 +206,9 @@ public class ModeRadialMenu extends GuiScreen {
             button.width = dim;
             button.height = dim;
             if (isDestruction)
-                button.y = height / 2 + (isRight ? 10 : -button.height - 10);
+                button.yPosition = height / 2 + (isRight ? 10 : -button.height - 10);
             else
-                button.x = width / 2 + offset;
+                button.xPosition = width / 2 + offset;
         }
         posRight = resetPos(tool, padding, posRight);
         posLeft = resetPos(tool, padding, posLeft);
@@ -224,9 +221,9 @@ public class ModeRadialMenu extends GuiScreen {
             boolean isRight = button.getPosition() == right;
             int pos = isRight ? posRight : posLeft;
             if (isDestruction)
-                button.x = pos;
+                button.xPosition = pos;
             else
-                button.y = pos;
+                button.yPosition = pos;
 
             if (isRight)
                 posRight += dim + padding;
@@ -252,7 +249,7 @@ public class ModeRadialMenu extends GuiScreen {
 
         int radiusMin = 26;
         int radiusMax = 60;
-        double dist = new Vec3(x, y, 0).distanceTo(new Vec3(mx, my, 0));
+        double dist = new Vec3i(x, y, 0).distanceTo(new Vec3i(mx, my, 0));
         boolean inRange = false;
         if (segments != 0) {
             inRange = dist > radiusMin && dist < radiusMax;
@@ -363,7 +360,7 @@ public class ModeRadialMenu extends GuiScreen {
 
             int xsp = xp - 4;
             int ysp = yp;
-            int width = fontRenderer.getStringWidth(name);
+            int width = fontRendererObj.getStringWidth(name);
 
             if (xsp < x)
                 xsp -= width - 8;
@@ -372,7 +369,7 @@ public class ModeRadialMenu extends GuiScreen {
 
             Color color = i == modeIndex ? Color.GREEN : Color.WHITE;
             if (data.isSelected())
-                fontRenderer.drawStringWithShadow(name, xsp + (data.isCentralized() ? width / 2 - 4 : 0), ysp, color.getRGB());
+                fontRendererObj.drawStringWithShadow(name, xsp + (data.isCentralized() ? width / 2 - 4 : 0), ysp, color.getRGB());
 
             double mod = 0.7;
             int xdp = (int) ((xp - x) * mod + x);
@@ -415,8 +412,8 @@ public class ModeRadialMenu extends GuiScreen {
             ZeroButton btn = (ZeroButton) button;
             if (btn.isMouseOver()) {
                 Color color = btn.isSelected() ? Color.GREEN : Color.WHITE;
-                int x = btn.getPosition() == ScreenPosition.LEFT ? mx - fontRenderer.getStringWidth(btn.getText()): mx;
-                fontRenderer.drawStringWithShadow(btn.getText(), x, my - fontRenderer.FONT_HEIGHT, color.getRGB());
+                int x = btn.getPosition() == ScreenPosition.LEFT ? mx - fontRendererObj.getStringWidth(btn.getText()): mx;
+                fontRendererObj.drawStringWithShadow(btn.getText(), x, my - fontRendererObj.FONT_HEIGHT, color.getRGB());
             }
         });
     }
@@ -503,7 +500,7 @@ public class ModeRadialMenu extends GuiScreen {
         private ScreenPosition position;
 
         ZeroButton(ScreenPosition pos, String message, String icon, boolean isSelectable, Predicate<Boolean> action) {
-            super(0, 0, icon, new TextComponentTranslation(String.format("tooltip.gadget.%s", message)).getUnformattedComponentText(), isSelectable, action);
+            super(0, 0, icon, new ChatComponentTranslation(String.format("tooltip.gadget.%s", message)).getUnformattedTextForChat(), isSelectable, action); //TODO check getUnformattedTextForChat
             this.position = pos;
         }
 

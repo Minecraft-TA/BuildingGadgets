@@ -1,10 +1,7 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 public class GuiButtonHelp extends GuiButtonSelect {
@@ -17,16 +14,17 @@ public class GuiButtonHelp extends GuiButtonSelect {
         return IHoverHelpText.get("button." + (selected ? "help.exit" : "help.enter"));
     }
 
+
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (!visible)
             return;
 
-        GL11.color(1, 1, 1, 1);
-        hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+        GL11.glColor4f(1, 1, 1, 1);
+        selected = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
 
-        float x = this.x + 5.5F;
-        int y = this.y + 6;
+        float x = this.xPosition + 5.5F;
+        int y = this.yPosition + 6;
         double radius = 6;
         int red, green, blue;
         if (selected) {
@@ -35,7 +33,7 @@ public class GuiButtonHelp extends GuiButtonSelect {
         } else {
             red = green = blue = 120;
         }
-        Tessellator tessellator = Tessellator.getInstance();
+        Tessellator tessellator = Tessellator.instance;
         BufferBuilder buffer = tessellator.getBuffer();
         GL11.enableBlend();
         GL11.disableTexture2D();
@@ -58,10 +56,10 @@ public class GuiButtonHelp extends GuiButtonSelect {
             colorText = packedFGColour;
         else if (!enabled)
             colorText = 10526880;
-        else if (hovered)
+        else if (selected)
             colorText = 16777120;
 
-        mc.fontRenderer.drawString(displayString, this.x + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2, this.y + (height - 8) / 2, colorText);
+        mc.fontRenderer.drawString(displayString, this.xPosition + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2, this.yPosition + (height - 8) / 2, colorText);
     }
 
 }

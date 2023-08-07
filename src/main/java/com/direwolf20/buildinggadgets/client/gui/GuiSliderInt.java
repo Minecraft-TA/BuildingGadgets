@@ -2,14 +2,13 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
 import com.google.common.collect.ImmutableSet;
-
+import cpw.mods.fml.client.config.GuiSlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.init.SoundEvents;
-import net.minecraftforge.fml.client.config.GuiSlider;
+import net.minecraftforge.client.event.sound.SoundEvent;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
@@ -19,7 +18,7 @@ public class GuiSliderInt extends GuiSlider {
     private int value;
 
     public GuiSliderInt(int xPos, int yPos, int width, int height, String prefix, String suf, double minVal, double maxVal,
-            double currentVal, boolean showDec, boolean drawStr, Color color, ISlider par, BiConsumer<GuiSliderInt, Integer> increment) {
+                        double currentVal, boolean showDec, boolean drawStr, Color color, ISlider par, BiConsumer<GuiSliderInt, Integer> increment) {
         super(0, xPos, yPos, width, height, prefix, suf, minVal, maxVal, currentVal, showDec, drawStr, par);
         colorBackground = ClientProxy.getColor(color, 200).getRGB();
         colorSliderBackground = ClientProxy.getColor(color.darker(), 200).getRGB();
@@ -44,16 +43,16 @@ public class GuiSliderInt extends GuiSlider {
     }
 
     private void playSound() {
-        ClientProxy.playSound(SoundEvents.BLOCK_DISPENSER_FAIL, 2F);
+        ClientProxy.playSound(SoundEvent.BLOCK_DISPENSER_FAIL, 2F);
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (!visible)
             return;
 
-        hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-        drawRect(x, y, x + width, y + height, colorBackground);
+        hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+        drawRect(xPosition, yPosition, xPosition + width, yPosition + height, colorBackground);
         mouseDragged(mc, mouseX, mouseY);
         renderText(mc, this);
     }
@@ -70,7 +69,8 @@ public class GuiSliderInt extends GuiSlider {
     }
 
     @Override
-    public void playPressSound(SoundHandler soundHandlerIn) {}
+    public void func_146113_a(SoundHandler soundHandlerIn) {
+    }
 
     @Override
     protected void mouseDragged(Minecraft mc, int mouseX, int mouseY) {
@@ -78,21 +78,21 @@ public class GuiSliderInt extends GuiSlider {
             return;
 
         if (dragging) {
-            sliderValue = (mouseX - (x + 4)) / (float) (width - 8);
+            sliderValue = (mouseX - (xPosition + 4)) / (float) (width - 8);
             updateSlider();
         }
-        drawBorderedRect(x + (int) (sliderValue * (width - 8)), y, 8, height);
+        drawBorderedRect(xPosition + (int) (sliderValue * (width - 8)), yPosition, 8, height);
     }
 
     private void drawBorderedRect(int x, int y, int width, int height) {
         drawRect(x, y, x + width, y + height, colorSliderBackground);
-        drawRect(++x, ++y, x + width - 2, y + height - 2, colorSlider); 
+        drawRect(++x, ++y, x + width - 2, y + height - 2, colorSlider);
     }
 
     public Collection<GuiButton> getComponents() {
         return ImmutableSet.of(this,
-                new GuiButtonIncrement(this, x - height, y, height, height, "-", () -> increment.accept(this, -1)),
-                new GuiButtonIncrement(this, x + width, y, height, height, "+", () -> increment.accept(this, 1)));
+            new GuiButtonIncrement(this, xPosition - height, yPosition, height, height, "-", () -> increment.accept(this, -1)),
+            new GuiButtonIncrement(this, xPosition + width, yPosition, height, height, "+", () -> increment.accept(this, 1)));
     }
 
     private static class GuiButtonIncrement extends GuiButton {
@@ -106,13 +106,13 @@ public class GuiSliderInt extends GuiSlider {
         }
 
         @Override
-        public void drawButton(Minecraft mc, int mouseX, int mouseY, float partial) {
+        public void drawButton(Minecraft mc, int mouseX, int mouseY) {
             if (!visible)
                 return;
 
-            hovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-            drawRect(x, y, x + width, y + height, parent.colorBackground);
-            parent.drawBorderedRect(x, y, width, height);
+            hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+            drawRect(xPosition, yPosition, xPosition + width, yPosition + height, parent.colorBackground);
+            parent.drawBorderedRect(xPosition, yPosition, width, height);
             parent.renderText(mc, this);
         }
 
@@ -122,6 +122,7 @@ public class GuiSliderInt extends GuiSlider {
         }
 
         @Override
-        public void playPressSound(SoundHandler soundHandlerIn) {}
+        public void func_146113_a(SoundHandler soundHandlerIn) {
+        }
     }
 }

@@ -4,7 +4,7 @@
   "name": "Building Gadgets",
   "description": "Adds some gadgets to help you build!",
   "version": "${version}",
-  "mcversion": "${mcversion}",
+  "mcversion": "1.7.10",
   "url": "https://minecraft.curseforge.com/projects/building-gadgets",
   "updateUrl": "${updatejson}",
   "authorList": ["Direwolf20"],

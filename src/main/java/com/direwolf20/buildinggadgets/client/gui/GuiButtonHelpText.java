@@ -23,7 +23,7 @@ public class GuiButtonHelpText extends GuiButton implements IHoverHelpText {
 
     @Override
     public void drawRect(Gui gui, int color) {
-        gui.drawRect(x, y, x + width, y + height, color);
+        gui.drawRect(xPosition, yPosition, xPosition + width, yPosition + height, color);
     }
 
 }
