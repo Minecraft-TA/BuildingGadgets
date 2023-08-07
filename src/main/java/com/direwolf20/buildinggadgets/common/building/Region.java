@@ -45,15 +45,15 @@ public final class Region implements IPlacementSequence {
      * @param z how much to translate z
      * @return A new Region, translated by the given coordinates
      */
-    public Region translate(int x, int y, int z) {
+    public Region glTranslatef(int x, int y, int z) {
         return new Region(minX + x, minY + y, minZ + z, maxX + x, maxY + y, maxZ + z);
     }
 
     /**
-     * @see #translate(int, int, int)
+     * @see #glTranslatef(int, int, int)
      */
-    public Region translate(Vec3i direction) {
-        return this.translate(direction.getX(), direction.getY(), direction.getZ());
+    public Region glTranslatef(Vec3i direction) {
+        return this.glTranslatef(direction.getX(), direction.getY(), direction.getZ());
     }
 
     /**

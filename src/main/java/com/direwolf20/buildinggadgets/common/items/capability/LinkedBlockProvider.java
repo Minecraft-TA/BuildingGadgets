@@ -26,7 +26,7 @@ public class LinkedBlockProvider implements IBlockProvider {
     }
 
     @Override
-    public IBlockProvider translate(BlockPos origin) {
+    public IBlockProvider glTranslatef(BlockPos origin) {
         return new TranslationWrapper(this, origin);
     }
 

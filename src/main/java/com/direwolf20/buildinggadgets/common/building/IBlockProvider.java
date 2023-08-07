@@ -21,7 +21,7 @@ public interface IBlockProvider<T extends IBlockProvider<T>> {
      * @return A block provider with all calls to {@link #at(BlockPos)} translated by the parameter.
      * @implSpec {@code pos.add(this.getTranslation())} should be applied when accessing the current object.
      */
-    IBlockProvider translate(BlockPos origin);
+    IBlockProvider glTranslatef(BlockPos origin);
 
     /**
      * @return the translation used as translation of the parameter of {@link #at(BlockPos)}

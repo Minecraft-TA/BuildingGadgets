@@ -259,8 +259,8 @@ public class ModeRadialMenu extends GuiScreen {
             }
         }
         GL11.glPushMatrix();
-        GL11.translate((1 - fract) * x, (1 - fract) * y, 0);
-        GL11.scale(fract, fract, fract);
+        GL11.glTranslatef((1 - fract) * x, (1 - fract) * y, 0);
+        GL11.glScalef(fract, fract, fract);
         super.drawScreen(mx, my, partialTicks);
         GL11.glPopMatrix();
         if (segments == 0) {
@@ -268,13 +268,13 @@ public class ModeRadialMenu extends GuiScreen {
             return;
         }
         GL11.glPushMatrix();
-        GL11.disableTexture2D();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
 
         float angle = mouseAngle(x, y, mx, my);
 
 //        int highlight = 5;
 
-        GL11.enableBlend();
+        GL11.glEnable(GL11.GL_BLEND);
         GL11.shadeModel(GL11.GL_SMOOTH);
         float totalDeg = 0;
         float degPer = 360F / segments;
@@ -323,7 +323,7 @@ public class ModeRadialMenu extends GuiScreen {
                 r = g = b = 1F;
             }
 
-            GL11.color(r, g, b, a);
+            GL11.glColor4f(r, g, b, a);
 
             for (float i = degPer; i >= 0; i--) {
                 float rad = (float) ((i + totalDeg) / 180F * Math.PI);
@@ -343,7 +343,7 @@ public class ModeRadialMenu extends GuiScreen {
 //                radius -= highlight;
         }
         GL11.shadeModel(GL11.GL_FLAT);
-        GL11.enableTexture2D();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         for (int i = 0; i < nameData.size(); i++) {
             NameDisplayData data = nameData.get(i);
@@ -376,24 +376,24 @@ public class ModeRadialMenu extends GuiScreen {
             int ydp = (int) ((yp - y) * mod + y);
 
             mc.renderEngine.bindTexture(signs.get(i));
-            GL11.color(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+            GL11.glColor4f(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
             mc.renderEngine.bindTexture(signs.get(i));
             drawModalRectWithCustomSizedTexture(xdp - 8, ydp - 8, 0, 0, 16, 16, 16, 16);
 
         }
 
         GL11.enableRescaleNormal();
-        GL11.enableBlend();
-        GL11.tryglBlendFuncSeparate(770, 771, 1, 0);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL14.glBlendFuncSeparate(770, 771, 1, 0);
         RenderHelper.enableGUIStandardItemLighting();
 
         float s = 2.25F * fract;
-        GL11.scale(s, s, s);
-        GL11.translate(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
+        GL11.glScalef(s, s, s);
+        GL11.glTranslatef(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
         mc.getRenderItem().renderItemAndEffectIntoGUI(tool, 0, 0);
 
         RenderHelper.disableStandardItemLighting();
-        GL11.disableBlend();
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.disableRescaleNormal();
 
         GL11.glPopMatrix();

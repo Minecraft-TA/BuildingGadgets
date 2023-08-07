@@ -96,17 +96,17 @@ public class GuiButtonActionable extends GuiButton {
         if (!visible)
             return;
 
-        GL11.enableBlend();
-        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
         GL11.glBlendFunc(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA);
 
-        GL11.disableTexture2D();
-        GL11.color(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glColor4f(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
         drawTexturedModalRect(this.x, this.y, 0, 0, this.width, this.height);
-        GL11.enableTexture2D();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-        GL11.color(1, 1, 1, alpha);
+        GL11.glColor4f(1, 1, 1, alpha);
         Minecraft.getMinecraft().getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
         drawModalRectWithCustomSizedTexture(this.xPosition, this.yPosition, 0, 0, this.width, this.height, this.width, this.height);

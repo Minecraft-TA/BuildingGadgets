@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 public class DireButton extends GuiButtonHelpText {
 
@@ -18,20 +19,20 @@ public class DireButton extends GuiButtonHelpText {
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (this.visible) {
             FontRenderer fontrenderer = mc.fontRenderer;
-            mc.getTextureManager().bindTexture(BUTTON_TEXTURES);
-            GL11.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+            mc.getTextureManager().bindTexture(buttonTextures);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
             int i = this.getHoverState(this.hovered);
-            GL11.enableBlend();
-            GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
-            GL11.glBlendFunc(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.drawTexturedModalRect(this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-            this.drawTexturedModalRect(this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO); //TODO Maybe switch to GL11
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
+            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 
 
             int bottomToDraw = 2;
-            this.drawTexturedModalRect(this.x, this.y + this.height - bottomToDraw, 0, 66 - bottomToDraw + i * 20, this.width / 2, bottomToDraw);
-            this.drawTexturedModalRect(this.x + this.width / 2, this.y + this.height - bottomToDraw, 200 - this.width / 2, 66 - bottomToDraw + i * 20, this.width / 2, bottomToDraw);
+            this.drawTexturedModalRect(this.xPosition, this.yPosition + this.height - bottomToDraw, 0, 66 - bottomToDraw + i * 20, this.width / 2, bottomToDraw);
+            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition + this.height - bottomToDraw, 200 - this.width / 2, 66 - bottomToDraw + i * 20, this.width / 2, bottomToDraw);
 
             this.mouseDragged(mc, mouseX, mouseY);
             int j = 14737632;
@@ -44,7 +45,7 @@ public class DireButton extends GuiButtonHelpText {
                 j = 16777120;
             }
 
-            this.drawCenteredString(fontrenderer, this.displayString, this.x + this.width / 2, this.y + (this.height - 8) / 2, j);
+            this.drawCenteredString(fontrenderer, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, j);
         }
     }
 }

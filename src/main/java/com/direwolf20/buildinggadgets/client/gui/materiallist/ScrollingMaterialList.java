@@ -80,7 +80,7 @@ class ScrollingMaterialList extends GuiScrollingList {
         RenderUtil.renderTextVerticalCenter(itemName, itemNameX, top, bottom - 1, Color.WHITE.getRGB());
 
         int required = item.stackSize;
-        int available = MathHelper.clamp(parent.getAvailable().getInt(index), 0, required);
+        int available = MathHelper.clamp_int(parent.getAvailable().getInt(index), 0, required);
         boolean fulfilled = available == required;
         int color = fulfilled ? Color.GREEN.getRGB() : Color.RED.getRGB();
         String amount = I18n.format("gui.buildinggadgets.materialList.text.statusTemplate", available, required);
@@ -96,8 +96,8 @@ class ScrollingMaterialList extends GuiScrollingList {
             int lineXStart = itemNameX + widthItemName + LINE_SIDE_MARGIN;
             int lineXEnd = right - widthAmount - LINE_SIDE_MARGIN;
             int lineY = AlignmentUtil.getYForAlignedCenter(1, top, bottom) - 1;
-            GL11.enableAlpha();
-            GL11.enableBlend();
+            GL11.glEnable(GL11.GL_ALPHA_TEST);
+            GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             parent.drawHorizontalLine(lineXStart, lineXEnd, lineY, 0x22FFFFFF);
         }
@@ -113,7 +113,7 @@ class ScrollingMaterialList extends GuiScrollingList {
         GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
         Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(item, slotX, slotY);
-        GL11.disableLighting();
+        GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glColor3f(1f, 1f, 1f);
         GL11.glPopMatrix();
     }

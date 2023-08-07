@@ -28,7 +28,7 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         Minecraft mc = Minecraft.getMinecraft();
         GL11.glPushMatrix();
-        GL11.enableBlend();
+        GL11.glEnable(GL11.GL_BLEND);
         GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
         mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
@@ -41,9 +41,9 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
         if (entity.getMakingPaste()) {
             scale = (float) teCounter / maxLife;
         }
-        GL11.translate(x, y, z);
-        GL11.translate(-0.0005f, -0.0005f, -0.0005f);
-        GL11.scale(1.001f, 1.001f, 1.001f);//Slightly Larger block to avoid z-fighting.
+        GL11.glTranslatef(x, y, z);
+        GL11.glTranslatef(-0.0005f, -0.0005f, -0.0005f);
+        GL11.glScalef(1.001f, 1.001f, 1.001f);//Slightly Larger block to avoid z-fighting.
         GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
 
         GL14.glBlendColor(1F, 1F, 1F, scale); //Set the alpha of the blocks we are rendering
@@ -54,7 +54,7 @@ public class ConstructionBlockEntityRender extends Render<ConstructionBlockEntit
 
         blockrendererdispatcher.renderBlockBrightness(renderBlockState, 1.0f);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GL11.disableBlend();
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
     }
 

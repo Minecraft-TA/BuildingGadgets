@@ -27,7 +27,7 @@ public final class TranslationWrapper implements IBlockProvider {
     }
 
     @Override
-    public IBlockProvider translate(BlockPos origin) {
+    public IBlockProvider glTranslatef(BlockPos origin) {
         // Since provider is the same, just adding the two translation together would be sufficient
         return new TranslationWrapper(provider, translation.add(origin));
     }

@@ -3,6 +3,7 @@ package com.direwolf20.buildinggadgets.client.gui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 public class GuiButtonHelp extends GuiButtonSelect {
 
@@ -35,10 +36,9 @@ public class GuiButtonHelp extends GuiButtonSelect {
         }
         Tessellator tessellator = Tessellator.instance;
         BufferBuilder buffer = tessellator.getBuffer();
-        GL11.enableBlend();
-        GL11.disableTexture2D();
-        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA,
-                GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         buffer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
         buffer.pos(x, y, 0).color(red, green, blue, 255).endVertex();
         double s = 30;
@@ -47,8 +47,8 @@ public class GuiButtonHelp extends GuiButtonSelect {
             buffer.pos(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0).color(red, green, blue, 255).endVertex();
         }
         tessellator.draw();
-        GL11.enableTexture2D();
-        GL11.disableBlend();
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_BLEND);
 
         mouseDragged(mc, mouseX, mouseY);
         int colorText = -1;

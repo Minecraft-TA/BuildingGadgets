@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.List;
@@ -153,7 +154,7 @@ public class MaterialListGUI extends GuiBase {
         if (hoveringText != null) {
             RenderHelper.enableGUIStandardItemLighting();
             drawHoveringText(hoveringText, hoveringTextX, hoveringTextY, fontRendererObj);
-            GL11.disableLighting();
+            GL11.glDisable(GL11.GL_LIGHTING);
             hoveringText = null;
         }
     }

@@ -69,7 +69,7 @@ public class EventTooltip {
             int totalMissing = 0;
             //Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
-                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().player, cache);
+                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
                 if (hasAmt < entry.getValue())
                     totalMissing = totalMissing + Math.abs(entry.getValue() - hasAmt);
             }
@@ -130,7 +130,7 @@ public class EventTooltip {
                 by += 10;
             }
 
-            GL11.enableBlend();
+            GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             //Gui.drawRect(bx, by, bx + width, by + height, 0x55000000);
 
@@ -156,7 +156,7 @@ public class EventTooltip {
 
     private static int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
         Minecraft mc = Minecraft.getMinecraft();
-        GL11.disableDepth();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         RenderItem render = mc.getRenderItem();
 
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
@@ -170,8 +170,8 @@ public class EventTooltip {
         boolean hasReq = req > 0;
 
         GL11.glPushMatrix();
-        GL11.translate(x + 8 - w1 / 4, y + (hasReq ? 12 : 14), 0);
-        GL11.scale(0.5F, 0.5F, 0.5F);
+        GL11.glTranslatef(x + 8 - w1 / 4, y + (hasReq ? 12 : 14), 0);
+        GL11.glScalef(0.5F, 0.5F, 0.5F);
         mc.fontRenderer.drawStringWithShadow(s1, 0, 0, color);
         GL11.glPopMatrix();
 
@@ -181,7 +181,7 @@ public class EventTooltip {
             //The commented out code will draw a red box around any items that you don't have enough of
             //I personally didn't like it.
             /*if (count < req) {
-                GL11.enableDepth();
+                GL11.glEnable(GL_DEPTH_TEST);
                 Gui.drawRect(x - 1, y - 1, x + 17, y + 17, 0x44FF0000);
                 GL11.disableDepth();
             }*/
@@ -192,14 +192,14 @@ public class EventTooltip {
                 int w2 = mc.fontRenderer.getStringWidth(s2);
 
                 GL11.glPushMatrix();
-                GL11.translate(x + 8 - w2 / 4, y + 17, 0);
-                GL11.scale(0.5F, 0.5F, 0.5F);
+                GL11.glTranslatef(x + 8 - w2 / 4, y + 17, 0);
+                GL11.glScalef(0.5F, 0.5F, 0.5F);
                 mc.fontRenderer.drawStringWithShadow(s2, 0, 0, 0xFF0000);
                 GL11.glPopMatrix();
                 missingCount = (req - count);
             }
         }
-        GL11.enableDepth();
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         return missingCount;
     }
 

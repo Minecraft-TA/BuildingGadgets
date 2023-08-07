@@ -22,7 +22,7 @@ public class SingleTypeProvider implements IBlockProvider {
     }
 
     @Override
-    public TranslationWrapper translate(BlockPos origin) {
+    public TranslationWrapper glTranslatef(BlockPos origin) {
         return new TranslationWrapper(this, origin);
     }
 

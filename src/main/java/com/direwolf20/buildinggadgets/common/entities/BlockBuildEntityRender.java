@@ -48,10 +48,10 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
             scale = (float) (maxLife - teCounter) / maxLife;
         }
         float trans = (1 - scale) / 2;
-        GL11.translate(x, y, z);
-        GL11.translate(trans, trans, trans);
+        GL11.glTranslatef(x, y, z);
+        GL11.glTranslatef(trans, trans, trans);
         GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.scale(scale, scale, scale);
+        GL11.glScalef(scale, scale, scale);
 
 
         //IBlockState renderBlockState = blocks.COBBLESTONE.getDefaultState();
@@ -82,9 +82,9 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
         GL11.glPushMatrix();
         GL11.pushAttrib();
 
-        GL11.enableBlend();
-        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
-        GL11.disableTexture2D();
+        GL11.glEnable(GL11.GL_BLEND);
+        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.depthMask(false);
         Tessellator t = Tessellator.getInstance();
         BufferBuilder bufferBuilder = t.getBuffer();
@@ -147,8 +147,8 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
         bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
         t.draw();
 
-        GL11.disableBlend();
-        GL11.enableTexture2D();
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.depthMask(true);
 
         GL11.glPopMatrix();

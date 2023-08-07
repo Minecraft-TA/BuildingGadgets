@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.Color;
 
@@ -40,10 +41,10 @@ public class GuiButtonIcon extends GuiButtonColor {
             return;
 
         super.drawButton(mc, mouseX, mouseY);
-        GL11.enableBlend();
-        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
-        GL11.glBlendFunc(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA,
+                GL11.GL_ONE, GL11.GL_ZERO);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         if (iconSelected == null) {
             ResourceLocation texture = iconDeselected.getModifiedTexture("selected");

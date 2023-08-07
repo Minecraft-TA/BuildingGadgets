@@ -71,7 +71,7 @@ public class ToolRenders {
     public static void renderBuilderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
 
         // Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
 
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
@@ -131,7 +131,7 @@ public class ToolRenders {
         for (BlockPos coordinate : coordinates) {
             GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.01f);
-            GL11.scale(1.006f, 1.006f, 1.006f);
+            GL11.glScalef(1.006f, 1.006f, 1.006f);
             GL14.glBlendColor(1F, 1F, 1F, 0.35f);
 
             hasBlocks--;
@@ -151,14 +151,14 @@ public class ToolRenders {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
         //Disable blend
-        GL11.disableBlend();
+        GL11.glDisable(GL11.GL_BLEND);
         //Pop from the original push in this method
         GL11.glPopMatrix();
     }
 
     public static void renderExchangerOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         // Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
 
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
         renderLinkedInventoryOutline(heldItem, playerPos, player);
@@ -227,7 +227,7 @@ public class ToolRenders {
             GL11.glPushMatrix();
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, 0.002f);
 
-            GL11.scale(1.02f, 1.02f, 1.02f); //Slightly Larger block to avoid z-fighting.
+            GL11.glScalef(1.02f, 1.02f, 1.02f); //Slightly Larger block to avoid z-fighting.
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
             hasBlocks--;
 
@@ -246,7 +246,7 @@ public class ToolRenders {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
-        GL11.disableBlend();
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
     }
 
@@ -263,7 +263,7 @@ public class ToolRenders {
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
         double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
         double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
-        GL11.translate(-doubleX, -doubleY, -doubleZ);
+        GL11.glTranslatef(-doubleX, -doubleY, -doubleZ);
         try {
             GL11.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
                 int displayList = GLAllocation.generateDisplayLists(1);
@@ -275,7 +275,7 @@ public class ToolRenders {
         } catch (ExecutionException e) {
             BuildingGadgets.logger.error("Error encountered while rendering destruction gadget overlay", e);
         }
-        GL11.enableLighting();
+        GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glPopMatrix();
     }
 
@@ -285,8 +285,8 @@ public class ToolRenders {
         Set<BlockPos> coordinates = GadgetDestruction.getArea(world, startBlock, facing, player, heldItem);
 
         GL11.glPushMatrix();
-        GL11.enableBlend();
-        GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
 
         List<BlockPos> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); //Sort the coords by distance to player.
 
@@ -307,31 +307,31 @@ public class ToolRenders {
                 continue;
 
             GL11.glPushMatrix();//Push matrix again just because
-            GL11.translate(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
+            GL11.glTranslatef(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
             GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
-            GL11.translate(-0.005f, -0.005f, 0.005f);
-            GL11.scale(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
+            GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
+            GL11.glScalef(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
 
-            GL11.disableLighting();
-            GL11.disableTexture2D();
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
 
             renderBoxSolid(t, bufferBuilder, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
 
-            GL11.enableTexture2D();
-            GL11.enableLighting();
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glPopMatrix();
         }
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
-        GL11.disableBlend();
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
     }
 
     public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         //Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerTranslate(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
 
         renderLinkedInventoryOutline(stack, playerPos, player);
         if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null)
@@ -374,23 +374,23 @@ public class ToolRenders {
             GL11.glPushMatrix();
 
             //Enable Blending (So we can have transparent effect)
-            GL11.enableBlend();
+            GL11.glEnable(GL11.GL_BLEND);
 
             //This blend function allows you to use a constant alpha, which is defined later
             GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
             GL11.glPushMatrix();//Push matrix again just because
-            GL11.translate(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GL11.glTranslatef(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
-            GL11.translate(0.0005f, 0.0005f, -0.0005f);
-            GL11.scale(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
+            GL11.glTranslatef(0.0005f, 0.0005f, -0.0005f);
+            GL11.glScalef(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
             PasteToolBufferBuilder.draw(player, playerPos.x, playerPos.y, playerPos.z, startPos, UUID); //Draw the cached buffer in the world.
 
             GL11.glPopMatrix();
 
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GL11.disableBlend();
+            GL11.glDisable(GL11.GL_BLEND);
             GL11.glPopMatrix();
 
         } else {
@@ -417,19 +417,19 @@ public class ToolRenders {
             BufferBuilder bufferbuilder = tessellator.getBuffer();
 
             GL11.glPushMatrix();
-            GL11.translate(-playerPos.x, -playerPos.y, -playerPos.z);//The render starts at the player, so we subtract the player coords and move the render to 0,0,0
+            GL11.glTranslated(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);//The render starts at the player, so we subtract the player coords and move the render to 0,0,0
 
-            GL11.disableLighting();
-            GL11.disableTexture2D();
-            GL11.enableBlend();
-            GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+            GL11.glDisable(GL11.GL_LIGHTING);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
 
             renderBox(tessellator, bufferbuilder, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks we've copied.
 
             GL11.glLineWidth(1.0F);
-            GL11.enableLighting();
-            GL11.enableTexture2D();
-            GL11.enableDepth();
+            GL11.glEnable(GL11.GL_LIGHTING);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
             GL11.depthMask(true);
 
             GL11.glPopMatrix();
@@ -527,7 +527,7 @@ public class ToolRenders {
         private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
             IBlockState startBlock = Blocks.air.getDefaultState();
             if (lookingAt != null)
-                startBlock = player.world.getBlockState(lookingAt.getBlockPos());
+                startBlock = player.worldObj.getBlockState(lookingAt.getBlockPos());
 
             return startBlock;
         }
@@ -546,7 +546,7 @@ public class ToolRenders {
          * Returns a Vec3i of the players position based on partial tick.
          * Used for Render translation.
          */
-        private static Vec3 getPlayerTranslate(EntityPlayer player, float partialTick) {
+        private static Vec3 getPlayerglTranslatef(EntityPlayer player, float partialTick) {
             return Vec3.createVectorHelper(
                     player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
                     player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
@@ -576,7 +576,7 @@ public class ToolRenders {
         }
 
         private static void stateManagerPrepareBlend() {
-            GL11.enableBlend();
+            GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
         }
 
