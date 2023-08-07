@@ -3,12 +3,10 @@ package com.direwolf20.buildinggadgets.client.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.Color;
@@ -41,7 +39,7 @@ public class GuiButtonIcon extends GuiButtonColor {
         if (!visible)
             return;
 
-        super.drawButton(mc, mouseX, mouseY, partialTicks);
+        super.drawButton(mc, mouseX, mouseY);
         GL11.enableBlend();
         GL11.tryglBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA,
                 GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);

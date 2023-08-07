@@ -15,7 +15,9 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,8 +45,8 @@ public class DestructionGUI extends GuiScreen {
         int x = width / 2;
         int y = height / 2;
 
-        this.addButton(new GuiButton(1, (x - 30) + 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.confirm")));
-        this.addButton(new GuiButton(2, (x - 30) - 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.cancel")));
+        this.buttonList.add(new GuiButton(1, (x - 30) + 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.confirm")));
+        this.buttonList.add(new GuiButton(2, (x - 30) - 32, y + 50, 60, 20, I18n.format("singles.buildinggadgets.cancel")));
 
         List<GuiDestructionSlider> sliders = new ArrayList<>();
 
@@ -54,7 +56,7 @@ public class DestructionGUI extends GuiScreen {
         sliders.add(up      = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y - 35, "Up", GadgetDestruction.getToolValue(destructionTool, "up")));
         sliders.add(down    = new GuiDestructionSlider(x - (GuiDestructionSlider.width / 2), y + 20, "Down", GadgetDestruction.getToolValue(destructionTool, "down")));
 
-        sliders.forEach( gui -> gui.getComponents().forEach(this::addButton));
+        sliders.forEach( gui -> this.buttonList.addAll(gui.getComponents()));
     }
 
     private boolean isWithinBounds() {
@@ -72,7 +74,7 @@ public class DestructionGUI extends GuiScreen {
                 this.mc.displayGuiScreen(null);
             }
             else
-                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.destroysizeerror").getUnformattedComponentText()), true);
+                Minecraft.getMinecraft().thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
         }
         else if (b.id == 2)
             this.mc.displayGuiScreen(null);
@@ -95,7 +97,7 @@ public class DestructionGUI extends GuiScreen {
             super(
                     x, y, width, height, String.format("%s ", prefix), "", min, max, current, false, true, Color.DARK_GRAY, null,
                     (slider, amount) -> {
-                        slider.setValue(MathHelper.clamp(slider.getValueInt() + amount, min, max));
+                        slider.setValue(MathHelper.clamp_int(slider.getValueInt() + amount, min, max));
                         slider.updateSlider();
                     }
             );
