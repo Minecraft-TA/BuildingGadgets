@@ -1,27 +1,21 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
 import com.direwolf20.buildinggadgets.common.entities.ConstructionBlockEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class ConstructionBlockPowder extends BlockFalling {
 
     public ConstructionBlockPowder() {
-        super(Material.SAND);
+        super(Material.sand);
         BlockModBase.init(this, 0.5F, "constructionblockpowder");
     }
 
@@ -30,16 +24,21 @@ public class ConstructionBlockPowder extends BlockFalling {
         BlockModBase.initModel(this);
     }
 
-    @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    /*@Override TODO: Doesnt exist?
+    public void addInformation(ItemStack stack, @Nullable World world, List<String> list) {
         super.addInformation(stack, world, list, b);
         list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
-    }
+    }*/
 
     @Override
     public void onEndFalling(World worldIn, BlockPos pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {
-        if (p_176502_4_.getMaterial().isLiquid()) {
-            worldIn.spawnEntity(new ConstructionBlockEntity(worldIn, pos, true));
+
+    }
+
+    @Override
+    public void func_149828_a(World world, int x, int y, int z, int p_149828_5_) {
+        if (p_176502_4_.getMaterial().isLiquid()) { //TODO Get material from blockstate that is an int :(
+            world.spawnEntityInWorld(new ConstructionBlockEntity(world, new BlockPos(x, y, z), true));
         }
     }
 
@@ -50,7 +49,7 @@ public class ConstructionBlockPowder extends BlockFalling {
             if (enumfacing != EnumFacing.DOWN) {
                 BlockPos blockpos = pos.offset(enumfacing);
 
-                if (worldIn.getBlockState(blockpos).getMaterial() == Material.WATER) {
+                if (worldIn.getBlockState(blockpos).getMaterial() == Material.water) { //TODO Get material from blockstate that is an int :(
                     flag = true;
                     break;
                 }
@@ -58,8 +57,8 @@ public class ConstructionBlockPowder extends BlockFalling {
         }
 
         if (flag) {
-            if (worldIn.getEntitiesWithinAABB(ConstructionBlockEntity.class, new AxisAlignedBB(pos.getX()-0.5, pos.getY()-0.5, pos.getZ()-0.5, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)).isEmpty()) {
-                worldIn.spawnEntity(new ConstructionBlockEntity(worldIn, pos, true));
+            if (worldIn.getEntitiesWithinAABB(ConstructionBlockEntity.class, AxisAlignedBB.getBoundingBox(pos.getX()-0.5, pos.getY()-0.5, pos.getZ()-0.5, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5)).isEmpty()) {
+                worldIn.spawnEntityInWorld(new ConstructionBlockEntity(worldIn, pos, true));
             }
         }
 
@@ -72,9 +71,9 @@ public class ConstructionBlockPowder extends BlockFalling {
      * block, etc.
      */
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        if (!this.tryTouchWater(worldIn, pos)) {
-            super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+    public void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
+        if (!this.tryTouchWater((World) world, new BlockPos(x, y, z))) {
+            super.onNeighborChange(world, x, y, z, tileX, tileY, tileZ);
         }
     }
 
@@ -82,20 +81,22 @@ public class ConstructionBlockPowder extends BlockFalling {
      * Called after the block is set in the Chunk data, but before the Tile Entity is set
      */
     @Override
-    public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) {
-        if (!this.tryTouchWater(worldIn, pos)) {
-            super.onBlockAdded(worldIn, pos, state);
+    public void onBlockAdded(World worldIn, int x, int y, int z) {
+        if (!this.tryTouchWater(worldIn, new BlockPos(x, y, z))) {
+            super.onBlockAdded(worldIn, x, y, z);
         }
     }
 
     @Override
-    public boolean isOpaqueCube(IBlockState p_isFullBlock_1_) {
+    public boolean isOpaqueCube() {
         return false;
     }
 
-    @Override
+
+
+    /*@Override TODO: Doesnt exist?
     public boolean isFullCube(IBlockState state) {
         return false;
-    }
+    }*/
 
 }

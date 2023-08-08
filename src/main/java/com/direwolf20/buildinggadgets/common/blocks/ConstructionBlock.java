@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
@@ -122,7 +123,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Nullable
     private IBlockState getActualMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
         try {
-            TileEntity te = blockAccess.getTileEntity(pos);
+            TileEntity te = blockAccess.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
             if (te instanceof ConstructionBlockTileEntity) {
                 return ((ConstructionBlockTileEntity) te).getActualBlockState();
             }
@@ -272,21 +273,6 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
             return mimicBlock.getBlock().getBoundingBox(mimicBlock, source, pos);
         } catch (Exception var8) {
             return super.getBoundingBox(state, source, pos);
-        }
-    }
-
-    @Override
-    @Deprecated
-    @SideOnly(Side.CLIENT)
-    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
-        IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
-        if (mimicBlock == null) {
-            return super.getSelectedBoundingBox(state, worldIn, pos);
-        }
-        try {
-            return mimicBlock.getBlock().getSelectedBoundingBox(mimicBlock, worldIn, pos);
-        } catch (Exception var8) {
-            return super.getSelectedBoundingBox(state, worldIn, pos);
         }
     }
 

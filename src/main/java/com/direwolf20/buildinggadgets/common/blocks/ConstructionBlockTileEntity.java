@@ -5,7 +5,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 import javax.annotation.Nullable;
@@ -52,9 +53,9 @@ public class ConstructionBlockTileEntity extends TileEntity {
 
     private void markDirtyClient() {
         markDirty();
-        if (getWorld() != null) {
-            IBlockState state = getWorld().getBlockState(getPos());
-            getWorld().notifyBlockUpdate(getPos(), state, state, 3);
+        if (worldObj != null) {
+            IBlockState state = worldObj.getBlockState(getPos());
+            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         }
     }
 
@@ -66,28 +67,28 @@ public class ConstructionBlockTileEntity extends TileEntity {
     }
 
     @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
+    public Packet getDescriptionPacket() {
         NBTTagCompound nbtTag = new NBTTagCompound();
         writeToNBT(nbtTag);
-        return new SPacketUpdateTileEntity(getPos(), 1, nbtTag);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 1, nbtTag);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity packet) {
+    public void onDataPacket(NetworkManager net, S35PacketUpdateTileEntity packet) {
         IBlockState oldMimicBlock = getBlockState();
-        NBTTagCompound tagCompound = packet.getNbtCompound();
+        NBTTagCompound tagCompound = packet.func_148857_g();
         super.onDataPacket(net, packet);
         readFromNBT(tagCompound);
-        if (world.isRemote) {
+        if (worldObj.isRemote) {
             // If needed send a render update.
             if (getBlockState() != oldMimicBlock) {
-                world.markBlockRangeForRenderUpdate(getPos(), getPos());
+                worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
             }
         }
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         if (blockState != null) {
             NBTTagCompound blockStateTag = new NBTTagCompound();
@@ -101,6 +102,5 @@ public class ConstructionBlockTileEntity extends TileEntity {
                 compound.setTag("actualBlockState", actualBlockStateTag);
             }
         }
-        return compound;
     }
 }

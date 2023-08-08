@@ -12,16 +12,16 @@ import net.minecraft.item.Item;
 public class ConstructionBlockDense extends BlockModBase {
 
     public ConstructionBlockDense() {
-        super(Material.ROCK, 3F, "constructionblock_dense");
+        super(Material.rock, 3F, "constructionblock_dense");
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+    public Item getItemDropped(int meta, Random random, int fortune) {
         return ModItems.constructionPaste;
     }
 
     @Override
-    public int quantityDropped(IBlockState state, int fortune, Random random) {
+    public int quantityDropped(int meta, int fortune, Random random) {
         return SyncedConfig.pasteDroppedMin + random.nextInt(SyncedConfig.pasteDroppedMax - SyncedConfig.pasteDroppedMin + 1);
     }
 }

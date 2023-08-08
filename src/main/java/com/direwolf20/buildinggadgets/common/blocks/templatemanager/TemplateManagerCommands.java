@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.NonNullList;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
@@ -38,7 +39,7 @@ import java.util.stream.Stream;
 import static net.minecraft.client.gui.GuiScreen.setClipboardString;
 
 public class TemplateManagerCommands {
-    private static final Set<Item> allowedItemsRight = Stream.of(Items.PAPER, ModItems.template).collect(Collectors.toSet());
+    private static final Set<Item> allowedItemsRight = Stream.of(Items.paper, ModItems.template).collect(Collectors.toSet());
 
     public static void loadTemplate(TemplateManagerContainer container, EntityPlayer player) {
         ItemStack itemStack0 = container.getSlot(0).getStack();
@@ -47,7 +48,7 @@ public class TemplateManagerCommands {
             return;
         }
         ITemplate template = (ITemplate) itemStack0.getItem();
-        if (itemStack1.getItem().equals(Items.PAPER)) return;
+        if (itemStack1.getItem().equals(Items.paper)) return;
         World world = player.worldObj;
 
         BlockPos startPos = template.getStartPos(itemStack1);
@@ -68,11 +69,11 @@ public class TemplateManagerCommands {
         if (UUID == null) return;
 
         NBTTagCompound templateTagCompound = templateWorldSave.getCompoundFromUUID(UUIDTemplate);
-        tagCompound = templateTagCompound.copy();
+        tagCompound = (NBTTagCompound) templateTagCompound.copy();
         template.incrementCopyCounter(itemStack0);
         tagCompound.setInteger("copycounter", template.getCopyCounter(itemStack0));
         tagCompound.setString("UUID", template.getUUID(itemStack0));
-        tagCompound.setString("owner", player.getName());
+        tagCompound.setString("owner", player.getDisplayName());
         if (template.equals(ModItems.gadgetCopyPaste)) {
             worldSave.addToMap(UUID, tagCompound);
         } else {
@@ -99,7 +100,7 @@ public class TemplateManagerCommands {
         ITemplate template = (ITemplate) itemStack0.getItem();
         World world = player.worldObj;
         ItemStack templateStack;
-        if (itemStack1.getItem().equals(Items.PAPER)) {
+        if (itemStack1.getItem().equals(Items.paper)) {
             templateStack = new ItemStack(ModItems.template, 1);
             container.putStackInSlot(1, templateStack);
         }
@@ -116,7 +117,7 @@ public class TemplateManagerCommands {
 
         boolean isTool = itemStack0.getItem().equals(ModItems.gadgetCopyPaste);
         NBTTagCompound tagCompound = isTool ? worldSave.getCompoundFromUUID(UUID) : templateWorldSave.getCompoundFromUUID(UUID);
-        templateTagCompound = tagCompound.copy();
+        templateTagCompound = (NBTTagCompound) tagCompound.copy();
         template.incrementCopyCounter(templateStack);
         templateTagCompound.setInteger("copycounter", template.getCopyCounter(templateStack));
         templateTagCompound.setString("UUID", ModItems.template.getUUID(templateStack));
@@ -150,7 +151,7 @@ public class TemplateManagerCommands {
 
         World world = player.worldObj;
         ItemStack templateStack;
-        if (itemStack1.getItem().equals(Items.PAPER)) {
+        if (itemStack1.getItem().equals(Items.paper)) {
             templateStack = new ItemStack(ModItems.template, 1);
             container.putStackInSlot(1, templateStack);
         }
@@ -164,7 +165,7 @@ public class TemplateManagerCommands {
 
         NBTTagCompound templateTagCompound;
 
-        templateTagCompound = sentTagCompound.copy();
+        templateTagCompound = (NBTTagCompound) sentTagCompound.copy();
         BlockPos startPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "startPos");
         BlockPos endPos = GadgetUtils.getPOSFromNBT(templateTagCompound, "endPos");
         template.incrementCopyCounter(templateStack);
@@ -181,7 +182,7 @@ public class TemplateManagerCommands {
         mapIntState.getIntStateMapFromNBT(MapIntStateTag);
         mapIntState.makeStackMapFromStateMap(player);
         templateTagCompound.setTag("mapIntStack", mapIntState.putIntStackMapIntoNBT());
-        templateTagCompound.setString("owner", player.getName());
+        templateTagCompound.setString("owner", player.getDisplayName());
 
         Multiset<UniqueItem> itemCountMap = HashMultiset.create();
         Map<IBlockState, UniqueItem> intStackMap = mapIntState.intStackMap;
@@ -223,7 +224,7 @@ public class TemplateManagerCommands {
         if (itemStack0.getItem() instanceof ITemplate) {
             NBTTagCompound tagCompound = PasteToolBufferBuilder.getTagFromUUID(ModItems.gadgetCopyPaste.getUUID(itemStack0));
             if (tagCompound == null) {
-                Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.copyfailed").getUnformattedComponentText()), false);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.copyfailed").getUnformattedTextForChat()));
                 return;
             }
             NBTTagCompound newCompound = new NBTTagCompound();
@@ -239,7 +240,7 @@ public class TemplateManagerCommands {
                 if (GadgetUtils.getPasteStream(newCompound, tagCompound.getString("name")) != null) {
                     String jsonTag = newCompound.toString();
                     setClipboardString(jsonTag);
-                    Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.copysuccess").getUnformattedComponentText()), false);
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copysuccess").getUnformattedTextForChat()));
                 } else {
                     pasteIsTooLarge();
                 }
@@ -251,6 +252,6 @@ public class TemplateManagerCommands {
     }
 
     private static void pasteIsTooLarge() {
-        Minecraft.getMinecraft().player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.pastetoobig").getUnformattedComponentText()), false);
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig").getUnformattedTextForChat()));
     }
 }
