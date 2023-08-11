@@ -33,17 +33,17 @@ public abstract class CommandAlterBlockMaps extends CommandBase {
     }
 
     @Override
-    public String getName() {
+    public String getCommandName() {
         return name;
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String getCommandUsage(ICommandSender sender) {
         return name + " <player>";
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> getCommandAliases() {
         return aliases;
     }
 
@@ -52,22 +52,22 @@ public abstract class CommandAlterBlockMaps extends CommandBase {
     abstract protected String getCompletionFeedback(int counter);
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (args.length > 0) {
-            if (!(sender.canUseCommand(4, this.getName()))) {
-                sender.sendMessage(new ChatComponentText(EnumChatFormatting.RED + "Only OPS can use this command with an argument."));
+            if (!(sender.canCommandSenderUseCommand(4, this.getCommandName()))) {
+                sender.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + "Only OPS can use this command with an argument."));
                 return;
             }
         }
         WorldSave worldSave = WorldSave.getWorldSave(sender.getEntityWorld());
         Map<String, NBTTagCompound> tagMap = worldSave.getTagMap();
         Map<String, NBTTagCompound> newMap = new HashMap<String, NBTTagCompound>(tagMap);
-        String searchName = (args.length == 0) ? sender.getName() : args[0];
+        String searchName = (args.length == 0) ? sender.getCommandSenderName() : args[0];
         int counter = 0;
         for (Map.Entry<String, NBTTagCompound> entry : tagMap.entrySet()) {
             NBTTagCompound tagCompound = entry.getValue();
             if (tagCompound.getString("owner").equals(searchName) || searchName.equals("*")) {
-                sender.sendMessage(new ChatComponentText(getActionFeedback(tagCompound)));
+                sender.addChatMessage(new ChatComponentText(getActionFeedback(tagCompound)));
                 counter++;
                 if (removeData) newMap.remove(entry.getKey());
             }
@@ -75,21 +75,21 @@ public abstract class CommandAlterBlockMaps extends CommandBase {
         if (removeData && counter > 0) {
             worldSave.setTagMap(newMap);
             worldSave.markForSaving();
-            if (searchName.equals(sender.getName())) {
+            if (searchName.equals(sender.getCommandSenderName())) {
                 PacketHandler.INSTANCE.sendTo(new PacketBlockMap(new NBTTagCompound()), (EntityPlayerMP) sender);
                 //System.out.println("Sending BlockMap Packet");
             }
         }
-        sender.sendMessage(new ChatComponentText(getCompletionFeedback(counter)));
+        sender.addChatMessage(new ChatComponentText(getCompletionFeedback(counter)));
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+    public boolean canCommandSenderUseCommand(ICommandSender sender) {
         return true;
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args) {
         return Collections.emptyList();
     }
 }

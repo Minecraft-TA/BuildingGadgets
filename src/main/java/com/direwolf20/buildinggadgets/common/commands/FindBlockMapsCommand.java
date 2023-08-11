@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.commands;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.EnumChatFormatting;
+import net.minecraft.util.EnumChatFormatting;
 
 public class FindBlockMapsCommand extends CommandAlterBlockMaps {
     public FindBlockMapsCommand() {
