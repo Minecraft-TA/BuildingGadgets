@@ -10,8 +10,21 @@ import com.direwolf20.buildinggadgets.client.KeyBindings;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.ModSounds;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
-import com.direwolf20.buildinggadgets.common.items.gadgets.*;
-import com.direwolf20.buildinggadgets.common.network.*;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetBuilding;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetExchanger;
+import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
+import com.direwolf20.buildinggadgets.common.network.PacketAnchor;
+import com.direwolf20.buildinggadgets.common.network.PacketChangeRange;
+import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleBlockPlacement;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleConnectedArea;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleFuzzy;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleMode;
+import com.direwolf20.buildinggadgets.common.network.PacketToggleRayTraceFluid;
+import com.direwolf20.buildinggadgets.common.network.PacketUndo;
 import com.direwolf20.buildinggadgets.common.tools.BuildingModes;
 import com.direwolf20.buildinggadgets.common.tools.ExchangingModes;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
@@ -27,13 +40,17 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
-
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
 import org.lwjgl.util.vector.Vector2f;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -122,12 +139,12 @@ public class ModeRadialMenu extends GuiScreen {
                             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange(slider.getValueInt()));
                     }, (slider, amount) -> {
                         int value = slider.getValueInt();
-                        int valueNew = MathHelper.clamp(value + amount, 1, SyncedConfig.maxRange);
+                        int valueNew = MathHelper.clamp_int(value + amount, 1, SyncedConfig.maxRange);
                         slider.setValue(valueNew);
                         slider.updateSlider();
                     });
                 sliderRange.precision = 1;
-                sliderRange.getComponents().forEach(this::this.buttonList.add);
+                this.buttonList.addAll(sliderRange.getComponents());
             }
         } else {
             // Copy Paste specific
@@ -237,7 +254,7 @@ public class ModeRadialMenu extends GuiScreen {
     }
 
     private ItemStack getGadget() {
-        return GadgetGeneric.getGadget(Minecraft.getMinecraft().player);
+        return GadgetGeneric.getGadget(Minecraft.getMinecraft().thePlayer);
     }
 
     @Override
@@ -275,14 +292,14 @@ public class ModeRadialMenu extends GuiScreen {
 //        int highlight = 5;
 
         GL11.glEnable(GL11.GL_BLEND);
-        GL11.shadeModel(GL11.GL_SMOOTH);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
         float totalDeg = 0;
         float degPer = 360F / segments;
 
         List<NameDisplayData> nameData = new ArrayList<>();
 
         ItemStack tool = getGadget();
-        if (tool.isEmpty())
+        if (tool == null)
             return;
 
         slotSelected = -1;
@@ -342,7 +359,7 @@ public class ModeRadialMenu extends GuiScreen {
 //            if (mouseInSector)
 //                radius -= highlight;
         }
-        GL11.shadeModel(GL11.GL_FLAT);
+        GL11.glShadeModel(GL11.GL_FLAT);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         for (int i = 0; i < nameData.size(); i++) {
@@ -376,13 +393,12 @@ public class ModeRadialMenu extends GuiScreen {
             int ydp = (int) ((yp - y) * mod + y);
 
             mc.renderEngine.bindTexture(signs.get(i));
-            GL11.glColor4f(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
+            GL11.glColor3f(color.getRed() / 255F, color.getGreen() / 255F, color.getBlue() / 255F);
             mc.renderEngine.bindTexture(signs.get(i));
-            drawModalRectWithCustomSizedTexture(xdp - 8, ydp - 8, 0, 0, 16, 16, 16, 16);
-
+            drawTexturedModalRect(xdp - 8, ydp - 8, 0, 0, 16, 16);
         }
 
-        GL11.enableRescaleNormal();
+        GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glEnable(GL11.GL_BLEND);
         GL14.glBlendFuncSeparate(770, 771, 1, 0);
         RenderHelper.enableGUIStandardItemLighting();
@@ -390,11 +406,11 @@ public class ModeRadialMenu extends GuiScreen {
         float s = 2.25F * fract;
         GL11.glScalef(s, s, s);
         GL11.glTranslatef(x / s - (tool.getItem() instanceof GadgetCopyPaste ? 8F : 8.5F), y / s - 8, 0);
-        mc.getRenderItem().renderItemAndEffectIntoGUI(tool, 0, 0);
+        itemRender.renderItemAndEffectIntoGUI(fontRendererObj, mc.getTextureManager(), tool, 0, 0);
 
         RenderHelper.disableStandardItemLighting();
         GL11.glDisable(GL11.GL_BLEND);
-        GL11.disableRescaleNormal();
+        GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 
         GL11.glPopMatrix();
         renderHoverHelpText(mx, my);
@@ -410,7 +426,7 @@ public class ModeRadialMenu extends GuiScreen {
                 return;
 
             ZeroButton btn = (ZeroButton) button;
-            if (btn.isMouseOver()) {
+            if (btn.func_146115_a()) {
                 Color color = btn.isSelected() ? Color.GREEN : Color.WHITE;
                 int x = btn.getPosition() == ScreenPosition.LEFT ? mx - fontRendererObj.getStringWidth(btn.getText()): mx;
                 fontRendererObj.drawStringWithShadow(btn.getText(), x, my - fontRendererObj.FONT_HEIGHT, color.getRGB());
@@ -432,7 +448,7 @@ public class ModeRadialMenu extends GuiScreen {
             else
                 mode = GadgetCopyPaste.ToolMode.values()[slotSelected].toString();
 
-            mc.thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)), true);
+            mc.thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + I18n.format("message.gadget.toolmode", mode)));
             PacketHandler.INSTANCE.sendToServer(new PacketToggleMode(slotSelected));
             ModSounds.BEEP.playSound();
         }

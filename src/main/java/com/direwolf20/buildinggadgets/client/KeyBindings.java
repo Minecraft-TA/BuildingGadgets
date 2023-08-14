@@ -44,8 +44,8 @@ public class KeyBindings {
     {
         @Override
         public boolean isActive() {
-            return !KeyConflictContext.GUI.isActive() && Minecraft.getMinecraft().player != null
-                    && !GadgetGeneric.getGadget(Minecraft.getMinecraft().player).isEmpty();
+            return !KeyConflictContext.GUI.isActive() && Minecraft.getMinecraft().thePlayer != null
+                    && !GadgetGeneric.getGadget(Minecraft.getMinecraft().thePlayer).isEmpty();
         }
 
         @Override

@@ -72,7 +72,7 @@ public class GadgetBuilding extends GadgetGeneric {
     public static void togglePlaceAtop(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("start_inside", shouldPlaceAtop(stack));
         String prefix = "message.gadget.building.placement";
-        player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation(prefix, new TextComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation(prefix, new TextComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class GadgetBuilding extends GadgetGeneric {
             range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
 
         setToolRange(heldItem, range);
-        player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
     }
 
     private boolean build(EntityPlayer player, ItemStack stack) {
@@ -191,7 +191,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
         UndoState undoState = popUndoList(heldItem); //Get the undo list off the tool, exit if empty
         if (undoState == null) {
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.nothingtoundo").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.nothingtoundo").getUnformattedComponentText()), true);
             return false;
         }
         World world = player.worldObj;
@@ -217,7 +217,7 @@ public class GadgetBuilding extends GadgetGeneric {
                         world.spawnEntity(new BlockBuildEntity(world, coord, player, currentBlock, 2, getToolActualBlock(heldItem), false));
                     }
                 } else { //If you're in the wrong dimension or too far away, fail the undo.
-                    player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
                     failedRemovals.add(coord);
                 }
             }

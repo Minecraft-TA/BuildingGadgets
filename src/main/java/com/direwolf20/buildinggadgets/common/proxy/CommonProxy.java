@@ -48,6 +48,10 @@ public class CommonProxy {
             applyCompatConfig = CompatConfig.readConfig(cfgFile);
         }
         IntegrationHandler.preInit(e);
+
+        registerBlocks();
+        registerItems();
+        registerSounds();
     }
 
     public void init() {
@@ -65,47 +69,51 @@ public class CommonProxy {
         IntegrationHandler.postInit();
     }
 
-    @SubscribeEvent
-    public static void registerBlocks(RegistryEvent.Register<Block> event) {
-        event.getRegistry().register(new EffectBlock());
-        event.getRegistry().register(new TemplateManager());
-        GameRegistry.registerTileEntity(TemplateManagerTileEntity.class, new ResourceLocation(BuildingGadgets.MODID, "templateManager"));
+    public static void registerBlocks() {
+        GameRegistry.registerBlock(new EffectBlock(), "effectblock");
+        GameRegistry.registerBlock(new TemplateManager(), "templatemanager");
+        GameRegistry.registerTileEntity(TemplateManagerTileEntity.class, "templateManager");
         if (SyncedConfig.enablePaste) {
-            event.getRegistry().register(new ConstructionBlockDense());
-            event.getRegistry().register(new ConstructionBlock());
-            event.getRegistry().register(new ConstructionBlockPowder());
-            GameRegistry.registerTileEntity(ConstructionBlockTileEntity.class, new ResourceLocation(BuildingGadgets.MODID, "_constructionBlock"));
+            GameRegistry.registerBlock(new ConstructionBlockDense(), "constructionblock_dense");
+            GameRegistry.registerBlock(new ConstructionBlock(), "constructionblock");
+            GameRegistry.registerBlock(new ConstructionBlockPowder(), "constructionblockpowder");
+            GameRegistry.registerTileEntity(ConstructionBlockTileEntity.class, "constructionblock");
         }
     }
 
-    @SubscribeEvent
-    public static void registerItems(RegistryEvent.Register<Item> event) {
-        event.getRegistry().register(new GadgetBuilding());
-        event.getRegistry().register(new GadgetExchanger());
-        event.getRegistry().register(new GadgetCopyPaste());
-        event.getRegistry().register(new ItemBlock(ModBlocks.templateManager).setRegistryName(ModBlocks.templateManager.getRegistryName()));
-        event.getRegistry().register(new Template());
+    public static void registerItems() {
+        GameRegistry.registerItem(new GadgetBuilding(), "buildingtool");
+        GameRegistry.registerItem(new GadgetExchanger(), "exchangertool");
+        GameRegistry.registerItem(new GadgetCopyPaste(), "copypastetool");
+        GameRegistry.registerItem(createWeirdItemBlock(ModBlocks.templateManager), "templatemanager");
+        GameRegistry.registerItem(new Template(), "template");
         if (SyncedConfig.enableDestructionGadget) {
-            event.getRegistry().register(new GadgetDestruction());
+            GameRegistry.registerItem(new GadgetDestruction(), "destructiontool");
         }
         if (SyncedConfig.enablePaste) {
-            event.getRegistry().register(new ItemBlock(ModBlocks.constructionBlockDense).setRegistryName(ModBlocks.constructionBlockDense.getRegistryName()));
-            event.getRegistry().register(new ItemBlock(ModBlocks.constructionBlock).setRegistryName(ModBlocks.constructionBlock.getRegistryName()));
-            event.getRegistry().register(new ItemBlock(ModBlocks.constructionBlockPowder).setRegistryName(ModBlocks.constructionBlockPowder.getRegistryName()));
-            event.getRegistry().register(new ConstructionPaste());
-            event.getRegistry().register(new ConstructionChunkDense());
+            GameRegistry.registerItem(createWeirdItemBlock(ModBlocks.constructionBlockDense), "constructionblock_dense");
+            GameRegistry.registerItem(createWeirdItemBlock(ModBlocks.constructionBlock), "constructionblock");
+            GameRegistry.registerItem(createWeirdItemBlock(ModBlocks.constructionBlockPowder), "constructionblockpowder");
+            GameRegistry.registerItem(new ConstructionPaste(), "constructionpaste");
+            GameRegistry.registerItem(new ConstructionChunkDense(), "construction_chunk_dense");
             for (RegularPasteContainerTypes type : RegularPasteContainerTypes.values()) {
-                event.getRegistry().register(new ConstructionPasteContainer(type.itemSuffix, type.capacitySupplier));
+                GameRegistry.registerItem(new ConstructionPasteContainer(type.itemSuffix, type.capacitySupplier), "constructionpastecontainer" + type.itemSuffix);
             }
-            event.getRegistry().register(new ConstructionPasteContainerCreative());
+            GameRegistry.registerItem(new ConstructionPasteContainerCreative(), "constructionpastecontainercreative");
         }
     }
 
-    @SubscribeEvent
-    public static void registerSounds(RegistryEvent.Register<SoundEvent> event) {
-        for (ModSounds sound : ModSounds.values()) {
-            event.getRegistry().register(sound.getSound());
-        }
+    private static ItemBlock createWeirdItemBlock(Block block) {
+        ItemBlock itemBlock = new ItemBlock(block);
+        itemBlock.setUnlocalizedName(block.getUnlocalizedName());
+        return itemBlock;
+    }
+
+    public static void registerSounds() {
+        // TODO: Maybe needs sounds.json https://github.com/GTNewHorizons/Random-Things/blob/master/src/main/resources/assets/randomthings/sounds.json , nothing else
+//        for (ModSounds sound : ModSounds.values()) {
+//            GameRegistry.regis.register(sound.getSound());
+//        }
     }
 
 }

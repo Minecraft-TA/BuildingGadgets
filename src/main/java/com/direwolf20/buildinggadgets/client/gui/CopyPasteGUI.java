@@ -197,7 +197,7 @@ public class CopyPasteGUI extends GuiScreen {
                 }
                 PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(startPos, endPos));
             } catch (Throwable t) {
-                Minecraft.getMinecraft().thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.copyguierror").getUnformattedTextForChat()), true);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.copyguierror").getUnformattedTextForChat()), true);
             }
             this.mc.displayGuiScreen(null);
         } else if (b.id == 2) {

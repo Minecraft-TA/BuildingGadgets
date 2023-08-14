@@ -102,7 +102,7 @@ public class TemplateManagerGUI extends GuiContainer {
         } else {
             this.renderHoveredToolTip(mouseX, mouseY);
         }
-        if (buttonHelp.isMouseOver())
+        if (buttonHelp.func_146115_a())
             drawHoveringText(buttonHelp.getHoverText(), mouseX, mouseY);
     }
 
@@ -138,8 +138,8 @@ public class TemplateManagerGUI extends GuiContainer {
         GL11.glColor4f(1, 1, 1, 1);
         mc.getTextureManager().bindTexture(background);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        if (!buttonCopy.isMouseOver() && !buttonPaste.isMouseOver())
-            drawTexturedModalRectReverseX(guiLeft + 112, guiTop + 41, 176, 0, 22, 15, buttonLoad.isMouseOver());
+        if (!buttonCopy.func_146115_a() && !buttonPaste.func_146115_a())
+            drawTexturedModalRectReverseX(guiLeft + 112, guiTop + 41, 176, 0, 22, 15, buttonLoad.func_146115_a());
 
         this.nameField.drawTextBox();
         drawStructure();
@@ -393,8 +393,8 @@ public class TemplateManagerGUI extends GuiContainer {
         if (!nameField.isFocused() && nameField.getText().isEmpty())
             fontRendererObj.drawString("template name", nameField.x - guiLeft + 4, nameField.y - guiTop, -10197916);
 
-        if (buttonSave.isMouseOver() || buttonLoad.isMouseOver() || buttonPaste.isMouseOver())
-            drawSlotOverlay(buttonLoad.isMouseOver() ? container.getSlot(0) : container.getSlot(1));
+        if (buttonSave.func_146115_a() || buttonLoad.func_146115_a() || buttonPaste.func_146115_a())
+            drawSlotOverlay(buttonLoad.func_146115_a() ? container.getSlot(0) : container.getSlot(1));
     }
 
     private void drawSlotOverlay(Slot slot) {

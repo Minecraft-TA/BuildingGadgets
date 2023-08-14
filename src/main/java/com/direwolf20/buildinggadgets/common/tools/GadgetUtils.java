@@ -280,7 +280,7 @@ public class GadgetUtils {
 
         IBlockState state = world.getBlockState(pos);
         if (result == EnumActionResult.FAIL || SyncedConfig.blockBlacklist.contains(state.getBlock()) || state.getBlock() instanceof EffectBlock ) {
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.invalidblock").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.invalidblock").getUnformattedComponentText()), true);
             return;
         }
         IBlockState placeState = InventoryManipulation.getSpecificStates(state, world, player, pos, stack);
@@ -326,10 +326,10 @@ public class GadgetUtils {
                 coords = ExchangingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock); // Build the positions list based on tool mode and range
             }
             setAnchor(stack, coords); //Set the anchor NBT
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
         } else {  //If theres already an anchor, remove it.
             setAnchor(stack, new ArrayList<BlockPos>());
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
         }
         return true;
     }
@@ -338,7 +338,7 @@ public class GadgetUtils {
         if (getRemoteInventory(pos, dim, world, player) != null) {
             boolean same = pos.equals(getPOSFromNBT(tool, "boundTE"));
             writePOSToNBT(tool, same ? null : pos, "boundTE", dim);
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedComponentText()), true);
             return true;
         }
         return false;

@@ -137,7 +137,7 @@ public class EventTooltip {
             int j = 0;
             //Look through all the ItemStacks and draw each one in the specified X/Y position
             for (Map.Entry<ItemStack, Integer> entry : list) {
-                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().player, cache);
+                int hasAmt = InventoryManipulation.countItem(entry.getKey(), Minecraft.getMinecraft().thePlayer, cache);
                 int x = bx + (j % STACKS_PER_LINE) * 18;
                 int y = by + (j / STACKS_PER_LINE) * 20;
                 totalMissing += renderRequiredBlocks(entry.getKey(), x, y, hasAmt, entry.getValue());
@@ -145,7 +145,7 @@ public class EventTooltip {
             }
             if (totalMissing > 0) {
                 ItemStack pasteItemStack = new ItemStack(ModItems.constructionPaste);
-                int hasAmt = InventoryManipulation.countPaste(Minecraft.getMinecraft().player);
+                int hasAmt = InventoryManipulation.countPaste(Minecraft.getMinecraft().thePlayer);
                 int x = bx + (j % STACKS_PER_LINE) * 18;
                 int y = by + (j / STACKS_PER_LINE) * 20;
                 renderRequiredBlocks(pasteItemStack, x, y, hasAmt, MathTool.longToInt(totalMissing));

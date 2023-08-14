@@ -13,7 +13,7 @@ public class GuiButtonHelpText extends GuiButton implements IHoverHelpText {
 
     @Override
     public boolean isHovered(int mouseX, int mouseY) {
-        return isMouseOver();
+        return func_146115_a();
     }
 
     @Override

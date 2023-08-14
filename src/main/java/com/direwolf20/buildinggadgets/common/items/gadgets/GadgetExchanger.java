@@ -137,7 +137,7 @@ public class GadgetExchanger extends GadgetGeneric {
             range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
         }
         setToolRange(heldItem, range);
-        player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
     }
 
     private boolean exchange(EntityPlayer player, ItemStack stack) {

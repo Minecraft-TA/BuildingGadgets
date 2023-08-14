@@ -188,7 +188,7 @@ public class MaterialListGUI extends GuiBase {
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
                 else
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.thePlayer.sendStatusMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
+                mc.thePlayer.addChatMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
                 return;
         }
         this.scrollingList.actionPerformed(button);
@@ -203,7 +203,7 @@ public class MaterialListGUI extends GuiBase {
     }
 
     private void updateAvailableMaterials() {
-        this.available = InventoryManipulation.countItems(materials, Minecraft.getMinecraft().player);
+        this.available = InventoryManipulation.countItems(materials, Minecraft.getMinecraft().thePlayer);
     }
 
     private void calculateButtonsWidthAndX() {

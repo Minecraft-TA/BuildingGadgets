@@ -74,7 +74,7 @@ public class DestructionGUI extends GuiScreen {
                 this.mc.displayGuiScreen(null);
             }
             else
-                Minecraft.getMinecraft().thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()));
         }
         else if (b.id == 2)
             this.mc.displayGuiScreen(null);

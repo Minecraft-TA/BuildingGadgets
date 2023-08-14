@@ -131,7 +131,7 @@ public class PasteGUI extends GuiScreen {
                 PacketHandler.INSTANCE.sendToServer(new PacketPasteGUI(Integer.parseInt(X.getText()), Integer.parseInt(Y.getText()), Integer.parseInt(Z.getText())));
                 this.mc.displayGuiScreen(null);
             } else {
-                Minecraft.getMinecraft().thePlayer.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
             }
 
         } else if (b.id == 2) {

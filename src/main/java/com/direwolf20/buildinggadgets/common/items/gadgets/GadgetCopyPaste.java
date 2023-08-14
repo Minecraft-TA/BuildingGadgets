@@ -253,7 +253,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 if (pos == null) {
                     //setStartPos(stack, null);
                     //setEndPos(stack, null);
-                    //player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
+                    //player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
                     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
                 }
                 if (player.isSneaking()) {
@@ -348,7 +348,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         worldSave.addToMap(tool.getUUID(stack), tagCompound);
         worldSave.markForSaving();
         PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
-        player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA
                 + new ChatComponentText("message.gadget." + (player.isSneaking() ? "mirrored" : "rotated")).getUnformattedTextForChat()), true);
     }
 
@@ -374,7 +374,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         int endZ = end.getZ();
 
         if (Math.abs(startX - endX) >= 125 || Math.abs(startY - endY) >= 125 || Math.abs(startZ - endZ) >= 125) {
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toobigarea").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toobigarea").getUnformattedComponentText()), true);
             return false;
         }
 
@@ -415,7 +415,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                                 blockMapIntState.addToStackMap(uniqueItem, actualState);
                                 blockCount++;
                                 if (blockCount > 32768) {
-                                    player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toomanyblocks").getUnformattedComponentText()), true);
+                                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toomanyblocks").getUnformattedComponentText()), true);
                                     return false;
                                 }
                                 NonNullList<ItemStack> drops = NonNullList.create();
@@ -461,9 +461,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
 
         if (foundTE > 0) {
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.YELLOW + new TextComponentTranslation("message.gadget.TEinCopy").getUnformattedComponentText() + ": " + foundTE), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + new TextComponentTranslation("message.gadget.TEinCopy").getUnformattedComponentText() + ": " + foundTE), true);
         } else {
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.copied").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.copied").getUnformattedComponentText()), true);
         }
         return true;
     }
@@ -566,10 +566,10 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             }
             currentAnchor = lookingAt.getBlockPos();
             setAnchor(stack, currentAnchor);
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
         } else {
             setAnchor(stack, null);
-            player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
         }
     }
 
@@ -604,7 +604,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     }
                 }
             } else {
-                player.sendStatusMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
+                player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
                 success = false;
             }
             //System.out.printf("Undid %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);
