@@ -18,7 +18,7 @@ public class SingleTypeProviderTest {
     private final Random random = new Random();
 
     //TODO implement custom runner that launches minecraft
-    //  this does not work since NBTUtil.readBlockState(IBlockState) accesses block registry, and using
+    //  this does not work since NBTPortUtil.readBlockState(IBlockState) accesses block registry, and using
     //  UniqueBlockState losses the point of testing
     @Disabled("requires custom runner with minecraft started")
     @Test

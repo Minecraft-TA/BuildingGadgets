@@ -57,7 +57,7 @@ public final class ConnectedSurface implements IPlacementSequence {
                 (filter, pos) -> {
                     BlockPos apply = searching2referenceMapper.apply(pos);
                     Block block = world.getBlock(apply.getX(), apply.getY(), apply.getZ());
-                    IBlockState reference = new IBlockState(world.getBlockMetadata(apply.getX(), apply.getY(), apply.getZ()));
+                    IBlockState reference = IBlockState.create(world.getBlockMetadata(apply.getX(), apply.getY(), apply.getZ()));
                     boolean isAir = block.isAir(world, apply.getX(), apply.getY(), apply.getZ()); // TODO This seems rather inefficient
                     // If fuzzy=true, we ignore the block for reference
                     return ! isAir && (fuzzy || filter == reference);
@@ -158,7 +158,7 @@ public final class ConnectedSurface implements IPlacementSequence {
 
     private IBlockState getReferenceFor(BlockPos pos) {
         BlockPos referencePos = searching2referenceMapper.apply(pos);
-        return new IBlockState(world.getBlockMetadata(referencePos.getX(), referencePos.getY(), referencePos.getZ()));
+        return IBlockState.create(world.getBlockMetadata(referencePos.getX(), referencePos.getY(), referencePos.getZ()));
     }
 
 }

@@ -24,7 +24,7 @@ import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ChatComponentTranslation;
 import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -176,7 +176,7 @@ public class GadgetDestruction extends GadgetGeneric {
     public void switchOverlay(EntityPlayer player, ItemStack stack) {
         boolean overlay = !getOverlay(stack);
         setOverlay(stack, overlay);
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedComponentText() + ": " + overlay), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("tooltip.gadget.destroyshowoverlay").getUnformattedTextForChat() + ": " + overlay), true);
     }
 
     private static List<EnumFacing> assignDirections(EnumFacing side, EntityPlayer player) {
@@ -212,7 +212,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 if (getAnchor(stack) != null) {
                     setAnchor(stack, null);
                     setAnchorSide(stack, null);
-                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedTextForChat()), true);
                 }
             }
         } else {
@@ -234,11 +234,11 @@ public class GadgetDestruction extends GadgetGeneric {
             currentAnchor = lookingAt.getBlockPos();
             setAnchor(stack, currentAnchor);
             setAnchorSide(stack, lookingAt.sideHit);
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedTextForChat()), true);
         } else {
             setAnchor(stack, null);
             setAnchorSide(stack, null);
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedTextForChat()), true);
         }
     }
 
@@ -304,8 +304,8 @@ public class GadgetDestruction extends GadgetGeneric {
             boolean isPaste;
 
             IBlockState blockState = world.getBlockState(voidPos);
-            IBlockState pasteState = Blocks.air.getDefaultState();
-            if( blockState == Blocks.air.getDefaultState() )
+            IBlockState pasteState = IBlockState.AIR_STATE;
+            if( blockState == IBlockState.AIR_STATE )
                 continue;
 
             if (blockState.getBlock() == ModBlocks.constructionBlock) {
@@ -314,7 +314,7 @@ public class GadgetDestruction extends GadgetGeneric {
                     pasteState = ((ConstructionBlockTileEntity) te).getActualBlockState();
             }
 
-            isPaste = pasteState != Blocks.air.getDefaultState() && pasteState != null;
+            isPaste = pasteState != IBlockState.AIR_STATE && pasteState != null;
             if (!destroyBlock(world, voidPos, player))
                 continue;
 
@@ -398,7 +398,7 @@ public class GadgetDestruction extends GadgetGeneric {
 
         this.applyDamage(tool, player);
 
-        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, world.getBlockState(voidPos), 2, Blocks.air.getDefaultState(), false));
+        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, world.getBlockState(voidPos), 2, IBlockState.AIR_STATE, false));
         return true;
     }
 

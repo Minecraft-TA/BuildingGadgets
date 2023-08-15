@@ -8,7 +8,6 @@ import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
@@ -32,7 +31,7 @@ public class ExchangingVerticalColumnMode extends AbstractMode {
     }
 
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         int radius = MathTool.floorToOdd(range);
         return Column.centerAt(hit, (sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getAxis() : Axis.Y), radius);

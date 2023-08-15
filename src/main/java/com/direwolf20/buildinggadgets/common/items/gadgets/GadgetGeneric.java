@@ -18,7 +18,7 @@ import net.minecraft.util.EnumHand;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ChatComponentTranslation;
 import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -169,7 +169,7 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     public static void toggleFuzzy(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("fuzzy", !getFuzzy(stack));
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.fuzzymode").getUnformattedComponentText() + ": " + getFuzzy(stack)), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.fuzzymode").getUnformattedTextForChat() + ": " + getFuzzy(stack)), true);
     }
 
     public static boolean getConnectedArea(ItemStack stack) {
@@ -179,7 +179,7 @@ public abstract class GadgetGeneric extends ItemModBase {
     public static void toggleConnectedArea(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("unconnectedarea", getConnectedArea(stack));
         String suffix = stack.getItem() instanceof GadgetDestruction ? "area" : "surface";
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.connected" + suffix).getUnformattedComponentText() + ": " + getConnectedArea(stack)), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.connected" + suffix).getUnformattedTextForChat() + ": " + getConnectedArea(stack)), true);
     }
 
     public static boolean shouldRayTraceFluid(ItemStack stack) {
@@ -188,7 +188,7 @@ public abstract class GadgetGeneric extends ItemModBase {
 
     public static void toggleRayTraceFluid(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("raytrace_fluid", !shouldRayTraceFluid(stack));
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.raytrace_fluid").getUnformattedComponentText() + ": " + shouldRayTraceFluid(stack)), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.raytrace_fluid").getUnformattedTextForChat() + ": " + shouldRayTraceFluid(stack)), true);
     }
 
     public static void addInformationRayTraceFluid(List<String> tooltip, ItemStack stack) {

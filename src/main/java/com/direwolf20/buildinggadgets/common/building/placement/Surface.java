@@ -46,7 +46,7 @@ public final class Surface implements IPlacementSequence {
     private Surface(IBlockAccess world, BlockPos center, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, boolean fuzzy) {
         this.world = world;
         BlockPos reference = searching2referenceMapper.apply(center);
-        this.selectedBase = new IBlockState(world.getBlockMetadata(reference.getX(), reference.getY(), reference.getZ()));
+        this.selectedBase = IBlockState.create(world.getBlockMetadata(reference.getX(), reference.getY(), reference.getZ()));
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
         this.fuzzy = fuzzy;

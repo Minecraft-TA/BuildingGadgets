@@ -3,9 +3,18 @@ package com.direwolf20.buildinggadgets.common.tools;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
 
 import javax.annotation.Nonnull;
+import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -87,9 +96,9 @@ public class NBTTool {
         short[] res = new short[shorts.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < shorts.tagCount(); i++) {
-            NBTBase nbt = shorts.get(i);
+            NBTBase nbt = shorts.getCompoundTagAt(i);
             if (nbt instanceof NBTTagShort) {
-                res[i] = ((NBTTagShort) nbt).getShort();
+                res[i] = ((NBTTagShort) nbt).func_150289_e();
             } else {
                 res[i] = 0;
                 failed.add(i);
@@ -114,9 +123,9 @@ public class NBTTool {
         Short[] res = new Short[shorts.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < shorts.tagCount(); i++) {
-            NBTBase nbt = shorts.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(shorts, i);
             if (nbt instanceof NBTTagShort) {
-                res[i] = ((NBTTagShort) nbt).getShort();
+                res[i] = ((NBTTagShort) nbt).func_150289_e();
             } else {
                 res[i] = 0;
                 failed.add(i);
@@ -151,9 +160,9 @@ public class NBTTool {
         float[] res = new float[floats.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < floats.tagCount(); i++) {
-            NBTBase nbt = floats.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(floats, i);
             if (nbt instanceof NBTTagFloat) {
-                res[i] = ((NBTTagFloat) nbt).getFloat();
+                res[i] = ((NBTTagFloat) nbt).func_150288_h();
             } else {
                 res[i] = 0;
                 failed.add(i);
@@ -178,9 +187,9 @@ public class NBTTool {
         Float[] res = new Float[floats.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < floats.tagCount(); i++) {
-            NBTBase nbt = floats.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(floats, i);
             if (nbt instanceof NBTTagFloat) {
-                res[i] = ((NBTTagFloat) nbt).getFloat();
+                res[i] = ((NBTTagFloat) nbt).func_150288_h();
             } else {
                 res[i] = 0f;
                 failed.add(i);
@@ -205,9 +214,9 @@ public class NBTTool {
         double[] res = new double[doubles.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < doubles.tagCount(); i++) {
-            NBTBase nbt = doubles.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(doubles, i);
             if (nbt instanceof NBTTagDouble) {
-                res[i] = ((NBTTagDouble) nbt).getDouble();
+                res[i] = ((NBTTagDouble) nbt).func_150286_g();
             } else {
                 res[i] = 0;
                 failed.add(i);
@@ -232,9 +241,9 @@ public class NBTTool {
         Double[] res = new Double[doubles.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < doubles.tagCount(); i++) {
-            NBTBase nbt = doubles.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(doubles, i);
             if (nbt instanceof NBTTagDouble) {
-                res[i] = ((NBTTagDouble) nbt).getDouble();
+                res[i] = ((NBTTagDouble) nbt).func_150286_g();
             } else {
                 res[i] = 0.0;
                 failed.add(i);
@@ -259,9 +268,9 @@ public class NBTTool {
         String[] res = new String[strings.tagCount()];
         IntList failed = new IntArrayList();
         for (int i = 0; i < strings.tagCount(); i++) {
-            NBTBase nbt = strings.get(i);
+            NBTBase nbt = bruhMomentGetFromNBTTagList(strings, i);
             if (nbt instanceof NBTTagString) {
-                res[i] = ((NBTTagString) nbt).getString();
+                res[i] = ((NBTTagString) nbt).func_150285_a_();
             } else {
                 res[i] = "";
                 failed.add(i);
@@ -282,7 +291,7 @@ public class NBTTool {
     }
 
     public static boolean[] readBooleanList(NBTTagByteArray booleans) {
-        byte[] bytes = booleans.getByteArray();
+        byte[] bytes = booleans.func_150292_c();
         boolean[] res = new boolean[bytes.length];
         for (int i = 0; i < bytes.length; ++i) {
             res[i] = bytes[i] == 0;
@@ -291,7 +300,7 @@ public class NBTTool {
     }
 
     public static Boolean[] readBBooleanList(NBTTagByteArray booleans) {
-        byte[] bytes = booleans.getByteArray();
+        byte[] bytes = booleans.func_150292_c();
         Boolean[] res = new Boolean[bytes.length];
         for (int i = 0; i < bytes.length; ++i) {
             res[i] = bytes[i] == 0;
@@ -311,7 +320,8 @@ public class NBTTool {
     }
 
     public static <K, V> Map<K, V> deserializeMap(NBTTagList list, Map<K, V> toAppendTo, Function<NBTBase, K> keyDeserializer, Function<NBTBase, V> valueDeserializer) {
-        for (NBTBase nbt : list) {
+        for (int i = 0; i < list.tagCount(); i++) {
+            NBTBase nbt = bruhMomentGetFromNBTTagList(list, i);
             if (nbt instanceof NBTTagCompound) {
                 NBTTagCompound compound = (NBTTagCompound) nbt;
                 toAppendTo.put(
@@ -336,4 +346,13 @@ public class NBTTool {
         return tag;
     }
 
+    private static NBTBase bruhMomentGetFromNBTTagList(NBTTagList list, int i) {
+        try {
+            Field field = NBTTagList.class.getDeclaredField("tagList");
+            field.setAccessible(true);
+            return (NBTBase) ((List) field.get(list)).get(i);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

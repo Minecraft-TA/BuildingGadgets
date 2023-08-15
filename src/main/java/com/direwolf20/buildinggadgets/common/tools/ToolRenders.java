@@ -12,22 +12,19 @@ import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetDestruction;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Multiset;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.math.MovingObjectPosition;
-
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
@@ -39,26 +36,28 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import static com.direwolf20.buildinggadgets.common.tools.GadgetUtils.getAnchor;
 import static com.direwolf20.buildinggadgets.common.tools.GadgetUtils.getToolBlock;
-import static net.minecraft.block.BlockStainedGlass.COLOR;
 
 public class ToolRenders {
+
     private static final FakeBuilderWorld fakeWorld = new FakeBuilderWorld();
 
     private static Minecraft mc = Minecraft.getMinecraft();
     private static RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
     private static Cache<Triple<UniqueItemStack, BlockPos, Integer>, Integer> cacheDestructionOverlay = CacheBuilder.newBuilder().maximumSize(1).
-            expireAfterWrite(1, TimeUnit.SECONDS).removalListener(removal -> GLAllocation.deleteDisplayLists((int) removal.getValue())).build();
+        expireAfterWrite(1, TimeUnit.SECONDS).removalListener(removal -> GLAllocation.deleteDisplayLists((int) removal.getValue())).build();
 
     // We use these as highlighters
-    private static final IBlockState stainedGlassYellow = Blocks.stained_glass.getDefaultState().withProperty(COLOR, EnumDyeColor.YELLOW);
-    private static final IBlockState stainedGlassRed    = Blocks.stained_glass_pane.getDefaultState().withProperty(COLOR, EnumDyeColor.RED);
-    private static final IBlockState stainedGlassWhite  = Blocks.stained_glass_pane.getDefaultState().withProperty(COLOR, EnumDyeColor.WHITE);
+    private static final IBlockState stainedGlassYellow = IBlockState.create(Blocks.stained_glass, 11);
+    private static final IBlockState stainedGlassRed = IBlockState.create(Blocks.stained_glass_pane, 1);
+    private static final IBlockState stainedGlassWhite = IBlockState.create(Blocks.stained_glass_pane, 15);
 
     public static void setInventoryCache(Multiset<UniqueItem> cache) {
         ToolRenders.cacheInventory.setCache(cache);
@@ -69,9 +68,8 @@ public class ToolRenders {
     }
 
     public static void renderBuilderOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
-
         // Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.partialTicks);
 
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
@@ -83,18 +81,18 @@ public class ToolRenders {
             return;
 
         IBlockState startBlock = ToolRenders.Utils.getStartBlock(lookingAt, player);
-        if (startBlock == ModBlocks.effectBlock.getDefaultState())
+        if (startBlock.getBlock() == ModBlocks.effectBlock)
             return;
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         IBlockState renderBlockState = getToolBlock(heldItem);
 
         //Don't render anything if there is no block selected (Air)
-        if (renderBlockState == Blocks.air.getDefaultState())
+        if (renderBlockState == IBlockState.AIR_STATE)
             return;
 
         //Build a list of coordinates based on the tool mode and range
-        if (coordinates.size() == 0 && lookingAt != null)
+        if (coordinates.isEmpty() && lookingAt != null)
             coordinates = BuildingModes.collectPlacementPos(player.worldObj, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
 
         // Figure out how many of the block we're rendering are in the player inventory.
@@ -107,7 +105,7 @@ public class ToolRenders {
         int hasEnergy = SyncedConfig.energyMax == 0 ? Integer.MAX_VALUE : ToolRenders.Utils.getStackEnergy(heldItem, player);
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
-        Set<BlockPos> coords =  new HashSet<>(coordinates);
+        Set<BlockPos> coords = new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
         GL11.glPushMatrix();
@@ -119,7 +117,7 @@ public class ToolRenders {
             ToolRenders.Utils.stateManagerPrepare(playerPos, coordinate, null);
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
-            IBlockState state = Blocks.air.getDefaultState();
+            IBlockState state = IBlockState.AIR_STATE;
             if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES)
                 state = renderBlockState.getActualState(fakeWorld, coordinate);
 
@@ -158,13 +156,13 @@ public class ToolRenders {
 
     public static void renderExchangerOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack heldItem) {
         // Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.partialTicks);
 
         BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
         MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
-        IBlockState state = Blocks.air.getDefaultState();
+        IBlockState state = IBlockState.AIR_STATE;
         List<BlockPos> coordinates = getAnchor(heldItem);
 
         if (lookingAt == null && coordinates.size() == 0)
@@ -176,8 +174,8 @@ public class ToolRenders {
 
         IBlockState renderBlockState = getToolBlock(heldItem);
         Minecraft mc = Minecraft.getMinecraft();
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        if (renderBlockState == Blocks.air.getDefaultState()) {//Don't render anything if there is no block selected (Air)
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        if (renderBlockState == IBlockState.AIR_STATE) {//Don't render anything if there is no block selected (Air)
             return;
         }
         if (coordinates.size() == 0 && lookingAt != null) { //Build a list of coordinates based on the tool mode and range
@@ -192,7 +190,7 @@ public class ToolRenders {
         int hasEnergy = SyncedConfig.energyMax == 0 ? Integer.MAX_VALUE : ToolRenders.Utils.getStackEnergy(heldItem, player);
 
         // Prepare the fake world -- using a fake world lets us render things properly, like fences connecting.
-        Set<BlockPos> coords =  new HashSet<>(coordinates);
+        Set<BlockPos> coords = new HashSet<>(coordinates);
         fakeWorld.setWorldAndState(player.worldObj, renderBlockState, coords);
 
         GL11.glPushMatrix();
@@ -211,7 +209,7 @@ public class ToolRenders {
             if (renderBlockState.getRenderType() != EnumBlockRenderType.INVISIBLE) {
                 try {
                     dispatcher.renderBlockBrightness(state, 1f);//Render the defined block
-                } catch(NullPointerException ex) {
+                } catch (NullPointerException ex) {
                     // This is to stop crashes with blocks that have not been implemented
                     // correctly by their mod authors.
                     BuildingGadgets.logger.error(ToolRenders.class.getSimpleName() + ": Error within overlay rendering -> " + ex);
@@ -252,17 +250,20 @@ public class ToolRenders {
 
     public static void renderDestructionOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
-        if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null) return;
+        if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null)
+            return;
         World world = player.worldObj;
         BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
         EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
-        if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
+        if (startBlock == ModBlocks.effectBlock.getDefaultState())
+            return;
 
-        if (!GadgetDestruction.getOverlay(stack)) return;
+        if (!GadgetDestruction.getOverlay(stack))
+            return;
         GL11.glPushMatrix();
-        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.getPartialTicks();
-        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.getPartialTicks();
-        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.getPartialTicks();
+        double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
+        double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.partialTicks;
+        double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.partialTicks;
         GL11.glTranslatef(-doubleX, -doubleY, -doubleZ);
         try {
             GL11.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
@@ -280,7 +281,7 @@ public class ToolRenders {
     }
 
     private static void renderDestructionOverlay(EntityPlayer player, World world, BlockPos startBlock, EnumFacing facing, ItemStack heldItem) {
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         Set<BlockPos> coordinates = GadgetDestruction.getArea(world, startBlock, facing, player, heldItem);
 
@@ -331,13 +332,13 @@ public class ToolRenders {
 
     public static void renderPasteOverlay(RenderWorldLastEvent evt, EntityPlayer player, ItemStack stack) {
         //Calculate the players current position, which is needed later
-        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.getPartialTicks());
+        Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.partialTicks);
 
         renderLinkedInventoryOutline(stack, playerPos, player);
         if (ModItems.gadgetCopyPaste.getStartPos(stack) == null || ModItems.gadgetCopyPaste.getEndPos(stack) == null)
             return;
 
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         String UUID = ModItems.gadgetCopyPaste.getUUID(stack);
         World world = player.worldObj;
         if (GadgetCopyPaste.getToolMode(stack) == GadgetCopyPaste.ToolMode.Paste) {
@@ -345,7 +346,8 @@ public class ToolRenders {
             BlockPos startPos = GadgetCopyPaste.getAnchor(stack);
             if (startPos == null) {
                 startPos = VectorTools.getPosLookingAt(player, stack);
-                if (startPos == null) return;
+                if (startPos == null)
+                    return;
                 startPos = startPos.up(GadgetCopyPaste.getY(stack));
                 startPos = startPos.east(GadgetCopyPaste.getX(stack));
                 startPos = startPos.south(GadgetCopyPaste.getZ(stack));
@@ -368,7 +370,8 @@ public class ToolRenders {
 
             //Don't draw on top of blocks being built by our tools.
             IBlockState startBlock = world.getBlockState(startPos);
-            if (startBlock == ModBlocks.effectBlock.getDefaultState()) return;
+            if (startBlock == ModBlocks.effectBlock.getDefaultState())
+                return;
 
             //Save the current position that is being rendered
             GL11.glPushMatrix();
@@ -380,7 +383,7 @@ public class ToolRenders {
             GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
             GL11.glPushMatrix();//Push matrix again just because
-            GL11.glTranslatef(startPos.getX()-playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GL11.glTranslatef(startPos.getX() - playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
             GL11.glTranslatef(0.0005f, 0.0005f, -0.0005f);
@@ -443,7 +446,7 @@ public class ToolRenders {
         if (dim == null || pos == null)
             return;
 
-        if( player.dimension != dim )
+        if (player.dimension != dim)
             return;
 
         GL11.glPushMatrix();
@@ -459,6 +462,7 @@ public class ToolRenders {
     private static void renderBox(Tessellator tessellator, BufferBuilder bufferBuilder, double startX, double startY, double startZ, double endX, double endY, double endZ, int R, int G, int B) {
         GL11.glLineWidth(2.0F);
         bufferBuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
+        tessellator.set
         bufferBuilder.pos(startX, startY, startZ).color(G, G, G, 0.0F).endVertex();
         bufferBuilder.pos(startX, startY, startZ).color(G, G, G, R).endVertex();
         bufferBuilder.pos(endX, startY, startZ).color(G, B, B, R).endVertex();
@@ -525,7 +529,7 @@ public class ToolRenders {
     private static class Utils {
 
         private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
-            IBlockState startBlock = Blocks.air.getDefaultState();
+            IBlockState startBlock = IBlockState.AIR_STATE;
             if (lookingAt != null)
                 startBlock = player.worldObj.getBlockState(lookingAt.getBlockPos());
 
@@ -537,7 +541,7 @@ public class ToolRenders {
                 return Integer.MAX_VALUE;
 
             if (stack.hasCapability(CapabilityEnergy.ENERGY, null))
-                return  CapabilityProviderEnergy.getCap(stack).getEnergyStored();
+                return CapabilityProviderEnergy.getCap(stack).getEnergyStored();
 
             return stack.getMaxDamage() - stack.getItemDamage();
         }
@@ -548,9 +552,9 @@ public class ToolRenders {
          */
         private static Vec3 getPlayerglTranslatef(EntityPlayer player, float partialTick) {
             return Vec3.createVectorHelper(
-                    player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
-                    player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
-                    player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick
+                player.lastTickPosX + (player.posX - player.lastTickPosX) * partialTick,
+                player.lastTickPosY + (player.posY - player.lastTickPosY) * partialTick,
+                player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * partialTick
             );
         }
 
@@ -584,13 +588,13 @@ public class ToolRenders {
          * Prepares our render using base properties
          */
         private static void stateManagerPrepare(Vec3 playerPos, BlockPos blockPos, Float shift) {
-            GL11.glTranslated(blockPos.getX()-playerPos.xCoord, blockPos.getY() - playerPos.yCoord, blockPos.getZ() - playerPos.zCoord);//Now move the render position to the coordinates we want to render at
+            GL11.glTranslated(blockPos.getX() - playerPos.xCoord, blockPos.getY() - playerPos.yCoord, blockPos.getZ() - playerPos.zCoord);//Now move the render position to the coordinates we want to render at
             // Rotate it because i'm not sure why but we need to
             GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
             GL11.glScalef(1f, 1f, 1f);
 
             // Slightly Larger block to avoid z-fighting.
-            if( shift != null ) {
+            if (shift != null) {
                 GL11.glTranslatef(-shift, -shift, shift);
                 GL11.glScalef(1.005f, 1.005f, 1.005f);
             }

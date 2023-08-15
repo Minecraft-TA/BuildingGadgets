@@ -25,7 +25,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.NonNullList;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ChatComponentTranslation;
 import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 

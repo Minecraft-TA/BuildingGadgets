@@ -4,7 +4,16 @@ import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.tools.ArrayUtils;
 import com.direwolf20.buildinggadgets.common.tools.NBTTool;
 import com.google.common.base.Preconditions;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -18,6 +27,7 @@ import java.util.Set;
  * This class allows for converting
  */
 public class FieldSerializer {
+
     private static Set<ITypeSerializer> serializers = new HashSet<>();
     private static Map<String, FieldMapper<?, ?>> mappingAdapters = new HashMap<>();
 
@@ -26,7 +36,7 @@ public class FieldSerializer {
     }
 
     private static void addMapper(String id, FieldMapper<?, ?> mapper) {
-        Preconditions.checkArgument(!mappingAdapters.containsKey(id),"Cannot overwrite already registered adapter!");
+        Preconditions.checkArgument(!mappingAdapters.containsKey(id), "Cannot overwrite already registered adapter!");
         mappingAdapters.put(id, mapper);
     }
 
@@ -48,7 +58,7 @@ public class FieldSerializer {
         field.setAccessible(true);
         FieldWrapper wrapper = wrapperFor(field, instance, mapperId);
         NBTBase tag = null;
-        for (ITypeSerializer serializer: serializers) {
+        for (ITypeSerializer serializer : serializers) {
             try {
                 tag = serializer.serializeValue(wrapper);
                 if (tag != null)
@@ -60,11 +70,11 @@ public class FieldSerializer {
         return tag;
     }
 
-    public static void applyValue(NBTBase nbt, Field field, String mapperId){
+    public static void applyValue(NBTBase nbt, Field field, String mapperId) {
         applyValue(nbt, field, null, mapperId);
     }
 
-    public static void applyValue(@Nonnull NBTBase nbt, @Nonnull Field field, @Nullable Object instance, @Nonnull String mapperId){
+    public static void applyValue(@Nonnull NBTBase nbt, @Nonnull Field field, @Nullable Object instance, @Nonnull String mapperId) {
         field.setAccessible(true);
         FieldWrapper wrapper = wrapperFor(field, instance, mapperId);
         for (ITypeSerializer serializer : serializers) {
@@ -77,7 +87,8 @@ public class FieldSerializer {
         }
     }
 
-    private static abstract class PrimitiveSerializer implements ITypeSerializer{
+    private static abstract class PrimitiveSerializer implements ITypeSerializer {
+
         private final Class<?> primitiveClass;
         private final Class<?> boxedClass;
 
@@ -124,7 +135,7 @@ public class FieldSerializer {
         @Override
         public boolean applyValue(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
             return (getPrimitiveClass().equals(field.getMappedType()) && applyPrimitiveVal(tag, field)) ||
-                    (getBoxedClass().equals(field.getMappedType()) && applyBoxedVal(tag, field));
+                   (getBoxedClass().equals(field.getMappedType()) && applyBoxedVal(tag, field));
         }
 
         protected abstract NBTBase serializePrimitiveVal(FieldWrapper field) throws IllegalAccessException;
@@ -138,16 +149,17 @@ public class FieldSerializer {
         @Override
         public String toString() {
             return "PrimitiveSerializer{" +
-                    "primitiveClass=" + primitiveClass.getSimpleName() +
-                    ", boxedClass=" + boxedClass.getSimpleName() +
-                    '}';
+                   "primitiveClass=" + primitiveClass.getSimpleName() +
+                   ", boxedClass=" + boxedClass.getSimpleName() +
+                   '}';
         }
     }
 
     private static class StringSerializer implements ITypeSerializer {
+
         @Nullable
         @Override
-        public NBTBase serializeValue(FieldWrapper field) throws IllegalAccessException{
+        public NBTBase serializeValue(FieldWrapper field) throws IllegalAccessException {
             if (!field.getMappedType().equals(String.class))
                 return null;
             String val = field.get(String.class);
@@ -158,7 +170,7 @@ public class FieldSerializer {
         public boolean applyValue(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
             if (!field.getMappedType().equals(String.class) || !(tag instanceof NBTTagString))
                 return false;
-            field.set(((NBTTagString) tag).getString(), String.class);
+            field.set(((NBTTagString) tag).func_150285_a_(), String.class);
             return true;
         }
 
@@ -169,9 +181,10 @@ public class FieldSerializer {
     }
 
     private static class StringArraySerializer implements ITypeSerializer {
+
         @Nullable
         @Override
-        public NBTBase serializeValue(FieldWrapper field) throws IllegalAccessException{
+        public NBTBase serializeValue(FieldWrapper field) throws IllegalAccessException {
             if (!field.getMappedType().equals(String[].class))
                 return null;
             String[] val = field.get(String[].class);
@@ -194,7 +207,7 @@ public class FieldSerializer {
 
     public static void init() {
         clear();
-        addSerializer(new PrimitiveSerializer(boolean.class,Boolean.class) {
+        addSerializer(new PrimitiveSerializer(boolean.class, Boolean.class) {
             @Override
             protected NBTBase serializePrimitiveVal(FieldWrapper field) throws IllegalAccessException {
                 return new NBTTagByte((byte) (field.get(boolean.class) ? 0 : 1));
@@ -207,15 +220,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByte)) return false;
-                field.set(((NBTTagByte) tag).getByte() == 0, boolean.class);
+                if (!(tag instanceof NBTTagByte))
+                    return false;
+                field.set(((NBTTagByte) tag).func_150290_f() == 0, boolean.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByte)) return false;
-                field.set(((NBTTagByte) tag).getByte() == 0, Boolean.class);
+                if (!(tag instanceof NBTTagByte))
+                    return false;
+                field.set(((NBTTagByte) tag).func_150290_f() == 0, Boolean.class);
                 return true;
             }
         });
@@ -232,15 +247,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByte)) return false;
-                field.set(((NBTTagByte) tag).getByte(), byte.class);
+                if (!(tag instanceof NBTTagByte))
+                    return false;
+                field.set(((NBTTagByte) tag).func_150290_f(), byte.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByte)) return false;
-                field.set(((NBTTagByte) tag).getByte(), Byte.class);
+                if (!(tag instanceof NBTTagByte))
+                    return false;
+                field.set(((NBTTagByte) tag).func_150290_f(), Byte.class);
                 return true;
             }
         });
@@ -257,15 +274,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagShort)) return false;
-                field.set(((NBTTagShort) tag).getShort(), short.class);
+                if (!(tag instanceof NBTTagShort))
+                    return false;
+                field.set(((NBTTagShort) tag).func_150289_e(), short.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagShort)) return false;
-                field.set(((NBTTagShort) tag).getShort(), Short.class);
+                if (!(tag instanceof NBTTagShort))
+                    return false;
+                field.set(((NBTTagShort) tag).func_150289_e(), Short.class);
                 return true;
             }
         });
@@ -282,15 +301,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagShort)) return false;
-                field.set((char) ((NBTTagShort) tag).getShort(), char.class);
+                if (!(tag instanceof NBTTagShort))
+                    return false;
+                field.set((char) ((NBTTagShort) tag).func_150289_e(), char.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagShort)) return false;
-                field.set((char) ((NBTTagShort) tag).getShort(), Character.class);
+                if (!(tag instanceof NBTTagShort))
+                    return false;
+                field.set((char) ((NBTTagShort) tag).func_150289_e(), Character.class);
                 return true;
             }
         });
@@ -307,15 +328,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagInt)) return false;
-                field.set(((NBTTagInt) tag).getInt(), int.class);
+                if (!(tag instanceof NBTTagInt))
+                    return false;
+                field.set(((NBTTagInt) tag).func_150287_d(), int.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagInt)) return false;
-                field.set(((NBTTagInt) tag).getInt(), Integer.class);
+                if (!(tag instanceof NBTTagInt))
+                    return false;
+                field.set(((NBTTagInt) tag).func_150287_d(), Integer.class);
                 return true;
             }
         });
@@ -332,15 +355,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagFloat)) return false;
-                field.set(((NBTTagFloat) tag).getFloat(), float.class);
+                if (!(tag instanceof NBTTagFloat))
+                    return false;
+                field.set(((NBTTagFloat) tag).func_150288_h(), float.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagFloat)) return false;
-                field.set(((NBTTagFloat) tag).getFloat(), Float.class);
+                if (!(tag instanceof NBTTagFloat))
+                    return false;
+                field.set(((NBTTagFloat) tag).func_150288_h(), Float.class);
                 return true;
             }
         });
@@ -357,21 +382,23 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagDouble)) return false;
-                field.set(((NBTTagDouble) tag).getDouble(), double.class);
+                if (!(tag instanceof NBTTagDouble))
+                    return false;
+                field.set(((NBTTagDouble) tag).func_150286_g(), double.class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagDouble)) return false;
-                field.set(((NBTTagDouble) tag).getDouble(), Double.class);
+                if (!(tag instanceof NBTTagDouble))
+                    return false;
+                field.set(((NBTTagDouble) tag).func_150286_g(), Double.class);
                 return true;
             }
         });
         addSerializer(new StringSerializer());
         //Arrays
-        addSerializer(new PrimitiveSerializer(boolean[].class,Boolean[].class) {
+        addSerializer(new PrimitiveSerializer(boolean[].class, Boolean[].class) {
             @Override
             protected NBTBase serializePrimitiveVal(FieldWrapper field) throws IllegalAccessException {
                 return NBTTool.createBooleanList(field.get(boolean[].class));
@@ -384,14 +411,16 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByteArray)) return false;
+                if (!(tag instanceof NBTTagByteArray))
+                    return false;
                 field.set(NBTTool.readBooleanList((NBTTagByteArray) tag), boolean[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByteArray)) return false;
+                if (!(tag instanceof NBTTagByteArray))
+                    return false;
                 field.set(NBTTool.readBBooleanList((NBTTagByteArray) tag), Boolean[].class);
                 return true;
             }
@@ -409,15 +438,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByteArray)) return false;
-                field.set(((NBTTagByteArray) tag).getByteArray(), byte[].class);
+                if (!(tag instanceof NBTTagByteArray))
+                    return false;
+                field.set(((NBTTagByteArray) tag).func_150292_c(), byte[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagByteArray)) return false;
-                field.set(ArrayUtils.asBoxed(((NBTTagByteArray) tag).getByteArray()), Byte[].class);
+                if (!(tag instanceof NBTTagByteArray))
+                    return false;
+                field.set(ArrayUtils.asBoxed(((NBTTagByteArray) tag).func_150292_c()), Byte[].class);
                 return true;
             }
         });
@@ -434,14 +465,16 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readShortList((NBTTagList) tag), short[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readBShortList((NBTTagList) tag), Short[].class);
                 return true;
             }
@@ -459,15 +492,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagString)) return false;
-                field.set(((NBTTagString) tag).getString().toCharArray(), char[].class);
+                if (!(tag instanceof NBTTagString))
+                    return false;
+                field.set(((NBTTagString) tag).func_150285_a_().toCharArray(), char[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagString)) return false;
-                field.set(ArrayUtils.asBoxed(((NBTTagString) tag).getString().toCharArray()), Character[].class);
+                if (!(tag instanceof NBTTagString))
+                    return false;
+                field.set(ArrayUtils.asBoxed(((NBTTagString) tag).func_150285_a_().toCharArray()), Character[].class);
                 return true;
             }
         });
@@ -484,15 +519,17 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagIntArray)) return false;
-                field.set(((NBTTagIntArray) tag).getIntArray(), int[].class);
+                if (!(tag instanceof NBTTagIntArray))
+                    return false;
+                field.set(((NBTTagIntArray) tag).func_150302_c(), int[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagIntArray)) return false;
-                field.set(ArrayUtils.asBoxed(((NBTTagIntArray) tag).getIntArray()), Integer[].class);
+                if (!(tag instanceof NBTTagIntArray))
+                    return false;
+                field.set(ArrayUtils.asBoxed(((NBTTagIntArray) tag).func_150302_c()), Integer[].class);
                 return true;
             }
         });
@@ -509,14 +546,16 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readFloatList((NBTTagList) tag), float[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readBFloatList((NBTTagList) tag), Float[].class);
                 return true;
             }
@@ -534,14 +573,16 @@ public class FieldSerializer {
 
             @Override
             protected boolean applyPrimitiveVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readDoubleList((NBTTagList) tag), double[].class);
                 return true;
             }
 
             @Override
             protected boolean applyBoxedVal(NBTBase tag, FieldWrapper field) throws IllegalAccessException {
-                if (!(tag instanceof NBTTagList)) return false;
+                if (!(tag instanceof NBTTagList))
+                    return false;
                 field.set(NBTTool.readBDoubleList((NBTTagList) tag), Double[].class);
                 return true;
             }

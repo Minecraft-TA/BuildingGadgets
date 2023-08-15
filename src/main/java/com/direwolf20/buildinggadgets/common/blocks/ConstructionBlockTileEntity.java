@@ -29,7 +29,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
 
     @Nullable
     public IBlockState getBlockState() {
-        if (blockState == null || blockState == Blocks.air.getDefaultState()) {
+        if (blockState == null || blockState == IBlockState.AIR_STATE) {
             return null;
         }
         return blockState;
@@ -37,7 +37,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
 
     @Nullable
     public IBlockState getActualBlockState() {
-        if (actualBlockState == null || actualBlockState == Blocks.air.getDefaultState()) {
+        if (actualBlockState == null || actualBlockState == IBlockState.AIR_STATE) {
             return null;
         }
         return actualBlockState;
@@ -46,8 +46,8 @@ public class ConstructionBlockTileEntity extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        blockState = NBTUtil.readBlockState(compound.getCompoundTag("blockState"));
-        actualBlockState = NBTUtil.readBlockState(compound.getCompoundTag("actualBlockState"));
+        blockState = NBTPortUtil.readBlockState(compound.getCompoundTag("blockState"));
+        actualBlockState = NBTPortUtil.readBlockState(compound.getCompoundTag("actualBlockState"));
         markDirtyClient();
     }
 
@@ -94,11 +94,11 @@ public class ConstructionBlockTileEntity extends TileEntity {
             NBTTagCompound blockStateTag = new NBTTagCompound();
             NBTTagCompound actualBlockStateTag = new NBTTagCompound();
             if (blockState != null) {
-                NBTUtil.writeBlockState(blockStateTag, blockState);
+                NBTPortUtil.writeBlockState(blockStateTag, blockState);
                 compound.setTag("blockState", blockStateTag);
             }
             if (actualBlockState != null) {
-                NBTUtil.writeBlockState(actualBlockStateTag, actualBlockState);
+                NBTPortUtil.writeBlockState(actualBlockStateTag, actualBlockState);
                 compound.setTag("actualBlockState", actualBlockStateTag);
             }
         }

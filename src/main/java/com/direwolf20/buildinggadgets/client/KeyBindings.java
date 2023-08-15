@@ -1,19 +1,14 @@
 package com.direwolf20.buildinggadgets.client;
 
-import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraftforge.client.settings.IKeyConflictContext;
-import net.minecraftforge.client.settings.KeyConflictContext;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.settings.KeyBinding;
 import org.lwjgl.input.Keyboard;
 
 @SideOnly(Side.CLIENT)
 public class KeyBindings {
 
-    private static final KeyConflictContextGadget CONFLICT_CONTEXT_GADGET = new KeyConflictContextGadget();
     public static KeyBinding menuSettings;
     public static KeyBinding range;
     public static KeyBinding rotateMirror;
@@ -35,22 +30,8 @@ public class KeyBindings {
     }
 
     private static KeyBinding createBinding(String name, int key) {
-        KeyBinding keyBinding = new KeyBinding("key." + name, CONFLICT_CONTEXT_GADGET, key, "key.categories.buildingGadgets");
+        KeyBinding keyBinding = new KeyBinding("key." + name, key, "key.categories.buildingGadgets");
         ClientRegistry.registerKeyBinding(keyBinding);
         return keyBinding;
-    }
-
-    public static class KeyConflictContextGadget implements IKeyConflictContext
-    {
-        @Override
-        public boolean isActive() {
-            return !KeyConflictContext.GUI.isActive() && Minecraft.getMinecraft().thePlayer != null
-                    && !GadgetGeneric.getGadget(Minecraft.getMinecraft().thePlayer).isEmpty();
-        }
-
-        @Override
-        public boolean conflicts(IKeyConflictContext other) {
-            return other == this || other == KeyConflictContext.IN_GAME;
-        }
     }
 }

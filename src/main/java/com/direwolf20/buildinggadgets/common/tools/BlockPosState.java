@@ -1,9 +1,6 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nullable;
 
@@ -11,12 +8,13 @@ import javax.annotation.Nullable;
  * Used to store a single Blocks Position along with it's state
  * It's important that we also remember if we're storing a construction
  * block as this will be important to know for many of our tools.
- *
+ * <p>
  * This class also comes with a handy method to allow us to convert our data
  * into a NBTTagCompound and back out of a NBTTagCompound making this ideal
  * for any code that uses this data to store to the world save.
  */
 public class BlockPosState {
+
     private static final String NBT_BLOCK_POS = "block_pos";
     private static final String NBT_BLOCK_STATE = "block_state";
     private static final String NBT_BLOCK_PASTE = "block_is_paste";
@@ -51,9 +49,9 @@ public class BlockPosState {
     public NBTTagCompound toCompound() {
         NBTTagCompound compound = new NBTTagCompound();
         NBTTagCompound stateCompound = new NBTTagCompound();
-        NBTTagCompound posCompound = NBTUtil.createPosTag(this.pos);
+        NBTTagCompound posCompound = NBTPortUtil.createPosTag(this.pos);
 
-        NBTUtil.writeBlockState(stateCompound, this.state);
+        NBTPortUtil.writeBlockState(stateCompound, this.state);
 
         compound.setTag(NBT_BLOCK_POS, posCompound);
         compound.setTag(NBT_BLOCK_STATE, stateCompound);
@@ -68,13 +66,13 @@ public class BlockPosState {
      */
     @Nullable
     public static BlockPosState fromCompound(NBTTagCompound compound) {
-        if( !compound.hasKey(NBT_BLOCK_POS) )
+        if (!compound.hasKey(NBT_BLOCK_POS))
             return null;
 
         return new BlockPosState(
-                NBTUtil.getPosFromTag( compound.getCompoundTag(NBT_BLOCK_POS) ),
-                NBTUtil.readBlockState( compound.getCompoundTag(NBT_BLOCK_STATE) ),
-                compound.getBoolean(NBT_BLOCK_PASTE)
+            NBTPortUtil.readPosTag(compound.getCompoundTag(NBT_BLOCK_POS)),
+            NBTPortUtil.readBlockState(compound.getCompoundTag(NBT_BLOCK_STATE)),
+            compound.getBoolean(NBT_BLOCK_PASTE)
         );
     }
 }

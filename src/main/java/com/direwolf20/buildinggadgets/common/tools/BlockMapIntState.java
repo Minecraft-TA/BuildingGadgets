@@ -1,14 +1,10 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -75,10 +71,10 @@ public class BlockMapIntState {
     }
 
     public Map<Short, IBlockState> getIntStateMapFromNBT(NBTTagList tagList) {
-        intStateMap = new HashMap<Short, IBlockState>();
+        intStateMap = new HashMap<>();
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound compound = tagList.getCompoundTagAt(i);
-            intStateMap.put(compound.getShort("mapSlot"), NBTUtil.readBlockState(compound.getCompoundTag("mapState")));
+            intStateMap.put(compound.getShort("mapSlot"), NBTPortUtil.readBlockState(compound.getCompoundTag("mapState")));
         }
         return intStateMap;
     }
@@ -88,7 +84,7 @@ public class BlockMapIntState {
         for (Map.Entry<Short, IBlockState> entry : intStateMap.entrySet()) {
             NBTTagCompound compound = new NBTTagCompound();
             NBTTagCompound state = new NBTTagCompound();
-            NBTUtil.writeBlockState(state, entry.getValue());
+            NBTPortUtil.writeBlockState(state, entry.getValue());
             compound.setShort("mapSlot", entry.getKey());
             compound.setTag("mapState", state);
             tagList.appendTag(compound);
@@ -125,19 +121,14 @@ public class BlockMapIntState {
         //} else {
         //}
         try {
-            itemStack = state.getBlock().getPickBlock(state, null, player.worldObj, pos, player);
+            itemStack = state.getBlock().getPickBlock(null, player.worldObj, pos.getX(), pos.getY(), pos.getZ(), player);
         } catch (Exception e) {
             itemStack = InventoryManipulation.getSilkTouchDrop(state);
         }
-        if (itemStack.isEmpty()) {
+        if (itemStack == null) {
             itemStack = InventoryManipulation.getSilkTouchDrop(state);
         }
-        if (!itemStack.isEmpty()) {
-            UniqueItem uniqueItem = new UniqueItem(itemStack.getItem(), itemStack.getMetadata());
-            return uniqueItem;
-        }
-        UniqueItem uniqueItem = new UniqueItem(Items.AIR, 0);
-        return uniqueItem;
+        return new UniqueItem(itemStack.getItem(), itemStack.getItemDamage());
         //throw new IllegalArgumentException("A UniqueItem could net be retrieved for the the follwing state (at position " + pos + "): " + state);
     }
 

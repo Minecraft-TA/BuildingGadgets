@@ -11,17 +11,16 @@ import com.direwolf20.buildinggadgets.common.building.modes.ExchangingVerticalCo
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
 import com.google.common.collect.ImmutableList;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
 
 public enum ExchangingModes {
     Surface("surface.png", new ExchangingSurfaceMode(ExchangingModes::combineTester)),
@@ -60,32 +59,32 @@ public enum ExchangingModes {
 
     public static ExchangingModes byName(String name) {
         return Arrays.stream(values())
-                .filter(mode -> mode.getRegistryName().equals(name))
-                .findFirst()
-                .orElse(Surface);
+            .filter(mode -> mode.getRegistryName().equals(name))
+            .findFirst()
+            .orElse(Surface);
     }
 
     private static final ImmutableList<ResourceLocation> ICONS = Arrays.stream(values())
-            .map(ExchangingModes::getIcon)
-            .collect(ImmutableList.toImmutableList());
+        .map(ExchangingModes::getIcon)
+        .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
 
     public static ImmutableList<ResourceLocation> getIcons() {
         return ICONS;
     }
 
-    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool, BlockPos initial) {
+    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool, BlockPos initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
         return mode.createExecutionContext(player, hit, sideHit, tool).collectFilteredSequence(world, tool, player, initial);
     }
 
     public static BiPredicate<BlockPos, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, BlockPos initial) {
-        IBlockState initialBlockState = world.getBlockState(initial);
+        IBlockState initialBlockState = IBlockState.getStateFromWorld(world, initial);
         IBlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
-            IBlockState worldBlockState = world.getBlockState(pos);
+            IBlockState worldBlockState = IBlockState.getStateFromWorld(world, pos);
 
             // Don't try to replace for the same block
-            if (worldBlockState == target)
+            if (worldBlockState.equals(target))
                 return false;
 
             // No need to replace if source and target are the same if fuzzy mode is off
@@ -93,15 +92,15 @@ public enum ExchangingModes {
                 return false;
 
             // If the target is already enqueued, don't replace it
-            if (worldBlockState == ModBlocks.effectBlock.getDefaultState())
+            if (worldBlockState.getBlock() == ModBlocks.effectBlock)
                 return false;
 
             // Only replace existing blocks, don't place more
-            if (worldBlockState.getBlock().isAir(worldBlockState, world, pos))
+            if (worldBlockState.getBlock().isAir(world, pos.getX(), pos.getY(), pos.getZ()))
                 return false;
 
             // Messy, lovely.
-            if( SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock().getDefaultState().getBlock()) )
+            if (SyncedConfig.blockBlacklist.contains(worldBlockState.getBlock()))
                 return false;
 
             TileEntity tile = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
@@ -112,11 +111,11 @@ public enum ExchangingModes {
                 return false;
 
             // Bedrock, End Portal Frame, etc.
-            if (worldBlockState.getBlockHardness(world, pos) < 0)
+            if (worldBlockState.getBlock().getBlockHardness(world, pos.getX(), pos.getY(), pos.getZ()) < 0)
                 return false;
 
             // Don't replace liquids
-            return !worldBlockState.getMaterial().isLiquid();
+            return !worldBlockState.getBlock().getMaterial().isLiquid();
         };
     }
 

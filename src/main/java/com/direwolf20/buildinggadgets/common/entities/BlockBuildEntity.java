@@ -75,7 +75,7 @@ public class BlockBuildEntity extends Entity {
                 }
                 setSetBlock(setBlock);
             } else {
-                setBlock = Blocks.air.getDefaultState();
+                setBlock = IBlockState.AIR_STATE;
                 setSetBlock(setBlock);
             }
         }
@@ -168,7 +168,7 @@ public class BlockBuildEntity extends Entity {
                     world.getBlockState(setPos).getBlock().neighborChanged(setBlock, world, setPos, world.getBlockState(setPos.up()).getBlock(), setPos.up());
                 }
             } else if (setPos != null && setBlock != null && getToolMode() == 2) {
-                world.setBlockState(setPos, Blocks.air.getDefaultState());
+                world.setBlockState(setPos, IBlockState.AIR_STATE);
             } else if (setPos != null && setBlock != null && getToolMode() == 3) {
                 world.spawnEntity(new BlockBuildEntity(world, setPos, spawnedBy, originalSetBlock, 1, actualSetBlock, getUsingConstructionPaste()));
             }
@@ -191,14 +191,14 @@ public class BlockBuildEntity extends Entity {
     public void writeEntityToNBT(NBTTagCompound compound) {
         compound.setInteger("despawning", despawning);
         compound.setInteger("ticksExisted", ticksExisted);
-        compound.setTag("setPos", NBTUtil.createPosTag(setPos));
+        compound.setTag("setPos", NBTPortUtil.createPosTag(setPos));
         NBTTagCompound blockStateTag = new NBTTagCompound();
-        NBTUtil.writeBlockState(blockStateTag, setBlock);
+        NBTPortUtil.writeBlockState(blockStateTag, setBlock);
         compound.setTag("setBlock", blockStateTag);
         NBTTagCompound actualBlockStateTag = new NBTTagCompound();
-        NBTUtil.writeBlockState(actualBlockStateTag, actualSetBlock);
+        NBTPortUtil.writeBlockState(actualBlockStateTag, actualSetBlock);
         compound.setTag("actualSetBlock", actualBlockStateTag);
-        NBTUtil.writeBlockState(blockStateTag, originalSetBlock);
+        NBTPortUtil.writeBlockState(blockStateTag, originalSetBlock);
         compound.setTag("originalBlock", blockStateTag);
         compound.setInteger("mode", mode);
         compound.setBoolean("paste", useConstructionPaste);
@@ -208,10 +208,10 @@ public class BlockBuildEntity extends Entity {
     public void readEntityFromNBT(NBTTagCompound compound) {
         despawning = compound.getInteger("despawning");
         ticksExisted = compound.getInteger("ticksExisted");
-        setPos = NBTUtil.getPosFromTag(compound.getCompoundTag("setPos"));
-        setBlock = NBTUtil.readBlockState(compound.getCompoundTag("setBlock"));
-        originalSetBlock = NBTUtil.readBlockState(compound.getCompoundTag("originalBlock"));
-        actualSetBlock = NBTUtil.readBlockState(compound.getCompoundTag("actualSetBlock"));
+        setPos = NBTPortUtil.readPosTag(compound.getCompoundTag("setPos"));
+        setBlock = NBTPortUtil.readBlockState(compound.getCompoundTag("setBlock"));
+        originalSetBlock = NBTPortUtil.readBlockState(compound.getCompoundTag("originalBlock"));
+        actualSetBlock = NBTPortUtil.readBlockState(compound.getCompoundTag("actualSetBlock"));
         mode = compound.getInteger("mode");
         useConstructionPaste = compound.getBoolean("paste");
     }

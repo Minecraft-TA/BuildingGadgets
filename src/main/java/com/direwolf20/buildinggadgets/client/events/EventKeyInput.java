@@ -31,11 +31,15 @@ public class EventKeyInput {
     }
 
     private static void handleEventInput() {
+        Minecraft mc = Minecraft.getMinecraft();
+        // Pre-condition moved from KeyBindings.KeyConflictContextGadget.isActive()
+        if (mc.thePlayer == null || mc.currentScreen != null || GadgetGeneric.getGadget(mc.thePlayer) == null)
+            return;
+
         if (KeyBindings.menuSettings.getIsKeyPressed() /*&& // TODO: Modifiers don't exist, what does this code do?
             ((KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) ||
              KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE)*/) {
             //PacketHandler.INSTANCE.sendToServer(new PacketToggleMode());
-            Minecraft mc = Minecraft.getMinecraft();
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
             if (tool != null)
                 mc.displayGuiScreen(new ModeRadialMenu(tool));

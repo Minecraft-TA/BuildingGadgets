@@ -2,28 +2,38 @@ package com.direwolf20.buildinggadgets.common.tools;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IBuildingMode;
-import com.direwolf20.buildinggadgets.common.building.modes.*;
+import com.direwolf20.buildinggadgets.common.building.modes.BuildToMeMode;
+import com.direwolf20.buildinggadgets.common.building.modes.BuildingHorizontalColumnMode;
+import com.direwolf20.buildinggadgets.common.building.modes.BuildingSurfaceMode;
+import com.direwolf20.buildinggadgets.common.building.modes.BuildingVerticalColumnMode;
+import com.direwolf20.buildinggadgets.common.building.modes.GridMode;
+import com.direwolf20.buildinggadgets.common.building.modes.HorizontalWallMode;
+import com.direwolf20.buildinggadgets.common.building.modes.StairMode;
+import com.direwolf20.buildinggadgets.common.building.modes.VerticalWallMode;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectArrayMap;
 import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
 import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
 import it.unimi.dsi.fastutil.doubles.DoubleSortedSet;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.World;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Spliterators;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.Spliterator.ORDERED;
-import static java.util.Spliterator.SORTED;
 
 public enum BuildingModes {
     BuildToMe("build_to_me.png", new BuildToMeMode(BuildingModes::combineTester)),
@@ -64,29 +74,29 @@ public enum BuildingModes {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool, BlockPos initial) {
+    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool, BlockPos initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
 
         // stream, sort by closes to the player, collect, return
         return StreamSupport.stream(
-                Spliterators.spliteratorUnknownSize(
-                        mode.createExecutionContext(player, hit, sideHit, tool).getFilteredSequence(world, tool, player, initial),
-                        ORDERED
-                ),
-                false
+            Spliterators.spliteratorUnknownSize(
+                mode.createExecutionContext(player, hit, sideHit, tool).getFilteredSequence(world, tool, player, initial),
+                ORDERED
+            ),
+            false
         ).sorted(Comparator.comparingDouble((e) -> e.distanceSqToCenter(player.posX, player.posY + player.getEyeHeight(), player.posZ))).collect(Collectors.toList());
     }
 
     public static BuildingModes byName(String name) {
         return Arrays.stream(values())
-                .filter(mode -> mode.getRegistryName().equals(name))
-                .findFirst()
-                .orElse(BuildToMe);
+            .filter(mode -> mode.getRegistryName().equals(name))
+            .findFirst()
+            .orElse(BuildToMe);
     }
 
     private static final ImmutableList<ResourceLocation> ICONS = Arrays.stream(values())
-            .map(BuildingModes::getIcon)
-            .collect(ImmutableList.toImmutableList());
+        .map(BuildingModes::getIcon)
+        .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
 
     public static ImmutableList<ResourceLocation> getIcons() {
         return ICONS;
@@ -95,14 +105,14 @@ public enum BuildingModes {
     public static BiPredicate<BlockPos, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, BlockPos initial) {
         IBlockState target = GadgetUtils.getToolBlock(tool);
         return (pos, state) -> {
-            IBlockState current = world.getBlockState(pos);
-            if (! target.getBlock().canPlaceBlockAt(world, pos))
+            IBlockState current = IBlockState.getStateFromWorld(world, pos);
+            if (!target.getBlock().canPlaceBlockAt(world, pos.getX(), pos.getY(), pos.getZ()))
                 return false;
             if (pos.getY() < 0)
                 return false;
             if (SyncedConfig.canOverwriteBlocks)
-                return current.getBlock().isReplaceable(world, pos);
-            return current.getBlock().isAir(current, world, pos);
+                return current.getBlock().isReplaceable(world, pos.getX(), pos.getY(), pos.getZ());
+            return current.getBlock().isAir(world, pos.getX(), pos.getY(), pos.getZ());
         };
     }
 
@@ -132,7 +142,7 @@ public enum BuildingModes {
         }
         for (double dist : distances) {
             //System.out.println(dist);
-            BlockPos pos = new BlockPos(rangeMap.get(dist));
+            BlockPos pos = rangeMap.get(dist);
             sortedMap.add(new BlockMap(pos, PosToStateMap.get(pos), PosToX.get(pos), PosToY.get(pos), PosToZ.get(pos)));
         }
         //System.out.println(unSortedList);

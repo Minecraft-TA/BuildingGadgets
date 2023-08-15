@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
 import com.direwolf20.buildinggadgets.common.tools.ToolRenders;
@@ -12,11 +13,13 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -77,9 +80,10 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public static class Handler implements IMessageHandler<PacketSetRemoteInventoryCache, IMessage> {
         @Override
         public IMessage onMessage(PacketSetRemoteInventoryCache message, MessageContext ctx) {
+            ctx.getServerHandler().proc essAnimation();
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 if (ctx.side == Side.SERVER) {
-                    EntityPlayerMP player = ctx.getServerHandler().player;
+                    EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                     Set<UniqueItem> itemTypes = new HashSet<>();
                     ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
                     IItemHandler remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);

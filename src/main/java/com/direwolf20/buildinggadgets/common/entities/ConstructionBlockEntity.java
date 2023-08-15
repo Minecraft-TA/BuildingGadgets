@@ -126,7 +126,7 @@ public class ConstructionBlockEntity extends Entity {
     public void writeEntityToNBT(NBTTagCompound compound) {
         compound.setInteger("despawning", despawning);
         compound.setInteger("ticksExisted", ticksExisted);
-        compound.setTag("setPos", NBTUtil.createPosTag(setPos));
+        compound.setTag("setPos", NBTPortUtil.createPosTag(setPos));
         compound.setBoolean("makingPaste", getMakingPaste());
     }
 
@@ -135,7 +135,7 @@ public class ConstructionBlockEntity extends Entity {
         //System.out.println(compound);
         despawning = compound.getInteger("despawning");
         ticksExisted = compound.getInteger("ticksExisted");
-        setPos = NBTUtil.getPosFromTag(compound.getCompoundTag("setPos"));
+        setPos = NBTPortUtil.readPosTag(compound.getCompoundTag("setPos"));
         setMakingPaste(compound.getBoolean("makingPaste"));
     }
 

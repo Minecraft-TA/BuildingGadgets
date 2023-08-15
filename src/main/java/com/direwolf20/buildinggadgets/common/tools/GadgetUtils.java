@@ -12,28 +12,22 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multiset;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.Mirror;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Rotation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,16 +41,16 @@ import java.util.concurrent.TimeUnit;
 public class GadgetUtils {
 
     private static final ImmutableList<String> LINK_STARTS = ImmutableList.of("http", "www");
-    private static Supplier<IItemHandler> remoteInventorySupplier;
+    private static Supplier<IInventory> remoteInventorySupplier;
 
     public static boolean mightBeLink(final String s) {
         return LINK_STARTS.stream().anyMatch(s::startsWith);
     }
 
     public static final Comparator<Vec3i> POSITION_COMPARATOR = Comparator
-            .comparingInt(Vec3i::getX)
-            .thenComparingInt(Vec3i::getY)
-            .thenComparingInt(Vec3i::getZ);
+        .comparingInt(Vec3i::getX)
+        .thenComparingInt(Vec3i::getY)
+        .thenComparingInt(Vec3i::getZ);
 
     public static String getStackErrorSuffix(ItemStack stack) {
         return getStackErrorText(stack) + " with NBT tag: " + stack.getTagCompound();
@@ -68,8 +62,9 @@ public class GadgetUtils {
 
     @Nullable
     public static ByteArrayOutputStream getPasteStream(@Nonnull NBTTagCompound compound, @Nullable String name) throws IOException {
-        NBTTagCompound withText = name != null && !name.isEmpty() ? compound.copy() : compound;
-        if (name != null && !name.isEmpty()) withText.setString("name", name);
+        NBTTagCompound withText = name != null && !name.isEmpty() ? (NBTTagCompound) compound.copy() : compound;
+        if (name != null && !name.isEmpty())
+            withText.setString("name", name);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         CompressedStreamTools.writeCompressed(withText, baos);
         return baos.size() < Short.MAX_VALUE - 200 ? baos : null;
@@ -134,7 +129,7 @@ public class GadgetUtils {
             int p = (px + py + pz);
             array[idx++] = p;
         }
-        compound.setTag("startBlock", NBTUtil.createPosTag(startBlock));
+        compound.setTag("startBlock", NBTPortUtil.createPosTag(startBlock));
         compound.setIntArray("undoIntCoords", array);
         return compound;
     }
@@ -144,7 +139,7 @@ public class GadgetUtils {
         int dim = compound.getInteger("dim");
         List<BlockPos> coordinates = new ArrayList<BlockPos>();
         int[] array = compound.getIntArray("undoIntCoords");
-        BlockPos startBlock = NBTUtil.getPosFromTag(compound.getCompoundTag("startBlock"));
+        BlockPos startBlock = NBTPortUtil.readPosTag(compound.getCompoundTag("startBlock"));
         for (int i = 0; i <= array.length - 1; i++) {
             int p = array[i];
             int x = startBlock.getX() + (byte) ((p & 0xff0000) >> 16);
@@ -164,7 +159,7 @@ public class GadgetUtils {
             tagCompound = new NBTTagCompound();
         }
         for (BlockPos coord : coordinates) {
-            coords.appendTag(NBTUtil.createPosTag(coord));
+            coords.appendTag(NBTPortUtil.createPosTag(coord));
         }
         tagCompound.setTag("anchorcoords", coords);
         stack.setTagCompound(tagCompound);
@@ -189,7 +184,7 @@ public class GadgetUtils {
             return coordinates;
         }
         for (int i = 0; i < coordList.tagCount(); i++) {
-            coordinates.add(NBTUtil.getPosFromTag(coordList.getCompoundTagAt(i)));
+            coordinates.add(NBTPortUtil.readPosTag(coordList.getCompoundTagAt(i)));
         }
         return coordinates;
     }
@@ -202,14 +197,16 @@ public class GadgetUtils {
 
     public static int getToolRange(ItemStack stack) {
         NBTTagCompound tagCompound = NBTTool.getOrNewTag(stack);
-        return MathHelper.clamp(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
+        return MathHelper.clamp_int(tagCompound.getInteger("range"), 1, SyncedConfig.maxRange);
     }
 
     public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation, IBlockState state) {
-        if (operation == PacketRotateMirror.Operation.MIRROR)
+        // TODO: Not possible this easily anymore
+        /*if (operation == PacketRotateMirror.Operation.MIRROR)
             return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT : Mirror.FRONT_BACK);
 
-        return state.withRotation(Rotation.CLOCKWISE_90);
+        return state.withRotation(Rotation.CLOCKWISE_90);*/
+        return state;
     }
 
     public static void rotateOrMirrorToolBlock(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation operation) {
@@ -224,11 +221,9 @@ public class GadgetUtils {
             tagCompound = new NBTTagCompound();
         }
         if (state == null) {
-            state = Blocks.air.getDefaultState();
+            state = IBlockState.AIR_STATE;
         }
-        NBTTagCompound stateTag = new NBTTagCompound();
-        NBTUtil.writeBlockState(stateTag, state);
-        tagCompound.setTag("blockstate", stateTag);
+        tagCompound.setInteger("blockstate", state.getMeta());
         stack.setTagCompound(tagCompound);
     }
 
@@ -239,10 +234,10 @@ public class GadgetUtils {
             tagCompound = new NBTTagCompound();
         }
         if (state == null) {
-            state = Blocks.air.getDefaultState();
+            state = IBlockState.AIR_STATE;
         }
         NBTTagCompound stateTag = new NBTTagCompound();
-        NBTUtil.writeBlockState(stateTag, state);
+        NBTPortUtil.writeBlockState(stateTag, state);
         tagCompound.setTag("actualblockstate", stateTag);
         stack.setTagCompound(tagCompound);
     }
@@ -250,20 +245,20 @@ public class GadgetUtils {
     public static IBlockState getToolBlock(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
-            setToolBlock(stack, Blocks.air.getDefaultState());
-            return Blocks.air.getDefaultState();
+            setToolBlock(stack, IBlockState.AIR_STATE);
+            return IBlockState.AIR_STATE;
         }
-        return NBTUtil.readBlockState(tagCompound.getCompoundTag("blockstate"));
+        return NBTPortUtil.readBlockState(tagCompound.getCompoundTag("blockstate"));
     }
 
     public static IBlockState getToolActualBlock(ItemStack stack) {
         NBTTagCompound tagCompound = stack.getTagCompound();
         if (tagCompound == null) {
-            setToolBlock(stack, Blocks.air.getDefaultState());
+            setToolBlock(stack, IBlockState.AIR_STATE);
             tagCompound = stack.getTagCompound();
-            return Blocks.air.getDefaultState();
+            return IBlockState.AIR_STATE;
         }
-        return NBTUtil.readBlockState(tagCompound.getCompoundTag("actualblockstate"));
+        return NBTPortUtil.readBlockState(tagCompound.getCompoundTag("actualblockstate"));
     }
 
     public static void selectBlock(ItemStack stack, EntityPlayer player) {
@@ -273,18 +268,20 @@ public class GadgetUtils {
         if (lookingAt == null)
             return;
 
-        BlockPos pos = lookingAt.getBlockPos();
+        BlockPos pos = new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ);
         EnumActionResult result = setRemoteInventory(stack, player, world, pos, true);
         if (result == EnumActionResult.SUCCESS)
             return;
 
-        IBlockState state = world.getBlockState(pos);
-        if (result == EnumActionResult.FAIL || SyncedConfig.blockBlacklist.contains(state.getBlock()) || state.getBlock() instanceof EffectBlock ) {
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.invalidblock").getUnformattedComponentText()), true);
+        IBlockState state = IBlockState.getStateFromWorld(world, pos);
+        if (result == EnumActionResult.FAIL || SyncedConfig.blockBlacklist.contains(state.getBlock()) || state.getBlock() instanceof EffectBlock) {
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.invalidblock").getUnformattedTextForChat()));
             return;
         }
         IBlockState placeState = InventoryManipulation.getSpecificStates(state, world, player, pos, stack);
-        IBlockState actualState = placeState.getActualState(world, pos);
+        // TODO: getActualState doesn't exist, but there's custom stuff like BlockDoor.func_150012_g (getFullMetadata)
+//        IBlockState actualState = placeState.getActualState(world, pos);
+        IBlockState actualState = placeState;
         setToolBlock(stack, placeState);
         setToolActualBlock(stack, actualState);
     }
@@ -299,7 +296,7 @@ public class GadgetUtils {
             setToolActualBlock(stack, ((ConstructionBlockTileEntity) te).getActualBlockState());
             return EnumActionResult.SUCCESS;
         }
-        if (setRemoteInventory(player, stack, pos, world.provider.getDimension(), world))
+        if (setRemoteInventory(player, stack, pos, world.provider.dimensionId, world))
             return EnumActionResult.SUCCESS;
 
         return EnumActionResult.FAIL;
@@ -309,14 +306,14 @@ public class GadgetUtils {
         //Stores the current visual blocks in NBT on the tool, so the player can look around without moving the visual render
         World world = player.worldObj;
         List<BlockPos> currentCoords = getAnchor(stack);
-        if (currentCoords.size() == 0) {  //If we don't have an anchor, find the block we're supposed to anchor to
+        if (currentCoords.isEmpty()) {  //If we don't have an anchor, find the block we're supposed to anchor to
             MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, stack);
             if (lookingAt == null) {  //If we aren't looking at anything, exit
                 return false;
             }
-            BlockPos startBlock = lookingAt.getBlockPos();
-            EnumFacing sideHit = lookingAt.sideHit;
-            if (startBlock == null || world.getBlockState(startBlock) == Blocks.air.getDefaultState()) { //If we are looking at air, exit
+            BlockPos startBlock = new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ);
+            int sideHit = lookingAt.sideHit;
+            if (IBlockState.getStateFromWorld(world, startBlock) == IBlockState.AIR_STATE) { //If we are looking at air, exit
                 return false;
             }
             List<BlockPos> coords = new ArrayList<BlockPos>();
@@ -326,10 +323,10 @@ public class GadgetUtils {
                 coords = ExchangingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock); // Build the positions list based on tool mode and range
             }
             setAnchor(stack, coords); //Set the anchor NBT
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedTextForChat()));
         } else {  //If theres already an anchor, remove it.
             setAnchor(stack, new ArrayList<BlockPos>());
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedTextForChat()));
         }
         return true;
     }
@@ -338,7 +335,7 @@ public class GadgetUtils {
         if (getRemoteInventory(pos, dim, world, player) != null) {
             boolean same = pos.equals(getPOSFromNBT(tool, "boundTE"));
             writePOSToNBT(tool, same ? null : pos, "boundTE", dim);
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget." + (same ? "unboundTE" : "boundTE")).getUnformattedTextForChat()));
             return true;
         }
         return false;
@@ -349,7 +346,7 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player) {
         return getRemoteInventory(tool, world, player, NetworkIO.Operation.EXTRACT);
     }
 
@@ -357,7 +354,7 @@ public class GadgetUtils {
      * Call {@link #clearCachedRemoteInventory clearCachedRemoteInventory} when done using this method
      */
     @Nullable
-    public static IItemHandler getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(ItemStack tool, World world, EntityPlayer player, NetworkIO.Operation operation) {
         if (remoteInventorySupplier == null) {
             remoteInventorySupplier = Suppliers.memoizeWithExpiration(() -> {
                 Integer dim = getDIMFromNBT(tool, "boundTE");
@@ -376,35 +373,40 @@ public class GadgetUtils {
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(BlockPos pos, int dim, World world, EntityPlayer player) {
+    public static IInventory getRemoteInventory(BlockPos pos, int dim, World world, EntityPlayer player) {
         return getRemoteInventory(pos, dim, world, player, NetworkIO.Operation.EXTRACT);
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(BlockPos pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
-        MinecraftServer server = world.getMinecraftServer();
-        if (server == null) return null;
-        World worldServer = server.getWorld(dim);
-        if (worldServer == null) return null;
+    public static IInventory getRemoteInventory(BlockPos pos, int dim, World world, EntityPlayer player, NetworkIO.Operation operation) {
+        if (world.isRemote)
+            return null;
+        World worldServer = MinecraftServer.getServer().worldServerForDimension(dim);
+        if (worldServer == null)
+            return null;
         return getRemoteInventory(pos, worldServer, player, operation);
     }
 
     @Nullable
-    public static IItemHandler getRemoteInventory(BlockPos pos, World world, EntityPlayer player, NetworkIO.Operation operation) {
+    public static IInventory getRemoteInventory(BlockPos pos, World world, EntityPlayer player, NetworkIO.Operation operation) {
         TileEntity te = world.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
-        if (te == null) return null;
-        IItemHandler network = NetworkProvider.getWrappedNetwork(te, player, operation);
-        if (network != null) return network;
-        IItemHandler cap = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        return cap != null ? cap : null;
+        if (te == null)
+            return null;
+        IInventory network = NetworkProvider.getWrappedNetwork(te, player, operation);
+        if (network != null)
+            return network;
+        if (!(te instanceof IInventory))
+            return null;
+        return (IInventory) te;
     }
 
     public static String withSuffix(int count) {
-        if (count < 1000) return "" + count;
+        if (count < 1000)
+            return "" + count;
         int exp = (int) (Math.log(count) / Math.log(1000));
         return String.format("%.1f%c",
-                count / Math.pow(1000, exp),
-                "kMGTPE".charAt(exp - 1));
+            count / Math.pow(1000, exp),
+            "kMGTPE".charAt(exp - 1));
     }
 
     public static void writePOSToNBT(ItemStack stack, @Nullable BlockPos pos, String tagName) {
@@ -419,7 +421,7 @@ public class GadgetUtils {
             }
             return;
         }
-        tagCompound.setTag(tagName, NBTUtil.createPosTag(pos));
+        tagCompound.setTag(tagName, NBTPortUtil.createPosTag(pos));
         stack.setTagCompound(tagCompound);
     }
 
@@ -435,7 +437,7 @@ public class GadgetUtils {
             }
             return;
         }
-        NBTTagCompound posTag = NBTUtil.createPosTag(pos);
+        NBTTagCompound posTag = NBTPortUtil.createPosTag(pos);
         posTag.setInteger("dim", dim);
         tagCompound.setTag(tagName, posTag);
         stack.setTagCompound(tagCompound);
@@ -451,7 +453,7 @@ public class GadgetUtils {
             }
             return;
         }
-        tagCompound.setTag(tagName, NBTUtil.createPosTag(pos));
+        tagCompound.setTag(tagName, NBTPortUtil.createPosTag(pos));
         tagCompound.setInteger("dim", dim);
     }
 
@@ -465,7 +467,7 @@ public class GadgetUtils {
         if (posTag.equals(new NBTTagCompound())) {
             return null;
         }
-        return NBTUtil.getPosFromTag(posTag);
+        return NBTPortUtil.readPosTag(posTag);
     }
 
     public static void writeIntToNBT(ItemStack stack, int tagInt, String tagName) {
@@ -527,7 +529,7 @@ public class GadgetUtils {
         if (posTag.equals(new NBTTagCompound())) {
             return null;
         }
-        return NBTUtil.getPosFromTag(posTag);
+        return NBTPortUtil.readPosTag(posTag);
     }
 
     @Nullable
@@ -545,7 +547,7 @@ public class GadgetUtils {
 
     public static NBTTagCompound stateToCompound(IBlockState state) {
         NBTTagCompound tagCompound = new NBTTagCompound();
-        NBTUtil.writeBlockState(tagCompound, state);
+        NBTPortUtil.writeBlockState(tagCompound, state);
         return tagCompound;
     }
 
@@ -554,7 +556,7 @@ public class GadgetUtils {
         if (tagCompound == null) {
             return null;
         }
-        return NBTUtil.readBlockState(tagCompound);
+        return NBTPortUtil.readBlockState(tagCompound);
     }
 
     public static int relPosToInt(BlockPos startPos, BlockPos relPos) {
@@ -590,7 +592,8 @@ public class GadgetUtils {
     }
 
     public static Multiset<UniqueItem> nbtToItemCount(@Nullable NBTTagList tagList) {
-        if (tagList == null) return HashMultiset.create();
+        if (tagList == null)
+            return HashMultiset.create();
         Multiset<UniqueItem> itemCountMap = HashMultiset.create(tagList.tagCount());
         for (int i = 0; i < tagList.tagCount(); i++) {
             NBTTagCompound tagCompound = tagList.getCompoundTagAt(i);

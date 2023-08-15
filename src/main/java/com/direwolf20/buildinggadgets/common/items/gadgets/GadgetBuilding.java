@@ -72,7 +72,7 @@ public class GadgetBuilding extends GadgetGeneric {
     public static void togglePlaceAtop(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("start_inside", shouldPlaceAtop(stack));
         String prefix = "message.gadget.building.placement";
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation(prefix, new TextComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedComponentText()), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation(prefix, new ChatComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedTextForChat()), true);
     }
 
     @Override
@@ -128,7 +128,7 @@ public class GadgetBuilding extends GadgetGeneric {
             range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
 
         setToolRange(heldItem, range);
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new ChatComponentTranslation("message.gadget.toolrange").getUnformattedTextForChat() + ": " + range), true);
     }
 
     private boolean build(EntityPlayer player, ItemStack stack) {
@@ -156,8 +156,8 @@ public class GadgetBuilding extends GadgetGeneric {
 
         IBlockState blockState = getToolBlock(heldItem);
 
-        if (blockState != Blocks.air.getDefaultState()) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
-            IBlockState state = Blocks.air.getDefaultState(); //Initialize a new State Variable for use in the fake world
+        if (blockState != IBlockState.AIR_STATE) { //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
+            IBlockState state = IBlockState.AIR_STATE; //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
@@ -191,12 +191,12 @@ public class GadgetBuilding extends GadgetGeneric {
 
         UndoState undoState = popUndoList(heldItem); //Get the undo list off the tool, exit if empty
         if (undoState == null) {
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.nothingtoundo").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.nothingtoundo").getUnformattedTextForChat()), true);
             return false;
         }
         World world = player.worldObj;
         if (!world.isRemote) {
-            IBlockState currentBlock = Blocks.air.getDefaultState();
+            IBlockState currentBlock = IBlockState.AIR_STATE;
             List<BlockPos> undoCoords = undoState.coordinates; //Get the Coords to undo
             int dimension = undoState.dimension; //Get the Dimension to undo
             List<BlockPos> failedRemovals = new ArrayList<BlockPos>(); //Build a list of removals that fail
@@ -211,13 +211,13 @@ public class GadgetBuilding extends GadgetGeneric {
                 boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, coord, currentBlock, player);
 
                 if (distance < 64 && sameDim && currentBlock != ModBlocks.effectBlock.getDefaultState() && !cancelled) { //Don't allow us to undo a block while its still being placed or too far away
-                    if (currentBlock != Blocks.air.getDefaultState()) {
+                    if (currentBlock != IBlockState.AIR_STATE) {
                         if( !player.capabilities.isCreativeMode )
                             currentBlock.getBlock().harvestBlock(world, player, coord, currentBlock, world.getTileEntity(coord), silkTool);
                         world.spawnEntity(new BlockBuildEntity(world, coord, player, currentBlock, 2, getToolActualBlock(heldItem), false));
                     }
                 } else { //If you're in the wrong dimension or too far away, fail the undo.
-                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
+                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.undofailed").getUnformattedTextForChat()), true);
                     failedRemovals.add(coord);
                 }
             }

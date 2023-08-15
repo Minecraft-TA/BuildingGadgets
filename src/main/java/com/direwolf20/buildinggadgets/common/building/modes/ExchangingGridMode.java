@@ -23,7 +23,7 @@ public class ExchangingGridMode extends GridMode {
      * @implNote Exchanger replace at the same level, Building gadget build on top of the level
      */
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool) {
         return super.computeCoordinates(player, hit.offset(EnumFacing.DOWN), sideHit, tool);
     }
 

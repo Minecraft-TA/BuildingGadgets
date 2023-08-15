@@ -31,8 +31,10 @@ import appeng.api.storage.channels.IItemStorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.util.AEPartLocation;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.items.IItemHandler;
 
 @IntegratedMod("appliedenergistics2")
@@ -40,7 +42,7 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
 
     @Override
     public void registerDeconstructRecipe(RecipieType type, ItemStack input, ItemStack output) {
-        AEApi.instance().registries().grinder().addRecipe(new GrinderRecipe(type == RecipieType.BLOCK_TO_CHUNKS ? 4 : 1, input, output));
+        AEApi.instance().registries().grinder().addRecipe(input, output, type == RecipieType.BLOCK_TO_CHUNKS ? 4 : 1);
     }
 
     @Override
@@ -51,14 +53,14 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
 
     @Override
     @Nullable
-    protected IItemHandler getWrappedNetworkInternal(TileEntity te, EntityPlayer player, Operation operation) {
+    protected IInventory getWrappedNetworkInternal(TileEntity te, EntityPlayer player, Operation operation) {
         if (te instanceof IGridHost) {
-            IGridNode node = ((IGridHost) te).getGridNode(AEPartLocation.INTERNAL);
+            IGridNode node = ((IGridHost) te).getGridNode(ForgeDirection.UNKNOWN);
             if (node != null) {
                 ISecurityGrid security = node.getGrid().getCache(ISecurityGrid.class);
                 if (security.hasPermission(player, operation == Operation.EXTRACT ? SecurityPermissions.EXTRACT : SecurityPermissions.INJECT)) {
                     IStorageGrid grid = node.getGrid().getCache(IStorageGrid.class);
-                    IMEMonitor<IAEItemStack> network = grid.getInventory(AEApi.instance().storage().getStorageChannel(IItemStorageChannel.class));
+                    IMEMonitor<IAEItemStack> network = grid.getItemInventory();
                     return new NetworkAppliedEnergistics2IO(player, network, operation);
                 }
             }
@@ -67,6 +69,7 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
     }
 
     public static class StackProviderAE2 implements IStackProvider {
+
         @Nonnull
         private IAEItemStack aeStack;
 
@@ -91,6 +94,7 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
     }
 
     private static class NetworkAppliedEnergistics2IO extends NetworkIO<StackProviderAE2> {
+
         private IMEMonitor<IAEItemStack> network;
         private IItemStorageChannel storageChannel;
 
@@ -124,6 +128,7 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
     }
 
     private static class PlayerSource implements IActionSource {
+
         private final EntityPlayer player;
 
         public PlayerSource(EntityPlayer player) {
@@ -148,6 +153,7 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
     }
 
     private static class GrinderRecipe implements IGrinderRecipe {
+
         private final ItemStack input, output;
         private final int turns;
 
@@ -195,6 +201,6 @@ public class AppliedEnergistics2 extends NetworkProvider implements IPasteRecipe
         public int getRequiredTurns() {
             return turns;
         }
-        
+
     }
 }

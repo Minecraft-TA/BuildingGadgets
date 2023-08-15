@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.direwolf20.buildinggadgets.common.building.placement.SingleTypeProvider;
-import net.minecraft.init.Blocks;
+import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
@@ -16,7 +16,7 @@ public final class CapabilityBlockProvider {
     @CapabilityInject(IBlockProvider.class)
     public static Capability<IBlockProvider> BLOCK_PROVIDER = null;
 
-    static IBlockProvider DEFAULT_AIR_PROVIDER = new SingleTypeProvider(Blocks.air.getDefaultState());
+    static IBlockProvider DEFAULT_AIR_PROVIDER = new SingleTypeProvider(IBlockState.AIR_STATE);
 
     private CapabilityBlockProvider() {
     }

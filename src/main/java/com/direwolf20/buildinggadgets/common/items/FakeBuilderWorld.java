@@ -19,7 +19,7 @@ public class FakeBuilderWorld implements IBlockAccess {
     private Set<BlockPos> positions;
     private IBlockState state;
     private World realWorld;
-    private final IBlockState AIR = Blocks.air.getDefaultState();
+    private final IBlockState AIR = IBlockState.AIR_STATE;
 
 
     public void setWorldAndState(World rWorld, IBlockState setBlock, Set<BlockPos> coordinates) {

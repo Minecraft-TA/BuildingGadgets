@@ -34,7 +34,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ChatComponentTranslation;
 import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -253,7 +253,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 if (pos == null) {
                     //setStartPos(stack, null);
                     //setEndPos(stack, null);
-                    //player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.areareset").getUnformattedComponentText()), true);
+                    //player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.areareset").getUnformattedTextForChat()), true);
                     return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, stack);
                 }
                 if (player.isSneaking()) {
@@ -374,7 +374,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         int endZ = end.getZ();
 
         if (Math.abs(startX - endX) >= 125 || Math.abs(startY - endY) >= 125 || Math.abs(startZ - endZ) >= 125) {
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toobigarea").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.toobigarea").getUnformattedTextForChat()), true);
             return false;
         }
 
@@ -398,7 +398,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 for (int z = iStartZ; z <= iEndZ; z++) {
                     BlockPos tempPos = new BlockPos(x, y, z);
                     IBlockState tempState = world.getBlockState(tempPos);
-                    if (!(tempState.getBlock() instanceof EffectBlock) && tempState != Blocks.air.getDefaultState() && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
+                    if (!(tempState.getBlock() instanceof EffectBlock) && tempState != IBlockState.AIR_STATE && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
                         TileEntity te = world.getTileEntity(tempPos);
                         IBlockState assignState = InventoryManipulation.getSpecificStates(tempState, world, player, tempPos, stack);
                         IBlockState actualState = assignState.getActualState(world, tempPos);
@@ -415,7 +415,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                                 blockMapIntState.addToStackMap(uniqueItem, actualState);
                                 blockCount++;
                                 if (blockCount > 32768) {
-                                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.toomanyblocks").getUnformattedComponentText()), true);
+                                    player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.toomanyblocks").getUnformattedTextForChat()), true);
                                     return false;
                                 }
                                 NonNullList<ItemStack> drops = NonNullList.create();
@@ -448,8 +448,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         tagCompound.setIntArray("posIntArray", posIntArray);
         tagCompound.setIntArray("stateIntArray", stateIntArray);
 
-        tagCompound.setTag("startPos", NBTUtil.createPosTag(start));
-        tagCompound.setTag("endPos", NBTUtil.createPosTag(end));
+        tagCompound.setTag("startPos", NBTPortUtil.createPosTag(start));
+        tagCompound.setTag("endPos", NBTPortUtil.createPosTag(end));
         tagCompound.setInteger("dim", player.dimension);
         tagCompound.setString("UUID", tool.getUUID(stack));
         tagCompound.setString("owner", player.getName());
@@ -461,9 +461,9 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
 
         if (foundTE > 0) {
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + new TextComponentTranslation("message.gadget.TEinCopy").getUnformattedComponentText() + ": " + foundTE), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.YELLOW + new ChatComponentTranslation("message.gadget.TEinCopy").getUnformattedTextForChat() + ": " + foundTE), true);
         } else {
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.copied").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.copied").getUnformattedTextForChat()), true);
         }
         return true;
     }
@@ -499,7 +499,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                 (!SyncedConfig.canOverwriteBlocks && testState.getBlock().isAir(testState, world, pos)))
             return;
 
-        if (pos.getY() < 0 || state.equals(Blocks.air.getDefaultState()) || !player.isAllowEdit())
+        if (pos.getY() < 0 || state.equals(IBlockState.AIR_STATE) || !player.isAllowEdit())
             return;
 
         ItemStack heldItem = getGadget(player);
@@ -566,10 +566,10 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             }
             currentAnchor = lookingAt.getBlockPos();
             setAnchor(stack, currentAnchor);
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorrender").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorrender").getUnformattedTextForChat()), true);
         } else {
             setAnchor(stack, null);
-            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new TextComponentTranslation("message.gadget.anchorremove").getUnformattedComponentText()), true);
+            player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.anchorremove").getUnformattedTextForChat()), true);
         }
     }
 
@@ -604,7 +604,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
                     }
                 }
             } else {
-                player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new TextComponentTranslation("message.gadget.undofailed").getUnformattedComponentText()), true);
+                player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.undofailed").getUnformattedTextForChat()), true);
                 success = false;
             }
             //System.out.printf("Undid %d Blocks in %.2f ms%n", blockMapList.size(), (System.nanoTime() - time) * 1e-6);

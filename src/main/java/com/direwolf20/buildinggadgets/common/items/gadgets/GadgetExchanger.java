@@ -22,7 +22,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.ChatComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.common.util.BlockSnapshot;
@@ -137,7 +137,7 @@ public class GadgetExchanger extends GadgetGeneric {
             range = (range >= SyncedConfig.maxRange) ? 1 : range + changeAmount;
         }
         setToolRange(heldItem, range);
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new TextComponentTranslation("message.gadget.toolrange").getUnformattedComponentText() + ": " + range), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.DARK_AQUA + new ChatComponentTranslation("message.gadget.toolrange").getUnformattedTextForChat() + ": " + range), true);
     }
 
     private boolean exchange(EntityPlayer player, ItemStack stack) {
@@ -164,8 +164,8 @@ public class GadgetExchanger extends GadgetGeneric {
 
         IBlockState blockState = getToolBlock(heldItem);
 
-        if (blockState != Blocks.air.getDefaultState()) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
-            IBlockState state = Blocks.air.getDefaultState(); //Initialize a new State Variable for use in the fake world
+        if (blockState != IBlockState.AIR_STATE) {  //Don't attempt a build if a block is not chosen -- Typically only happens on a new tool.
+            IBlockState state = IBlockState.AIR_STATE; //Initialize a new State Variable for use in the fake world
             fakeWorld.setWorldAndState(player.worldObj, blockState, coordinates); // Initialize the fake world's blocks
             for (BlockPos coordinate : coords) {
                 if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
@@ -279,7 +279,7 @@ public class GadgetExchanger extends GadgetGeneric {
      * @param originalBlock the block we need to put back on failure
      */
     private static boolean canPlaceBlockAt(World world, BlockPos pos, IBlockState setBlock, IBlockState originalBlock) {
-        world.setBlockState(pos, Blocks.air.getDefaultState());
+        world.setBlockState(pos, IBlockState.AIR_STATE);
         boolean canPlace = setBlock.getBlock().canPlaceBlockAt(world, pos);
         world.setBlockState(pos, originalBlock);
 

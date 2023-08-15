@@ -32,12 +32,12 @@ public class ConstructionPasteRecipeHandler extends ShapedOreRecipe {
     public ItemStack getCraftingResult(final InventoryCrafting inv) {
         final ItemStack output = super.getCraftingResult(inv); // Get the default output
 
-        if (!output.isEmpty()) {
+        if (output != null) {
             int totalPaste = 0;
             for (int i = 0; i < inv.getSizeInventory(); i++) { // For each slot in the crafting inventory,
                 final ItemStack ingredient = inv.getStackInSlot(i); // Get the ingredient in the slot
 
-                if (!ingredient.isEmpty() && ingredient.getItem() instanceof GenericPasteContainer) { // If it's a Paste Container,
+                if (ingredient != null && ingredient.getItem() instanceof GenericPasteContainer) { // If it's a Paste Container,
                     totalPaste += GenericPasteContainer.getPasteAmount(ingredient);
                 }
             }

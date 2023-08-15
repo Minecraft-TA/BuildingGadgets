@@ -97,7 +97,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         ConstructionBlockTileEntity te = getTE(world, pos);
         ItemStack heldItem = player.getHeldItem(hand);
         IBlockState newState = Block.getBlockFromItem(heldItem.getItem()).getStateFromMeta(heldItem.getMetadata());
-        if (newState != null && newState != Blocks.air.getDefaultState()) {
+        if (newState != null && newState != IBlockState.AIR_STATE) {
             te.setBlockState(newState);
             te.setActualBlockState(newState);
             return true;

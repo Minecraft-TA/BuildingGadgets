@@ -1,11 +1,16 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
-import it.unimi.dsi.fastutil.doubles.*;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectArrayMap;
+import it.unimi.dsi.fastutil.doubles.Double2ObjectMap;
+import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
+import it.unimi.dsi.fastutil.doubles.DoubleSortedSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Sorter
@@ -54,7 +59,7 @@ public class Sorter {
 
         private static final Comparator<ItemStack> COMPARATOR_NAME = Comparator.comparing(ItemStack::getDisplayName);
         private static final Comparator<ItemStack> COMPARATOR_NAME_REVERSED = COMPARATOR_NAME.reversed();
-        private static final Comparator<ItemStack> COMPARATOR_COUNT = Comparator.comparing(ItemStack::getCount);
+        private static final Comparator<ItemStack> COMPARATOR_COUNT = Comparator.comparing(i -> i.stackSize);
         private static final Comparator<ItemStack> COMPARATOR_COUNT_REVERSED = COMPARATOR_COUNT.reversed();
 
         /**
@@ -87,7 +92,7 @@ public class Sorter {
          * Sort the given list consisting {@link ItemStack} by stack size.
          * <p>
          * This method will copy all content of the original list to another {@link ArrayList}, and sort them using
-         * {@link List#sort(Comparator)} by comparing the {@link ItemStack#getCount()}.
+         * {@link List#sort(Comparator)} by comparing the {@link ItemStack#stackSize}.
          *
          * @param stacks the list of {@link ItemStack} to be sorted
          * @return A copy of the original list that is sorted.

@@ -18,7 +18,7 @@ public abstract class AtopSupportedMode extends AbstractMode {
     }
 
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool) {
         if (GadgetBuilding.shouldPlaceAtop(tool))
             return this.computeWithTransformed(player, transformAtop(player, hit, sideHit, tool), hit, sideHit, tool);
         return this.computeWithTransformed(player, hit, hit, sideHit, tool);
