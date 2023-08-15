@@ -7,7 +7,7 @@ import com.direwolf20.buildinggadgets.util.CasedBlockView;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;
@@ -36,14 +36,14 @@ public class ConnectedSurfaceTest {
     @Test
     void connectedSurfaceShouldOnlyIncludeBlocksThatHasSameBlockUnderAsStartingPosition5By5RandomSelected30DifferPositions() {
         CasedBlockView world = regionAtOriginWithRandomTargets(5, 30);
-        IBlockState selectedBlock = world.getBlockState(BlockPos.ORIGIN);
+        IBlockState selectedBlock = IBlockState.getStateFromWorld(world, BlockPos.ORIGIN);
 
         for (EnumFacing side : EnumFacing.VALUES) {
             ConnectedSurface surface = ConnectedSurface.create(world, BlockPos.ORIGIN, side, 5, false);
             Set<BlockPos> calculated = surface.collect(new ObjectOpenHashSet<>());
 
             for (BlockPos pos : calculated) {
-                assertEquals(selectedBlock, world.getBlockState(pos.offset(side.getOpposite())));
+                assertEquals(selectedBlock, IBlockState.getStateFromWorld(world, pos.offset(side.getOpposite())));
             }
         }
     }

@@ -1,12 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ public final class Wall implements IPlacementSequence {
                 radius * (1 - Math.abs(side.getFrontOffsetZ())));
 
         if (extendingSize != 0) {
-            if (extendingSide.getAxisDirection() == AxisDirection.POSITIVE)
+            if (EnumFacingPortUtil.getAxisDirection(extendingSide) == EnumFacingPortUtil.AxisDirection.POSITIVE)
                 this.region = new Region(region.getMin(), region.getMax().offset(extendingSide, extendingSize));
             else
                 this.region = new Region(region.getMin().offset(extendingSide, extendingSize), region.getMax());

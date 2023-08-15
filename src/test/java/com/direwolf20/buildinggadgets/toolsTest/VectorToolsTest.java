@@ -1,7 +1,7 @@
 package com.direwolf20.buildinggadgets.toolsTest;
 
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

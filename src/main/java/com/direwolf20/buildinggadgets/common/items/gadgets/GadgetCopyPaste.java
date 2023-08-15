@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
+import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
@@ -16,22 +17,20 @@ import com.direwolf20.buildinggadgets.common.network.PacketRotateMirror;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.ChatComponentText;
 import net.minecraft.util.text.ChatComponentTranslation;
@@ -319,7 +318,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             int nx, nz;
             IBlockState alteredState = GadgetUtils.rotateOrMirrorBlock(player, operation, blockMap.state);
             if (operation == PacketRotateMirror.Operation.MIRROR) {
-                if (player.getHorizontalFacing().getAxis() == Axis.X) {
+                if (EnumFacingPortUtil.getHorizontalFacing(player).getAxis() == Axis.X) {
                     nx = px;
                     nz = -pz;
                 } else {
@@ -397,7 +396,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             for (int y = iStartY; y <= iEndY; y++) {
                 for (int z = iStartZ; z <= iEndZ; z++) {
                     BlockPos tempPos = new BlockPos(x, y, z);
-                    IBlockState tempState = world.getBlockState(tempPos);
+                    IBlockState tempState = IBlockState.getStateFromWorld(world, tempPos);
                     if (!(tempState.getBlock() instanceof EffectBlock) && tempState != IBlockState.AIR_STATE && (world.getTileEntity(tempPos) == null || world.getTileEntity(tempPos) instanceof ConstructionBlockTileEntity) && !tempState.getMaterial().isLiquid() && !SyncedConfig.blockBlacklist.contains(tempState.getBlock())) {
                         TileEntity te = world.getTileEntity(tempPos);
                         IBlockState assignState = InventoryManipulation.getSpecificStates(tempState, world, player, tempPos, stack);
@@ -494,7 +493,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         if( world.isOutsideBuildHeight(pos) )
             return;
 
-        IBlockState testState = world.getBlockState(pos);
+        IBlockState testState = IBlockState.getStateFromWorld(world, pos);
         if ((SyncedConfig.canOverwriteBlocks && !testState.getBlock().isReplaceable(world, pos)) ||
                 (!SyncedConfig.canOverwriteBlocks && testState.getBlock().isAir(testState, world, pos)))
             return;
@@ -592,7 +591,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
         for (BlockMap blockMap : blockMapList) {
             double distance = blockMap.pos.getDistance(player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ());
             boolean sameDim = (player.dimension == dimension);
-            IBlockState currentBlock = world.getBlockState(blockMap.pos);
+            IBlockState currentBlock = IBlockState.getStateFromWorld(world, blockMap.pos);
 
             boolean cancelled = !GadgetGeneric.EmitEvent.breakBlock(world, blockMap.pos, currentBlock, player);
             if (distance < 256 && !cancelled && sameDim) { //Don't allow us to undo a block while its still being placed or too far away

@@ -5,10 +5,10 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
@@ -57,7 +57,7 @@ public final class ConnectedSurface implements IPlacementSequence {
                 (filter, pos) -> {
                     BlockPos apply = searching2referenceMapper.apply(pos);
                     Block block = world.getBlock(apply.getX(), apply.getY(), apply.getZ());
-                    IBlockState reference = IBlockState.create(world.getBlockMetadata(apply.getX(), apply.getY(), apply.getZ()));
+                    IBlockState reference = IBlockState.getStateFromWorld(world, apply);
                     boolean isAir = block.isAir(world, apply.getX(), apply.getY(), apply.getZ()); // TODO This seems rather inefficient
                     // If fuzzy=true, we ignore the block for reference
                     return ! isAir && (fuzzy || filter == reference);
@@ -158,7 +158,7 @@ public final class ConnectedSurface implements IPlacementSequence {
 
     private IBlockState getReferenceFor(BlockPos pos) {
         BlockPos referencePos = searching2referenceMapper.apply(pos);
-        return IBlockState.create(world.getBlockMetadata(referencePos.getX(), referencePos.getY(), referencePos.getZ()));
+        return IBlockState.getStateFromWorld(world, referencePos);
     }
 
 }

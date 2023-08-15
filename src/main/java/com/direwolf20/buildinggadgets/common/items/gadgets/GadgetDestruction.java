@@ -9,18 +9,17 @@ import com.direwolf20.buildinggadgets.common.building.placement.ConnectedSurface
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.tools.*;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.math.MovingObjectPosition;
 import net.minecraft.util.text.ChatComponentText;
@@ -183,7 +182,7 @@ public class GadgetDestruction extends GadgetGeneric {
         List<EnumFacing> dirs = new ArrayList<>();
         EnumFacing depth = side.getOpposite();
         boolean vertical = side.getAxis() == Axis.Y;
-        EnumFacing up = vertical ? player.getHorizontalFacing() : EnumFacing.UP;
+        EnumFacing up = vertical ? EnumFacingPortUtil.getHorizontalFacing(player) : EnumFacing.UP;
         EnumFacing left = vertical ? up.rotateY() : side.rotateYCCW();
         EnumFacing right = left.getOpposite();
         if (side == EnumFacing.DOWN)
@@ -258,7 +257,7 @@ public class GadgetDestruction extends GadgetGeneric {
             selectionRegion = selectionRegion.union(new Region(startPos.offset(directions.get(i), getToolValue(stack, directionNames[i]) - (i == 4 ? 1 : 0))));
 
         boolean fuzzy = ! SyncedConfig.nonFuzzyEnabledDestruction || GadgetGeneric.getFuzzy(stack);
-        IBlockState stateTarget = fuzzy ? null : world.getBlockState(pos);
+        IBlockState stateTarget = fuzzy ? null : IBlockState.getStateFromWorld(world, pos);
         if (GadgetGeneric.getConnectedArea(stack)) {
             return ConnectedSurface.create(
                     world,
@@ -277,7 +276,7 @@ public class GadgetDestruction extends GadgetGeneric {
     }
 
     private static boolean validBlock(World world, BlockPos voidPos, EntityPlayer player, @Nullable IBlockState stateTarget, boolean fuzzy) {
-        IBlockState currentBlock = world.getBlockState(voidPos);
+        IBlockState currentBlock = IBlockState.getStateFromWorld(world, voidPos);
         if (! fuzzy && currentBlock != stateTarget) return false;
         TileEntity te = world.getTileEntity(voidPos);
         if (currentBlock.getBlock().isAir(currentBlock, world, voidPos)) return false;
@@ -303,7 +302,7 @@ public class GadgetDestruction extends GadgetGeneric {
         for (BlockPos voidPos : voidPosArray) {
             boolean isPaste;
 
-            IBlockState blockState = world.getBlockState(voidPos);
+            IBlockState blockState = IBlockState.getStateFromWorld(world, voidPos);
             IBlockState pasteState = IBlockState.AIR_STATE;
             if( blockState == IBlockState.AIR_STATE )
                 continue;
@@ -365,7 +364,7 @@ public class GadgetDestruction extends GadgetGeneric {
                 return;
 
             // Check that there is no blocks where we want to put the new blocks.
-            IBlockState state = world.getBlockState(posState.getPos());
+            IBlockState state = IBlockState.getStateFromWorld(world, posState.getPos());
             if (!state.getBlock().isAir(state, world, posState.getPos()) && !state.getMaterial().isLiquid())
                 return;
 
@@ -393,12 +392,12 @@ public class GadgetDestruction extends GadgetGeneric {
         if( !this.canUse(tool, player) )
             return false;
 
-        if( !GadgetGeneric.EmitEvent.breakBlock(world, voidPos, world.getBlockState(voidPos), player) )
+        if( !GadgetGeneric.EmitEvent.breakBlock(world, voidPos, IBlockState.getStateFromWorld(world, voidPos), player) )
             return false;
 
         this.applyDamage(tool, player);
 
-        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, world.getBlockState(voidPos), 2, IBlockState.AIR_STATE, false));
+        world.spawnEntity(new BlockBuildEntity(world, voidPos, player, IBlockState.getStateFromWorld(world, voidPos), 2, IBlockState.AIR_STATE, false));
         return true;
     }
 

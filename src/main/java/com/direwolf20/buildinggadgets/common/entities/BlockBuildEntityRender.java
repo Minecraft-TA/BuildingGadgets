@@ -2,40 +2,37 @@ package com.direwolf20.buildinggadgets.common.entities;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockRendererDispatcher;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GL11;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.client.registry.IRenderFactory;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import javax.annotation.Nullable;
 
 
-public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
+public class BlockBuildEntityRender extends Render {
 
-    public BlockBuildEntityRender(RenderManager renderManager) {
-        super(renderManager);
+    public BlockBuildEntityRender() {
         this.shadowSize = 0F;
     }
 
     @Override
-    public void doRender(Entity entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
+    public void doRender(Entity e, double x, double y, double z, float entityYaw, float partialTicks) {
+        BlockBuildEntity entity = (BlockBuildEntity) e;
+        RenderBlocks renderBlocks = new RenderBlocks(e.worldObj);
         Minecraft mc = Minecraft.getMinecraft();
         GL11.glPushMatrix();
 
         int toolMode = entity.getToolMode();
-        mc.renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-        int teCounter = entity.getTicksExisted();
+        mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
+        int teCounter = entity.ticksExisted;
         int maxLife = entity.maxLife;
         if (teCounter > maxLife) {
             teCounter = maxLife;
@@ -48,30 +45,30 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
             scale = (float) (maxLife - teCounter) / maxLife;
         }
         float trans = (1 - scale) / 2;
-        GL11.glTranslatef(x, y, z);
+        GL11.glTranslated(x, y, z);
         GL11.glTranslatef(trans, trans, trans);
-        GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+        GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F);
         GL11.glScalef(scale, scale, scale);
 
 
         //IBlockState renderBlockState = blocks.COBBLESTONE.getDefaultState();
 
-        IBlockState renderBlockState = entity.getSetBlock();
+        Block renderBlockState = entity.getSetBlock().getBlock();
         if (entity.getUsingConstructionPaste() && toolMode == 1) {
-            renderBlockState = ModBlocks.constructionBlock.getDefaultState();
+            renderBlockState = ModBlocks.constructionBlock;
         }
         if (renderBlockState == null) {
-            renderBlockState = Blocks.COBBLESTONE.getDefaultState();
+            renderBlockState = Blocks.cobblestone;
         }
         try {
-            blockrendererdispatcher.renderBlockBrightness(renderBlockState, 1.0f);
+            // TODO: Won't work
+//            renderBlocks.renderBlockByRenderType(renderBlockState, (int) x, (int) y, (int) z);
         } catch (Throwable t) {
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferBuilder = tessellator.getBuffer();
+            Tessellator tessellator = Tessellator.instance;
             try {
                 // If the buffer is already not drawing then it'll throw
                 // and IllegalStateException... Very rare
-                bufferBuilder.finishDrawing();
+//                bufferBuilder.finishDrawing();
             } catch (IllegalStateException ex) {
                 BuildingGadgets.logger.error(getClass().getSimpleName() + ": Error within rendering method -> " + ex);
             }
@@ -80,15 +77,14 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
 
 
         GL11.glPushMatrix();
-        GL11.pushAttrib();
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT); // TODO: Could be wrong, but 8256 (0x2040) doesn't exist
 
         GL11.glEnable(GL11.GL_BLEND);
-        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.depthMask(false);
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = t.getBuffer();
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        GL11.glDepthMask(false);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
         double minX = x;
         double minY = y;
         double minZ = z;
@@ -111,49 +107,72 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
             alpha = 0.33f;
         }
         //down
-        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, maxZ);
 
         //up
-        bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, minZ);
 
         //north
-        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, minZ);
 
         //south
-        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, maxZ);
 
         //east
-        bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, maxY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(maxX, minY, maxZ);
 
         //west
-        bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-        t.draw();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, minZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, minY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, maxZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(minX, maxY, minZ);
+        tessellator.draw();
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.depthMask(true);
+        GL11.glDepthMask(true);
 
         GL11.glPopMatrix();
-        GL11.popAttrib();
-
+        GL11.glPopAttrib();
     }
 
     @Nullable
@@ -161,15 +180,4 @@ public class BlockBuildEntityRender extends Render<BlockBuildEntity> {
     protected ResourceLocation getEntityTexture(Entity entity) {
         return null;
     }
-
-
-    public static class Factory implements IRenderFactory<BlockBuildEntity> {
-
-        @Override
-        public Render<? super BlockBuildEntity> createRenderFor(RenderManager manager) {
-            return new BlockBuildEntityRender(manager);
-        }
-
-    }
-
 }

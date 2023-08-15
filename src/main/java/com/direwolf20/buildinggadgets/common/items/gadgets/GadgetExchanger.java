@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
 import com.direwolf20.buildinggadgets.common.items.FakeBuilderWorld;
@@ -7,13 +8,12 @@ import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -189,7 +189,7 @@ public class GadgetExchanger extends GadgetGeneric {
         if( world.isOutsideBuildHeight(pos) )
             return false;
 
-        IBlockState currentBlock = world.getBlockState(pos);
+        IBlockState currentBlock = IBlockState.getStateFromWorld(world, pos);
         ItemStack itemStack;
         boolean useConstructionPaste = false;
         //ItemStack itemStack = setBlock.getBlock().getPickBlock(setBlock, null, world, pos, player);
@@ -244,7 +244,7 @@ public class GadgetExchanger extends GadgetGeneric {
             return false;
 
         BlockSnapshot blockSnapshot = BlockSnapshot.getBlockSnapshot(world, pos);
-        if (!GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, player.getHorizontalFacing(), player.getActiveHand())) {
+        if (!GadgetGeneric.EmitEvent.placeBlock(player, blockSnapshot, EnumFacingPortUtil.getHorizontalFacing(player), player.getActiveHand())) {
             return false;
         }
 

@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.collect.ImmutableList;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Iterator;

@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -9,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Grid mode for Building Gadget.
@@ -34,7 +35,7 @@ public class GridMode extends AtopSupportedMode {
 
     @Override
     public BlockPos transformAtop(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
-        EnumFacing locked = sideHit.getAxis().isVertical() ? sideHit : EnumFacing.UP;
+        EnumFacing locked = EnumFacingPortUtil.getAxis(sideHit).isVertical() ? sideHit : EnumFacing.UP;
         return hit.offset(locked);
     }
 

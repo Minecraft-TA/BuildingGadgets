@@ -1,13 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import net.minecraft.util.EnumFacing.AxisDirection;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -17,18 +16,18 @@ import java.util.Iterator;
  */
 public final class ExclusiveAxisChasing implements IPlacementSequence {
 
-    public static ExclusiveAxisChasing create(BlockPos source, BlockPos target, Axis axis, int maxProgression) {
+    public static ExclusiveAxisChasing create(BlockPos source, BlockPos target, EnumFacingPortUtil.Axis axis, int maxProgression) {
         int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
         if (difference < 0)
-            return create(source, target, EnumFacing.getFacingFromAxis(AxisDirection.NEGATIVE, axis), maxProgression);
-        return create(source, target, EnumFacing.getFacingFromAxis(AxisDirection.POSITIVE, axis), maxProgression);
+            return create(source, target, EnumFacingPortUtil.getFacingFromAxis(EnumFacingPortUtil.AxisDirection.NEGATIVE, axis), maxProgression);
+        return create(source, target, EnumFacingPortUtil.getFacingFromAxis(EnumFacingPortUtil.AxisDirection.POSITIVE, axis), maxProgression);
     }
 
     /**
-     * <p>Note that this factory method does not verify that {@code offsetDirection} is appropriate. Use {@link #create(BlockPos, BlockPos, Axis, int)} if this is required.</p>
+     * <p>Note that this factory method does not verify that {@code offsetDirection} is appropriate. Use {@link #create(BlockPos, BlockPos, EnumFacingPortUtil.Axis, int)} if this is required.</p>
      */
     public static ExclusiveAxisChasing create(BlockPos source, BlockPos target, EnumFacing offsetDirection, int maxProgression) {
-        Axis axis = offsetDirection.getAxis();
+        EnumFacingPortUtil.Axis axis = EnumFacingPortUtil.getAxis(offsetDirection);
         int difference = VectorTools.getAxisValue(target, axis) - VectorTools.getAxisValue(source, axis);
         maxProgression = Math.min(Math.abs(difference), maxProgression);
 
@@ -52,7 +51,7 @@ public final class ExclusiveAxisChasing implements IPlacementSequence {
 
     @Override
     public boolean mayContain(int x, int y, int z) {
-        Axis axis = offsetDirection.getAxis();
+        EnumFacingPortUtil.Axis axis = EnumFacingPortUtil.getAxis(offsetDirection);
         int value = VectorTools.getAxisValue(x, y, z, axis);
         int sourceValue = VectorTools.getAxisValue(source, axis);
         int difference = Math.abs(value - sourceValue);

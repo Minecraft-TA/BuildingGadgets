@@ -1,14 +1,13 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetGeneric;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -39,7 +38,7 @@ public class VectorTools {
         return new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ);
     }
 
-    public static int getAxisValue(BlockPos pos, Axis axis) {
+    public static int getAxisValue(BlockPos pos, EnumFacingPortUtil.Axis axis) {
         switch (axis) {
             case X:
                 return pos.getX();
@@ -51,7 +50,7 @@ public class VectorTools {
         throw new IllegalArgumentException("Trying to find the value an imaginary axis of a BlockPos");
     }
 
-    public static int getAxisValue(int x, int y, int z, Axis axis) {
+    public static int getAxisValue(int x, int y, int z, EnumFacingPortUtil.Axis axis) {
         switch (axis) {
             case X:
                 return x;
@@ -64,10 +63,10 @@ public class VectorTools {
     }
 
     public static BlockPos perpendicularSurfaceOffset(BlockPos pos, EnumFacing intersector, int i, int j) {
-        return perpendicularSurfaceOffset(pos, intersector.getAxis(), i, j);
+        return perpendicularSurfaceOffset(pos, EnumFacingPortUtil.getAxis(intersector), i, j);
     }
 
-    public static BlockPos perpendicularSurfaceOffset(BlockPos pos, Axis intersector, int i, int j) {
+    public static BlockPos perpendicularSurfaceOffset(BlockPos pos, EnumFacingPortUtil.Axis intersector, int i, int j) {
         switch (intersector) {
             case X:
                 return pos.add(0, i, j);

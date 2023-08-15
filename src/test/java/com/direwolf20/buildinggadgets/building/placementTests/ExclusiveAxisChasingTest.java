@@ -4,7 +4,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.ExclusiveAxisCha
 import com.direwolf20.buildinggadgets.common.tools.VectorTools;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.Test;
 
 import java.util.Random;

@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 /**
  * Grid mode designed for Exchanging Gadget where it attempt to build on the same level as target position rather than
@@ -23,7 +23,7 @@ public class ExchangingGridMode extends GridMode {
      * @implNote Exchanger replace at the same level, Building gadget build on top of the level
      */
     @Override
-    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool) {
+    public IPlacementSequence computeCoordinates(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
         return super.computeCoordinates(player, hit.offset(EnumFacing.DOWN), sideHit, tool);
     }
 

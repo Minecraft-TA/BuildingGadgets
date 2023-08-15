@@ -3,10 +3,10 @@ package com.direwolf20.buildinggadgets.common.blocks;
 import com.direwolf20.buildinggadgets.common.entities.ConstructionBlockEntity;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.material.Material;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
@@ -49,7 +49,7 @@ public class ConstructionBlockPowder extends BlockFalling {
             if (enumfacing != EnumFacing.DOWN) {
                 BlockPos blockpos = pos.offset(enumfacing);
 
-                if (worldIn.getBlockState(blockpos).getMaterial() == Material.water) { //TODO Get material from blockstate that is an int :(
+                if (IBlockState.getStateFromWorld(worldIn, blockpos).getMaterial() == Material.water) { //TODO Get material from blockstate that is an int :(
                     flag = true;
                     break;
                 }

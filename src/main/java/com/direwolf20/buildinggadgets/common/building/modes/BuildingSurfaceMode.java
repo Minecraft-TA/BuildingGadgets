@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -11,7 +13,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Surface mode for Building Gadget.
@@ -36,8 +37,8 @@ public class BuildingSurfaceMode extends AtopSupportedMode {
         int range = GadgetUtils.getToolRange(tool) / 2;
         boolean fuzzy = GadgetGeneric.getFuzzy(tool);
         if (GadgetGeneric.getConnectedArea(tool))
-            return ConnectedSurface.create(player.worldObj, transformed, sideHit.getOpposite(), range , fuzzy);
-        return Surface.create(player.worldObj, transformed, sideHit.getOpposite(), range, fuzzy);
+            return ConnectedSurface.create(player.worldObj, transformed, EnumFacingPortUtil.getOpposite(sideHit), range , fuzzy);
+        return Surface.create(player.worldObj, transformed, EnumFacingPortUtil.getOpposite(sideHit), range, fuzzy);
     }
 
     @Override

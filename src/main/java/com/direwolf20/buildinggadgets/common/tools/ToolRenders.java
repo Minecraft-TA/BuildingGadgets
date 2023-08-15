@@ -1,5 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
@@ -17,18 +20,13 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldType;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.energy.CapabilityEnergy;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -45,13 +43,14 @@ import java.util.concurrent.TimeUnit;
 import static com.direwolf20.buildinggadgets.common.tools.GadgetUtils.getAnchor;
 import static com.direwolf20.buildinggadgets.common.tools.GadgetUtils.getToolBlock;
 
+// TODO: This class is probably fully broken. Glass pane rendering definitely won't work
 public class ToolRenders {
 
     private static final FakeBuilderWorld fakeWorld = new FakeBuilderWorld();
 
-    private static Minecraft mc = Minecraft.getMinecraft();
-    private static RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
-    private static Cache<Triple<UniqueItemStack, BlockPos, Integer>, Integer> cacheDestructionOverlay = CacheBuilder.newBuilder().maximumSize(1).
+    private static final Minecraft mc = Minecraft.getMinecraft();
+    private static final RemoteInventoryCache cacheInventory = new RemoteInventoryCache(false);
+    private static final Cache<Triple<UniqueItemStack, BlockPos, Integer>, Integer> cacheDestructionOverlay = CacheBuilder.newBuilder().maximumSize(1).
         expireAfterWrite(1, TimeUnit.SECONDS).removalListener(removal -> GLAllocation.deleteDisplayLists((int) removal.getValue())).build();
 
     // We use these as highlighters
@@ -71,13 +70,15 @@ public class ToolRenders {
         // Calculate the players current position, which is needed later
         Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.partialTicks);
 
+        RenderBlocks renderBlocks = new RenderBlocks(fakeWorld);
+
         // Render if we have a remote inventory selected
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
         MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         List<BlockPos> coordinates = getAnchor(heldItem);
 
-        if (lookingAt == null && coordinates.size() == 0)
+        if (lookingAt == null && coordinates.isEmpty())
             return;
 
         IBlockState startBlock = ToolRenders.Utils.getStartBlock(lookingAt, player);
@@ -93,7 +94,7 @@ public class ToolRenders {
 
         //Build a list of coordinates based on the tool mode and range
         if (coordinates.isEmpty() && lookingAt != null)
-            coordinates = BuildingModes.collectPlacementPos(player.worldObj, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
+            coordinates = BuildingModes.collectPlacementPos(player.worldObj, player, new BlockPos(lookingAt), lookingAt.sideHit, heldItem, new BlockPos(lookingAt));
 
         // Figure out how many of the block we're rendering are in the player inventory.
         ItemStack itemStack = ToolRenders.Utils.getSilkDropIfPresent(player.worldObj, renderBlockState, player);
@@ -118,10 +119,9 @@ public class ToolRenders {
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
             IBlockState state = IBlockState.AIR_STATE;
-            if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES)
-                state = renderBlockState.getActualState(fakeWorld, coordinate);
+            state = IBlockState.getStateFromWorld(fakeWorld, coordinate)/*.getActualState(fakeWorld, coordinate)*/;  // TODO: getActualState doesn't exist, but there's custom stuff like BlockDoor.func_150012_g (getFullMetadata)
 
-            mc.getBlockRendererDispatcher().renderBlockBrightness(state, 1f);//Render the defined block
+            renderBlocks.renderBlockByRenderType(state.getBlock(), coordinate.getX(), coordinate.getY(), coordinate.getZ());//Render the defined block
             GL11.glPopMatrix();
         });
 
@@ -139,7 +139,7 @@ public class ToolRenders {
                 hasEnergy -= ModItems.gadgetBuilding.getDamageCost(heldItem);
 
             if (hasBlocks < 0 || hasEnergy < 0)
-                mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassRed, 1f);
+                renderBlocks.renderBlockByRenderType(stainedGlassRed.getBlock(), coordinate.getX(), coordinate.getY(), coordinate.getZ());
 
             // Move the render position back to where it was
             GL11.glPopMatrix();
@@ -147,7 +147,8 @@ public class ToolRenders {
 
         //Set blending back to the default mode
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
+        // TODO: Doesn't exist
+//        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
         //Disable blend
         GL11.glDisable(GL11.GL_BLEND);
         //Pop from the original push in this method
@@ -158,18 +159,19 @@ public class ToolRenders {
         // Calculate the players current position, which is needed later
         Vec3 playerPos = ToolRenders.Utils.getPlayerglTranslatef(player, evt.partialTicks);
 
-        BlockRendererDispatcher dispatcher = mc.getBlockRendererDispatcher();
+        RenderBlocks renderBlocks = new RenderBlocks(fakeWorld);
+
         renderLinkedInventoryOutline(heldItem, playerPos, player);
 
         MovingObjectPosition lookingAt = VectorTools.getLookingAt(player, heldItem);
         IBlockState state = IBlockState.AIR_STATE;
         List<BlockPos> coordinates = getAnchor(heldItem);
 
-        if (lookingAt == null && coordinates.size() == 0)
+        if (lookingAt == null && coordinates.isEmpty())
             return;
 
         IBlockState startBlock = ToolRenders.Utils.getStartBlock(lookingAt, player);
-        if (startBlock == ModBlocks.effectBlock.getDefaultState())
+        if (startBlock.getBlock() == ModBlocks.effectBlock)
             return;
 
         IBlockState renderBlockState = getToolBlock(heldItem);
@@ -178,8 +180,8 @@ public class ToolRenders {
         if (renderBlockState == IBlockState.AIR_STATE) {//Don't render anything if there is no block selected (Air)
             return;
         }
-        if (coordinates.size() == 0 && lookingAt != null) { //Build a list of coordinates based on the tool mode and range
-            coordinates = ExchangingModes.collectPlacementPos(player.worldObj, player, lookingAt.getBlockPos(), lookingAt.sideHit, heldItem, lookingAt.getBlockPos());
+        if (coordinates.isEmpty() && lookingAt != null) { //Build a list of coordinates based on the tool mode and range
+            coordinates = ExchangingModes.collectPlacementPos(player.worldObj, player, new BlockPos(lookingAt), lookingAt.sideHit, heldItem, new BlockPos(lookingAt));
         }
 
         // Figure out how many of the block we're rendering we have in the inventory of the player.
@@ -202,24 +204,22 @@ public class ToolRenders {
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
             // Get the block state in the fake world
-            if (fakeWorld.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
-                state = renderBlockState.getActualState(fakeWorld, coordinate);
-            }
+            state = IBlockState.getStateFromWorld(fakeWorld, coordinate)/*.getActualState(fakeWorld, coordinate)*/; // TODO: getActualState doesn't exist, but there's custom stuff like BlockDoor.func_150012_g (getFullMetadata)
 
-            if (renderBlockState.getRenderType() != EnumBlockRenderType.INVISIBLE) {
+            if (renderBlockState.getBlock().getRenderType() != -1) {
                 try {
-                    dispatcher.renderBlockBrightness(state, 1f);//Render the defined block
+                    renderBlocks.renderBlockByRenderType(state.getBlock(), coordinate.getX(), coordinate.getY(), coordinate.getZ());//Render the defined block
                 } catch (NullPointerException ex) {
                     // This is to stop crashes with blocks that have not been implemented
                     // correctly by their mod authors.
                     BuildingGadgets.logger.error(ToolRenders.class.getSimpleName() + ": Error within overlay rendering -> " + ex);
                 }
 
-                GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
+                GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because I'm not sure why, but we need to
             }
 
             GL14.glBlendColor(1F, 1F, 1F, 0.1f); //Set the alpha of the blocks we are rendering
-            dispatcher.renderBlockBrightness(stainedGlassWhite, 1f);//Render the defined block - White glass to show non-full block renders (Example: Torch)
+            renderBlocks.renderBlockByRenderType(stainedGlassWhite.getBlock(), coordinate.getX(), coordinate.getY(), coordinate.getZ());//Render the defined block - White glass to show non-full block renders (Example: Torch)
             GL11.glPopMatrix();
 
             GL11.glPushMatrix();
@@ -235,14 +235,15 @@ public class ToolRenders {
                 hasEnergy -= ModItems.gadgetExchanger.getDamageCost(heldItem);
 
             if (hasBlocks < 0 || hasEnergy < 0)
-                dispatcher.renderBlockBrightness(stainedGlassRed, 1f);
+                renderBlocks.renderBlockByRenderType(stainedGlassRed.getBlock(), coordinate.getX(), coordinate.getY(), coordinate.getZ());
 
             // Move the render position back to where it was
             GL11.glPopMatrix();
         }
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
+        // TODO: Doesn't exist
+//        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
@@ -253,9 +254,9 @@ public class ToolRenders {
         if (lookingAt == null && GadgetDestruction.getAnchor(stack) == null)
             return;
         World world = player.worldObj;
-        BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? lookingAt.getBlockPos() : GadgetDestruction.getAnchor(stack);
-        EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? lookingAt.sideHit : GadgetDestruction.getAnchorSide(stack);
-        if (startBlock == ModBlocks.effectBlock.getDefaultState())
+        BlockPos startBlock = (GadgetDestruction.getAnchor(stack) == null) ? new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ) : GadgetDestruction.getAnchor(stack);
+        EnumFacing facing = (GadgetDestruction.getAnchorSide(stack) == null) ? EnumFacingPortUtil.fromSideHit(lookingAt.sideHit) : GadgetDestruction.getAnchorSide(stack);
+        if (world.getBlock(startBlock.getX(), startBlock.getY(), startBlock.getZ()) == ModBlocks.effectBlock)
             return;
 
         if (!GadgetDestruction.getOverlay(stack))
@@ -264,9 +265,9 @@ public class ToolRenders {
         double doubleX = player.lastTickPosX + (player.posX - player.lastTickPosX) * evt.partialTicks;
         double doubleY = player.lastTickPosY + (player.posY - player.lastTickPosY) * evt.partialTicks;
         double doubleZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * evt.partialTicks;
-        GL11.glTranslatef(-doubleX, -doubleY, -doubleZ);
+        GL11.glTranslated(-doubleX, -doubleY, -doubleZ);
         try {
-            GL11.callList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
+            GL11.glCallList(cacheDestructionOverlay.get(new ImmutableTriple<>(new UniqueItemStack(stack), startBlock, facing.ordinal()), () -> {
                 int displayList = GLAllocation.generateDisplayLists(1);
                 GL11.glNewList(displayList, GL11.GL_COMPILE);
                 renderDestructionOverlay(player, world, startBlock, facing, stack);
@@ -287,18 +288,17 @@ public class ToolRenders {
 
         GL11.glPushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
-        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         List<BlockPos> sortedCoordinates = Sorter.Blocks.byDistance(coordinates, player); //Sort the coords by distance to player.
 
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = t.getBuffer();
+        Tessellator t = Tessellator.instance;
 
-        for (BlockPos coordinate : sortedCoordinates) {
+        for (BlockPos c : sortedCoordinates) {
             boolean invisible = true;
-            IBlockState state = world.getBlockState(coordinate);
+            IBlockState state = IBlockState.getStateFromWorld(world, c);
             for (EnumFacing side : EnumFacing.values()) {
-                if (state.shouldSideBeRendered(world, coordinate, side)) {
+                if (state.getBlock().shouldSideBeRendered(world, c.getX(), c.getY(), c.getZ(), side.ordinal())) {
                     invisible = false;
                     break;
                 }
@@ -308,15 +308,15 @@ public class ToolRenders {
                 continue;
 
             GL11.glPushMatrix();//Push matrix again just because
-            GL11.glTranslatef(coordinate.getX(), coordinate.getY(), coordinate.getZ());//Now move the render position to the coordinates we want to render at
-            GL11.rotate(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
+            GL11.glTranslatef(c.getX(), c.getY(), c.getZ());//Now move the render position to the coordinates we want to render at
+            GL11.glRotatef(-90.0F, 0.0F, 1.0F, 0.0F); //Rotate it because i'm not sure why but we need to
             GL11.glTranslatef(-0.005f, -0.005f, 0.005f);
             GL11.glScalef(1.01f, 1.01f, 1.01f);//Slightly Larger block to avoid z-fighting.
 
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 
-            renderBoxSolid(t, bufferBuilder, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
+            renderBoxSolid(t, 0, 0, -1, 1, 1, 0, 1, 0, 0, 0.5f);
 
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_LIGHTING);
@@ -324,7 +324,8 @@ public class ToolRenders {
         }
 
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
+        // TODO: Doesn't exist
+//        ForgeHooksClient.setRenderLayer(MinecraftForgeClient.getRenderLayer());
 
         GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
@@ -348,14 +349,11 @@ public class ToolRenders {
                 startPos = VectorTools.getPosLookingAt(player, stack);
                 if (startPos == null)
                     return;
-                startPos = startPos.up(GadgetCopyPaste.getY(stack));
-                startPos = startPos.east(GadgetCopyPaste.getX(stack));
-                startPos = startPos.south(GadgetCopyPaste.getZ(stack));
-            } else {
-                startPos = startPos.up(GadgetCopyPaste.getY(stack));
-                startPos = startPos.east(GadgetCopyPaste.getX(stack));
-                startPos = startPos.south(GadgetCopyPaste.getZ(stack));
             }
+
+            startPos = startPos.up(GadgetCopyPaste.getY(stack));
+            startPos = startPos.east(GadgetCopyPaste.getX(stack));
+            startPos = startPos.south(GadgetCopyPaste.getZ(stack));
 
             //We store our buffers in PasteToolBufferBuilder (A client only class) -- retrieve the buffer from this locally cache'd map
             ToolDireBuffer toolDireBuffer = PasteToolBufferBuilder.getBufferFromMap(UUID);
@@ -364,13 +362,13 @@ public class ToolRenders {
             }
             //Also get the blockMapList from the local cache - If either the buffer or the blockmap list are empty, exit.
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            if (toolDireBuffer.getVertexCount() == 0 || blockMapList.size() == 0) {
+            if (toolDireBuffer.getVertexCount() == 0 || blockMapList.isEmpty()) {
                 return;
             }
 
             //Don't draw on top of blocks being built by our tools.
-            IBlockState startBlock = world.getBlockState(startPos);
-            if (startBlock == ModBlocks.effectBlock.getDefaultState())
+            IBlockState startBlock = IBlockState.getStateFromWorld(world, startPos);
+            if (startBlock.getBlock() == ModBlocks.effectBlock)
                 return;
 
             //Save the current position that is being rendered
@@ -383,12 +381,12 @@ public class ToolRenders {
             GL11.glBlendFunc(GL11.GL_CONSTANT_ALPHA, GL11.GL_ONE_MINUS_CONSTANT_ALPHA);
 
             GL11.glPushMatrix();//Push matrix again just because
-            GL11.glTranslatef(startPos.getX() - playerPos.x, startPos.getY() - playerPos.y, startPos.getZ() - playerPos.z);//Now move the render position to the coordinates we want to render at
+            GL11.glTranslated(startPos.getX() - playerPos.xCoord, startPos.getY() - playerPos.yCoord, startPos.getZ() - playerPos.zCoord);//Now move the render position to the coordinates we want to render at
             GL14.glBlendColor(1F, 1F, 1F, 0.55f); //Set the alpha of the blocks we are rendering
 
             GL11.glTranslatef(0.0005f, 0.0005f, -0.0005f);
             GL11.glScalef(0.999f, 0.999f, 0.999f);//Slightly Larger block to avoid z-fighting.
-            PasteToolBufferBuilder.draw(player, playerPos.x, playerPos.y, playerPos.z, startPos, UUID); //Draw the cached buffer in the world.
+            PasteToolBufferBuilder.draw(player, playerPos.xCoord, playerPos.yCoord, playerPos.zCoord, startPos, UUID); //Draw the cached buffer in the world.
 
             GL11.glPopMatrix();
 
@@ -405,19 +403,18 @@ public class ToolRenders {
             }
 
             List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
-            if (blockMapList.size() == 0)
+            if (blockMapList.isEmpty())
                 return;
 
             // We want to draw from the starting position to the (ending position)+1
-            int x = (startPos.getX() <= endPos.getX()) ? startPos.getX() : endPos.getX();
-            int y = (startPos.getY() <= endPos.getY()) ? startPos.getY() : endPos.getY();
-            int z = (startPos.getZ() <= endPos.getZ()) ? startPos.getZ() : endPos.getZ();
+            int x = Math.min(startPos.getX(), endPos.getX());
+            int y = Math.min(startPos.getY(), endPos.getY());
+            int z = Math.min(startPos.getZ(), endPos.getZ());
             int dx = (startPos.getX() > endPos.getX()) ? startPos.getX() + 1 : endPos.getX() + 1;
             int dy = (startPos.getY() > endPos.getY()) ? startPos.getY() + 1 : endPos.getY() + 1;
             int dz = (startPos.getZ() > endPos.getZ()) ? startPos.getZ() + 1 : endPos.getZ() + 1;
 
-            Tessellator tessellator = Tessellator.getInstance();
-            BufferBuilder bufferbuilder = tessellator.getBuffer();
+            Tessellator tessellator = Tessellator.instance;
 
             GL11.glPushMatrix();
             GL11.glTranslated(-playerPos.xCoord, -playerPos.yCoord, -playerPos.zCoord);//The render starts at the player, so we subtract the player coords and move the render to 0,0,0
@@ -425,15 +422,15 @@ public class ToolRenders {
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_BLEND);
-            GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-            renderBox(tessellator, bufferbuilder, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks we've copied.
+            renderBox(tessellator, x, y, z, dx, dy, dz, 255, 223, 127); // Draw the box around the blocks we've copied.
 
             GL11.glLineWidth(1.0F);
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glEnable(GL11.GL_TEXTURE_2D);
             GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.depthMask(true);
+            GL11.glDepthMask(true);
 
             GL11.glPopMatrix();
         }
@@ -455,74 +452,116 @@ public class ToolRenders {
         GL14.glBlendColor(1F, 1F, 1F, 0.35f);
 
         // Render the overlay
-        mc.getBlockRendererDispatcher().renderBlockBrightness(stainedGlassYellow, 1f);
+        RenderBlocks renderBlocks = new RenderBlocks(fakeWorld);
+        renderBlocks.renderBlockByRenderType(stainedGlassYellow.getBlock(), pos.getX(), pos.getY(), pos.getZ());
         GL11.glPopMatrix();
     }
 
-    private static void renderBox(Tessellator tessellator, BufferBuilder bufferBuilder, double startX, double startY, double startZ, double endX, double endY, double endZ, int R, int G, int B) {
+    private static void renderBox(Tessellator tessellator, double startX, double startY, double startZ, double endX, double endY, double endZ, int R, int G, int B) {
         GL11.glLineWidth(2.0F);
-        bufferBuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-        tessellator.set
-        bufferBuilder.pos(startX, startY, startZ).color(G, G, G, 0.0F).endVertex();
-        bufferBuilder.pos(startX, startY, startZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, startY, startZ).color(G, B, B, R).endVertex();
-        bufferBuilder.pos(endX, startY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, startY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, startY, startZ).color(B, B, G, R).endVertex();
-        bufferBuilder.pos(startX, endY, startZ).color(B, G, B, R).endVertex();
-        bufferBuilder.pos(endX, endY, startZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, endY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, endY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, endY, startZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, endY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(startX, startY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, startY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, endY, endZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, endY, startZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, startY, startZ).color(G, G, G, R).endVertex();
-        bufferBuilder.pos(endX, startY, startZ).color(G, G, G, 0.0F).endVertex();
+        tessellator.startDrawing(GL11.GL_LINE_STRIP);
+        tessellator.setColorRGBA_F(G, G, G, 0.0F);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(G, B, B, R);
+        tessellator.addVertex(endX, startY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, startY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, startY, endZ);
+        tessellator.setColorRGBA_F(B, B, G, R);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(B, G, B, R);
+        tessellator.addVertex(startX, endY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, endY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, endY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, endY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, endY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, endY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(startX, startY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, startY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, endY, endZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, endY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, R);
+        tessellator.addVertex(endX, startY, startZ);
+        tessellator.setColorRGBA_F(G, G, G, 0.0F);
+        tessellator.addVertex(endX, startY, startZ);
         tessellator.draw();
         GL11.glLineWidth(1.0F);
     }
 
-    private static void renderBoxSolid(Tessellator tessellator, BufferBuilder bufferBuilder, double startX, double startY, double startZ, double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR);
+    private static void renderBoxSolid(Tessellator tessellator, double startX, double startY, double startZ, double endX, double endY, double endZ, float red, float green, float blue, float alpha) {
+        tessellator.startDrawingQuads();
 
         //down
-        bufferBuilder.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, endZ);
 
         //up
-        bufferBuilder.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, startZ);
 
         //east
-        bufferBuilder.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, startZ);
 
         //west
-        bufferBuilder.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, endZ);
 
         //south
-        bufferBuilder.pos(endX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(endX, startY, endZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, endY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(endX, startY, endZ);
 
         //north
-        bufferBuilder.pos(startX, startY, startZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, startY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, endY, endZ).color(red, green, blue, alpha).endVertex();
-        bufferBuilder.pos(startX, endY, startZ).color(red, green, blue, alpha).endVertex();
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, startZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, startY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, endZ);
+        tessellator.setColorRGBA_F(red, green, blue, alpha);
+        tessellator.addVertex(startX, endY, startZ);
         tessellator.draw();
     }
 
@@ -531,7 +570,7 @@ public class ToolRenders {
         private static IBlockState getStartBlock(MovingObjectPosition lookingAt, EntityPlayer player) {
             IBlockState startBlock = IBlockState.AIR_STATE;
             if (lookingAt != null)
-                startBlock = player.worldObj.getBlockState(lookingAt.getBlockPos());
+                startBlock = IBlockState.getStateFromWorld(player.worldObj, new BlockPos(lookingAt.blockX, lookingAt.blockY, lookingAt.blockZ));
 
             return startBlock;
         }
@@ -563,13 +602,13 @@ public class ToolRenders {
          * non-silk touch ItemStack.
          */
         private static ItemStack getSilkDropIfPresent(World world, IBlockState state, EntityPlayer player) {
-            ItemStack itemStack = ItemStack.EMPTY;
-            if (state.getBlock().canSilkHarvest(world, BlockPos.ORIGIN, state, player))
+            ItemStack itemStack = null;
+            if (state.getBlock().canSilkHarvest(world, player, 0, 0, 0, state.getMeta()))
                 itemStack = InventoryManipulation.getSilkTouchDrop(state);
 
-            if (itemStack.isEmpty()) {
+            if (itemStack == null) {
                 try {
-                    itemStack = state.getBlock().getPickBlock(state, null, world, BlockPos.ORIGIN, player);
+                    itemStack = state.getBlock().getPickBlock(null, world, 0, 0, 0, player);
                 } catch (Exception ignored) {
                     // This may introduce issues. I hope it doesn't
                     itemStack = InventoryManipulation.getSilkTouchDrop(state);

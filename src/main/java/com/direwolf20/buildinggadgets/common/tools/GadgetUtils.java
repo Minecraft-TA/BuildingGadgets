@@ -1,5 +1,9 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
+import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
+import com.direwolf20.buildinggadgets.backport.Vec3i;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.EffectBlock;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
@@ -203,7 +207,7 @@ public class GadgetUtils {
     public static IBlockState rotateOrMirrorBlock(EntityPlayer player, PacketRotateMirror.Operation operation, IBlockState state) {
         // TODO: Not possible this easily anymore
         /*if (operation == PacketRotateMirror.Operation.MIRROR)
-            return state.withMirror(player.getHorizontalFacing().getAxis() == Axis.X ? Mirror.LEFT_RIGHT : Mirror.FRONT_BACK);
+            return state.withMirror(EnumFacingPortUtil.getHorizontalFacing(player).getAxis() == Axis.X ? Mirror.LEFT_RIGHT : Mirror.FRONT_BACK);
 
         return state.withRotation(Rotation.CLOCKWISE_90);*/
         return state;

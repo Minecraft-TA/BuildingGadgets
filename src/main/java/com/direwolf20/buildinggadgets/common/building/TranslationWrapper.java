@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.common.building;
 
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 /**
  * Wraps an {@link IBlockProvider} such that all access to the provider will be translated by the given amount as the

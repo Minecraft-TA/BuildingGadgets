@@ -5,7 +5,7 @@ import com.direwolf20.buildinggadgets.common.building.placement.Surface;
 import com.direwolf20.buildinggadgets.util.CasedBlockView;
 import com.google.common.collect.Sets;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Random;

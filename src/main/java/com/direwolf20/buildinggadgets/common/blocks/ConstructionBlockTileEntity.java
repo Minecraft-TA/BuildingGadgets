@@ -1,9 +1,7 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
-import net.minecraft.init.Blocks;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
@@ -54,7 +52,7 @@ public class ConstructionBlockTileEntity extends TileEntity {
     private void markDirtyClient() {
         markDirty();
         if (worldObj != null) {
-            IBlockState state = worldObj.getBlockState(getPos());
+            IBlockState state = IBlockState.getStateFromWorld(worldObj, getPos());
             worldObj.notifyBlockUpdate(getPos(), state, state, 3);
         }
     }

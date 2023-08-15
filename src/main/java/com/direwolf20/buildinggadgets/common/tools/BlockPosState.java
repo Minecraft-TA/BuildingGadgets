@@ -1,5 +1,8 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
+import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
 import net.minecraft.nbt.NBTTagCompound;
 
 import javax.annotation.Nullable;

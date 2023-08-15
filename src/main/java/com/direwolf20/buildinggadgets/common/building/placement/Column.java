@@ -1,12 +1,12 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.MathTool;
 import com.google.common.annotations.VisibleForTesting;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumFacing.Axis;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -38,9 +38,9 @@ public final class Column implements IPlacementSequence {
      * @param axis   which axis will the column align to
      * @param length length of the column, will be floored to an odd number if it is not one already
      */
-    public static Column centerAt(BlockPos center, Axis axis, int length) {
-        EnumFacing positive = EnumFacing.getFacingFromAxis(EnumFacing.AxisDirection.POSITIVE, axis);
-        EnumFacing negative = positive.getOpposite();
+    public static Column centerAt(BlockPos center, EnumFacingPortUtil.Axis axis, int length) {
+        EnumFacing positive = EnumFacingPortUtil.getFacingFromAxis(EnumFacingPortUtil.AxisDirection.POSITIVE, axis);
+        EnumFacing negative = EnumFacingPortUtil.getOpposite(positive);
         BlockPos base = center.offset(negative, (length - 1) / 2);
         // -1 because Region's vertexes are inclusive
         return new Column(base, base.offset(positive, MathTool.floorToOdd(length) - 1));

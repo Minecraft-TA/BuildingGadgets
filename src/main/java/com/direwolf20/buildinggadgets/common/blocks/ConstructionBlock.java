@@ -1,15 +1,17 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import com.direwolf20.buildinggadgets.common.blocks.Models.BlockstateProperty;
 import com.direwolf20.buildinggadgets.common.blocks.Models.ConstructionBakedModel;
 import com.direwolf20.buildinggadgets.common.items.FakeRenderWorld;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.color.BlockColors;
@@ -21,20 +23,16 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.math.AxisAlignedBB;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fml.common.Optional;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import team.chisel.ctm.api.IFacade;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Random;
@@ -68,22 +66,22 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     }
 
     @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+    public Item getItemDropped(int meta, Random random, int fortune) {
         return ModItems.constructionPaste;
     }
 
     @Override
-    public boolean canSilkHarvest(World world, BlockPos pos, IBlockState state, EntityPlayer player) {
+    public boolean canSilkHarvest(World world, EntityPlayer player, int x, int y, int z, int metadata) {
         return false;
     }
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {
+    public boolean hasTileEntity(int state) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(World worldIn, IBlockState state) {
+    public TileEntity createTileEntity(World worldIn, int state) {
         return new ConstructionBlockTileEntity();
     }
 
@@ -106,24 +104,10 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         return false;
     }*/
 
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IExtendedBlockState extendedBlockState = (IExtendedBlockState) super.getExtendedState(state, world, pos);
-        IBlockState mimicBlock = getActualMimicBlock(world, pos);
-        if (mimicBlock != null) {
-            FakeRenderWorld fakeRenderWorld = new FakeRenderWorld();
-            fakeRenderWorld.setState(world, mimicBlock, pos);
-            IBlockState extState = mimicBlock.getBlock().getExtendedState(mimicBlock, fakeRenderWorld, pos);
-            //ConstructionID mimicID = new ConstructionID(mimicBlock);
-            return extendedBlockState.withProperty(FACADE_ID, mimicBlock).withProperty(FACADE_EXT_STATE, extState);
-        }
-        return extendedBlockState;
-    }
-
     @Nullable
-    private IBlockState getActualMimicBlock(IBlockAccess blockAccess, BlockPos pos) {
+    private IBlockState getActualMimicBlock(IBlockAccess blockAccess, int x, int y, int z) {
         try {
-            TileEntity te = blockAccess.getTileEntity(pos.getX(), pos.getY(), pos.getZ());
+            TileEntity te = blockAccess.getTileEntity(x, y, z);
             if (te instanceof ConstructionBlockTileEntity) {
                 return ((ConstructionBlockTileEntity) te).getActualBlockState();
             }
@@ -133,24 +117,18 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
         }
     }
 
-    @Override
-    protected BlockStateContainer createBlockState() {
-        IProperty<?>[] listedProperties = new IProperty<?>[]{BRIGHT, NEIGHBOR_BRIGHTNESS};
-        IUnlistedProperty<?>[] unlistedProperties = new IUnlistedProperty<?>[]{FACADE_ID, FACADE_EXT_STATE};
-        return new ExtendedBlockState(this, listedProperties, unlistedProperties);
-    }
+    // TODO: Idk
+    /*@Override
+    public int getRenderType() {
+        return super.getRenderType();
+    }*/
 
-    @Override
-    @Deprecated
-    public EnumBlockRenderType getRenderType(IBlockState state) {
-        return EnumBlockRenderType.MODEL;
-    }
-
-    @Override
+    // TODO:
+    /*@Override
     @SideOnly(Side.CLIENT)
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return true; // delegated to FacadeBakedModel#getQuads
-    }
+    }*/
 
     /*@Override
     @SideOnly(Side.CLIENT)
@@ -161,61 +139,58 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
 
     @Override
     @Deprecated
-    public boolean isOpaqueCube(IBlockState p_isFullBlock_1_) {
+    public boolean isOpaqueCube() {
         return false;
     }
 
     @Override
     @Deprecated
-    public boolean isFullCube(IBlockState state) {
+    public boolean isBlockNormalCube() {
         return false;
     }
 
     @Override
-    public int getLightOpacity(IBlockState state, IBlockAccess world, BlockPos pos) {
-        Boolean bright = state.getValue(ConstructionBlock.BRIGHT);
-        if (bright) {
-            return 0;
-        }
-        return 255;
+    public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
+        // TODO: Could be wrong
+        IBlockState mimicBlock = getActualMimicBlock(world, x, y, z);
+        return mimicBlock != null ? mimicBlock.getBlock().getLightOpacity(world, x, y, z) : super.getLightOpacity(world, x, y, z);
     }
 
-    @Override
+    // TODO: Idk
+    /*@Override
     public boolean doesSideBlockRendering(IBlockState state, IBlockAccess world, BlockPos pos, EnumFacing face) {
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
         return mimicBlock == null ? true : mimicBlock.getBlock().doesSideBlockRendering(mimicBlock, world, pos, face);
-    }
+    }*/
 
+    @Override
     @SideOnly(Side.CLIENT)
-    public void initColorHandler(BlockColors blockColors) {
-        blockColors.registerBlockColorHandler((state, world, pos, tintIndex) -> {
-            IBlockState mimicBlock = getActualMimicBlock(world, pos);
-            return mimicBlock != null ? blockColors.colorMultiplier(mimicBlock, world, pos, tintIndex) : -1;
-        }, this);
+    public int colorMultiplier(IBlockAccess worldIn, int x, int y, int z) {
+        IBlockState mimicBlock = getActualMimicBlock(worldIn, x, y, z);
+        return mimicBlock != null ? mimicBlock.getBlock().colorMultiplier(worldIn, x, y, z) : super.colorMultiplier(worldIn, x, y, z);
     }
 
     @Override
-    @Deprecated
-    public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face) {
-        IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
+    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+        IBlockState mimicBlock = getActualMimicBlock(world, x, y, z);
         try {
-            return mimicBlock == null ? BlockFaceShape.SOLID : mimicBlock.getBlock().getBlockFaceShape(worldIn, mimicBlock, pos, face);
+            return mimicBlock == null || mimicBlock.getBlock().isSideSolid(world, x, y, z, side);
         } catch (Exception var8) {
-            return BlockFaceShape.SOLID;
+            return true;
         }
     }
 
     @Override
     @Deprecated
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean isActualState) {
-        IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
+    public void addCollisionBoxesToList(World worldIn, int x, int y, int z, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn) {
+        IBlockState mimicBlock = getActualMimicBlock(worldIn, x, y, z);
         if (mimicBlock == null) {
-            super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
+            super.addCollisionBoxesToList(worldIn, x, y, z, entityBox, collidingBoxes, entityIn);
         } else {
             try {
-                mimicBlock.getBlock().addCollisionBoxToList(mimicBlock, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
+                mimicBlock.getBlock().addCollisionBoxesToList(worldIn, x, y, z, entityBox, collidingBoxes, entityIn);
             } catch (Exception var8) {
-                super.addCollisionBoxToList(state, worldIn, pos, entityBox, collidingBoxes, entityIn, isActualState);
+                super.addCollisionBoxesToList(worldIn, x, y, z, entityBox, collidingBoxes, entityIn);
             }
         }
     }
@@ -223,120 +198,99 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     @Override
     @Nullable
     @Deprecated
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        IBlockState mimicBlock = getActualMimicBlock(worldIn, pos);
+    public AxisAlignedBB getCollisionBoundingBoxFromPool(World worldIn, int x, int y, int z) {
+        IBlockState mimicBlock = getActualMimicBlock(worldIn, x, y, z);
         if (mimicBlock == null) {
-            return super.getBoundingBox(blockState, worldIn, pos);
+            return super.getCollisionBoundingBoxFromPool(worldIn, x, y, z);
         }
         try {
-            return mimicBlock.getBlock().getBoundingBox(mimicBlock, worldIn, pos);
+            return mimicBlock.getBlock().getCollisionBoundingBoxFromPool(worldIn, x, y, z);
         } catch (Exception var8) {
-            return super.getBoundingBox(blockState, worldIn, pos);
+            return super.getCollisionBoundingBoxFromPool(worldIn, x, y, z);
         }
     }
+
 
     @Override
     @Deprecated
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+    public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
         FakeRenderWorld fakeWorld = new FakeRenderWorld();
 
-        IBlockState mimicBlock = getActualMimicBlock(blockAccess, pos);
+        BlockPos pos = new BlockPos(x, y, z);
+
+        IBlockState mimicBlock = getActualMimicBlock(blockAccess, x, y, z);
         if (mimicBlock == null) {
-            return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+            return super.shouldSideBeRendered(fakeWorld, x, y, z, side);
         }
-        IBlockState sideBlockState = blockAccess.getBlockState(pos.offset(side));
+        BlockPos pos2 = pos.offset(EnumFacing.values()[side]);
+        IBlockState sideBlockState = IBlockState.getStateFromWorld(blockAccess, pos2);
         if (sideBlockState.getBlock().equals(ModBlocks.constructionBlock)) {
-            if (!(getActualMimicBlock(blockAccess, pos.offset(side)) == null)) {
-                sideBlockState = getActualMimicBlock(blockAccess, pos.offset(side));
+            if (!(getActualMimicBlock(blockAccess, pos2.getX(), pos2.getY(), pos2.getZ()) == null)) {
+                sideBlockState = getActualMimicBlock(blockAccess, pos2.getX(), pos2.getY(), pos2.getZ());
             }
         }
 
         fakeWorld.setState(blockAccess, mimicBlock, pos);
-        fakeWorld.setState(blockAccess, sideBlockState, pos.offset(side));
+        fakeWorld.setState(blockAccess, sideBlockState, pos2);
 
         try {
-            return mimicBlock.getBlock().shouldSideBeRendered(mimicBlock, fakeWorld, pos, side);
+            return mimicBlock.getBlock().shouldSideBeRendered(fakeWorld, x, y, z, side);
         } catch (Exception var8) {
-            return super.shouldSideBeRendered(blockState, blockAccess, pos, side);
+            return super.shouldSideBeRendered(fakeWorld, x, y, z, side);
         }
     }
 
     @Override
-    @Deprecated
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        IBlockState mimicBlock = getActualMimicBlock(source, pos);
+    public boolean isNormalCube(IBlockAccess world, int x, int y, int z) {
+        IBlockState mimicBlock = getActualMimicBlock(world, x, y, z);
         if (mimicBlock == null) {
-            return super.getBoundingBox(state, source, pos);
+            return super.isNormalCube(world, x, y, z);
         }
         try {
-            return mimicBlock.getBlock().getBoundingBox(mimicBlock, source, pos);
+            return mimicBlock.getBlock().isNormalCube(world, x, y, z);
         } catch (Exception var8) {
-            return super.getBoundingBox(state, source, pos);
-        }
-    }
-
-    @Override
-    public boolean isNormalCube(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IBlockState mimicBlock = getActualMimicBlock(world, pos);
-        if (mimicBlock == null) {
-            return super.isNormalCube(state, world, pos);
-        }
-        try {
-            return mimicBlock.getBlock().isNormalCube(mimicBlock, world, pos);
-        } catch (Exception var8) {
-            return super.isNormalCube(state, world, pos);
+            return super.isNormalCube(world, x, y, z);
         }
     }
 
     @Override
     @Deprecated
     @SideOnly(Side.CLIENT)
-    public float getAmbientOcclusionLightValue(IBlockState state) {
-        Boolean bright = state.getValue(ConstructionBlock.BRIGHT);
-        Boolean neighborBrightness = state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);
-        if (bright || neighborBrightness) {
-            return 1f;
-        }
-        return 0.2f;
+    public float getAmbientOcclusionLightValue() {
+        // TODO: Idk how
+//        Boolean bright = state.getValue(ConstructionBlock.BRIGHT);
+//        Boolean neighborBrightness = state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);
+//        if (bright || neighborBrightness) {
+//            return 1f;
+//        }
+//        return 0.2f;
+        return 1f;
     }
 
-    @Override
-    @Deprecated
-    public boolean getUseNeighborBrightness(IBlockState state) {
-        return state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);
-    }
-
-    @Override
-    @Deprecated
-    public IBlockState getStateFromMeta(int meta) {
-        return getDefaultState()
-                .withProperty(BRIGHT, (meta % 2 == 1))
-                .withProperty(NEIGHBOR_BRIGHTNESS, (meta / 2 == 1));
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        int value = state.getValue(BRIGHT) ? 1 : 0;
-        return state.getValue(NEIGHBOR_BRIGHTNESS) ? value + 2 : value;
-    }
+    // TODO: Idk how
+//    @Override
+//    @Deprecated
+//    public boolean getUseNeighborBrightness(IBlockState state) {
+//        return state.getValue(ConstructionBlock.NEIGHBOR_BRIGHTNESS);
+//    }
 
     /**
      * The below implements support for CTM's Connected Textures to work properly
      *
      * @param world IBlockAccess
-     * @param pos BlockPos
-     * @param side EnumFacing
+     * @param pos   BlockPos
+     * @param side  EnumFacing
      * @return IBlockState
-     *
      * @deprecated see {@link IFacade#getFacade(IBlockAccess, BlockPos, EnumFacing, BlockPos)}
      */
-    @Override
+    // TODO: ConnectedTexturesMod support
+    /*@Override
     @Nonnull
     @Deprecated
     public IBlockState getFacade(@Nonnull IBlockAccess world, @Nonnull BlockPos pos, @Nullable EnumFacing side) {
         IBlockState mimicBlock = getActualMimicBlock(world, pos);
-        return mimicBlock != null ? mimicBlock : world.getBlockState(pos);
+        return mimicBlock != null ? mimicBlock : IBlockState.getStateFromWorld(world, pos);
         //return mimicBlock;
-    }
+    }*/
 }

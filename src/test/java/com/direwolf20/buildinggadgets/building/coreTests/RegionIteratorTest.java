@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.building.coreTests;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
 import com.google.common.collect.ImmutableList;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.junit.jupiter.api.*;
 
 import java.util.Iterator;

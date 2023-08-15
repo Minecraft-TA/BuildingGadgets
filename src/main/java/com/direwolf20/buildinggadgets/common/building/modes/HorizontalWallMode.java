@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -10,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Building mode where such wall will always be perpendicular to the XZ world plane.
@@ -36,9 +37,9 @@ public class HorizontalWallMode extends AtopSupportedMode {
     public IPlacementSequence computeWithTransformed(EntityPlayer player, BlockPos transformed, BlockPos original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
         int radius = MathTool.floorToOdd(range) / 2;
-        if (sideHit.getAxis().isVertical())
+        if (EnumFacingPortUtil.getAxis(sideHit).isVertical())
             return Wall.clickedSide(transformed, sideHit, radius);
-        return Wall.extendingFrom(transformed.offset(sideHit.getOpposite()), sideHit, EnumFacing.UP, radius, MathTool.isEven(range) ? 1 : 0);
+        return Wall.extendingFrom(transformed.offset(EnumFacingPortUtil.getOpposite(sideHit)), sideHit, EnumFacing.UP, radius, MathTool.isEven(range) ? 1 : 0);
     }
 
     @Override

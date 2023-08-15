@@ -1,24 +1,24 @@
 package com.direwolf20.buildinggadgets.common.entities;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
+import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlock;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockPowder;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTUtil;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.tileentity.TileEntity;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.World;
 
 public class ConstructionBlockEntity extends Entity {
 
-    private static final DataParameter<BlockPos> FIXED = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BLOCK_POS);
-    private static final DataParameter<Boolean> MAKING = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BOOLEAN);
+    //    private static final DataParameter<BlockPos> FIXED = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BLOCK_POS);
+    private static final int ID_FIXED = 1;
+    //    private static final DataParameter<Boolean> MAKING = EntityDataManager.createKey(ConstructionBlockEntity.class, DataSerializers.BOOLEAN);
+    private static final int ID_MAKING = 2;
 
     private int despawning = -1;
     public int maxLife = 80;
@@ -53,7 +53,7 @@ public class ConstructionBlockEntity extends Entity {
             setDespawning();
         }
         if (setPos != null) {
-            if (!(world.getBlockState(setPos).getBlock() instanceof ConstructionBlock) && !(world.getBlockState(setPos).getBlock() instanceof ConstructionBlockPowder)) {
+            if (!(IBlockState.getStateFromWorld(world, setPos).getBlock() instanceof ConstructionBlock) && !(IBlockState.getStateFromWorld(world, setPos).getBlock() instanceof ConstructionBlockPowder)) {
                 setDespawning();
             }
         }
@@ -74,29 +74,30 @@ public class ConstructionBlockEntity extends Entity {
             despawning = 0;
             if (setPos != null) {
                 if (!getMakingPaste()) {
-                    TileEntity te = world.getTileEntity(setPos);
+                    TileEntity te = world.getTileEntity(setPos.getX(), setPos.getY(), setPos.getZ());
                     if (te instanceof ConstructionBlockTileEntity) {
                         IBlockState tempState = ((ConstructionBlockTileEntity) te).getBlockState();
                         if (tempState == null)
                             return;
 
-                        int opacity = tempState.getBlock().getLightOpacity(tempState, world, setPos);
-                        boolean neighborBrightness = tempState.getBlock().getUseNeighborBrightness(tempState);
+                        int opacity = tempState.getBlock().getLightOpacity(world, setPos.getX(), setPos.getY(), setPos.getZ());
+                        boolean neighborBrightness = tempState.getBlock().getUseNeighborBrightness();
                         if (opacity == 255 || neighborBrightness) {
                             IBlockState tempSetBlock = ((ConstructionBlockTileEntity) te).getBlockState();
                             IBlockState tempActualSetBlock = ((ConstructionBlockTileEntity) te).getActualBlockState();
-                            world.setBlockState(setPos, ModBlocks.constructionBlock.getDefaultState()
-                                    .withProperty(ConstructionBlock.BRIGHT, opacity != 255)
-                                    .withProperty(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness));
-                            te = world.getTileEntity(setPos);
+                            // TODO: Idk about the withProperty stuff :(
+                            world.setBlock(setPos.getX(), setPos.getY(), setPos.getZ(), ModBlocks.constructionBlock);
+//                                .withProperty(ConstructionBlock.BRIGHT, opacity != 255)
+//                                .withProperty(ConstructionBlock.NEIGHBOR_BRIGHTNESS, neighborBrightness));
+                            te = world.getTileEntity(setPos.getX(), setPos.getY(), setPos.getZ());
                             if (te instanceof ConstructionBlockTileEntity) {
                                 ((ConstructionBlockTileEntity) te).setBlockState(tempSetBlock);
                                 ((ConstructionBlockTileEntity) te).setActualBlockState(tempActualSetBlock);
                             }
                         }
                     }
-                } else if (world.getBlockState(setPos) == ModBlocks.constructionBlockPowder.getDefaultState()) {
-                    world.setBlockState(setPos, ModBlocks.constructionBlockDense.getDefaultState());
+                } else if (IBlockState.getStateFromWorld(world, setPos).getBlock() == ModBlocks.constructionBlockPowder) {
+                    world.setBlock(setPos.getX(), setPos.getY(), setPos.getZ(), ModBlocks.constructionBlockDense);
                 }
             }
         }
@@ -115,11 +116,11 @@ public class ConstructionBlockEntity extends Entity {
     }
 
     public void setMakingPaste(Boolean paste) {
-        this.dataManager.set(MAKING, paste);
+        this.getDataWatcher().updateObject(ID_MAKING, paste ? 1 : 0);
     }
 
     public boolean getMakingPaste() {
-        return this.dataManager.get(MAKING);
+        return this.getDataWatcher().getWatchableObjectByte(ID_MAKING) == 1;
     }
 
     @Override
@@ -141,8 +142,8 @@ public class ConstructionBlockEntity extends Entity {
 
     @Override
     protected void entityInit() {
-        this.dataManager.register(FIXED, BlockPos.ORIGIN);
-        this.dataManager.register(MAKING, false);
+        this.getDataWatcher().addObject(ID_FIXED, new ChunkCoordinates(0, 0, 0));
+        this.getDataWatcher().addObject(ID_MAKING, (byte) 0);
     }
 
     @Override

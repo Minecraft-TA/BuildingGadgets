@@ -1,12 +1,11 @@
 package com.direwolf20.buildinggadgets.common.building.placement;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraft.util.math.BlockPos.MutableBlockPos;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
@@ -71,12 +70,12 @@ public final class Stair implements IPlacementSequence {
     @Override
     @Nonnull
     public Iterator<BlockPos> iterator() {
-        return new AbstractIterator<BlockPos>() {
-            private MutableBlockPos current = new MutableBlockPos(base);
+        return new AbstractIterator<>() {
+            private BlockPos current = new BlockPos(base);
             private int i = 0;
 
             {
-                current.move(horizontalAdvance, -1).move(verticalAdvance, -1);
+                current.offset(horizontalAdvance, -1).offset(verticalAdvance, -1);
             }
 
             @Override
@@ -85,8 +84,8 @@ public final class Stair implements IPlacementSequence {
                     return endOfData();
                 i++;
 
-                current.move(horizontalAdvance, 1).move(verticalAdvance, 1);
-                return current.toImmutable();
+                current.offset(horizontalAdvance, 1).offset(verticalAdvance, 1);
+                return current;
             }
         };
     }

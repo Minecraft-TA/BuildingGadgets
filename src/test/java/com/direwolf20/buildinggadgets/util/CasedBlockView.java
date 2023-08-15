@@ -3,7 +3,7 @@ package com.direwolf20.buildinggadgets.util;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
 import net.minecraft.block.state.IBlockState;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -51,7 +51,7 @@ public class CasedBlockView extends RegionBlockView {
         if (otherPositions.contains(pos)) {
             return otherState;
         }
-        return super.getBlockState(pos);
+        return IBlockState.getStateFromWorld(super, pos);
     }
 
 }

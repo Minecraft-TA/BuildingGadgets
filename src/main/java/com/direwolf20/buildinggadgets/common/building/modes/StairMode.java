@@ -1,5 +1,7 @@
 package com.direwolf20.buildinggadgets.common.building.modes;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.IValidatorFactory;
@@ -9,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 
 /**
  * Stair mode for Building Gadget.
@@ -31,19 +32,19 @@ public class StairMode extends AtopSupportedMode {
     @Override
     public IPlacementSequence computeWithTransformed(EntityPlayer player, BlockPos transformed, BlockPos original, EnumFacing sideHit, ItemStack tool) {
         int range = GadgetUtils.getToolRange(tool);
-        EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing().getOpposite() : sideHit;
+        EnumFacing side = EnumFacingPortUtil.getAxis(sideHit).isVertical() ? EnumFacingPortUtil.getOpposite(EnumFacingPortUtil.getHorizontalFacing(player)) : sideHit;
 
         if (original.getY() > player.posY + 1)
             return Stair.create(transformed, side, EnumFacing.DOWN, range);
         else if (original.getY() < player.posY - 2)
             return Stair.create(transformed, side, EnumFacing.UP, range);
-        return Stair.create(transformed, side.getOpposite(), EnumFacing.UP, range);
+        return Stair.create(transformed, EnumFacingPortUtil.getOpposite(side), EnumFacing.UP, range);
     }
 
     @Override
     public BlockPos transformAtop(EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool) {
         if (hit.getY() > player.posY + 1) {
-            EnumFacing side = sideHit.getAxis().isVertical() ? player.getHorizontalFacing() : sideHit;
+            EnumFacing side = EnumFacingPortUtil.getAxis(sideHit).isVertical() ? EnumFacingPortUtil.getHorizontalFacing(player) : sideHit;
             return hit.down().offset(side);
         }
         return hit.up();

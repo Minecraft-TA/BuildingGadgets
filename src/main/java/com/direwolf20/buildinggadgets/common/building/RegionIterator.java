@@ -2,7 +2,7 @@ package com.direwolf20.buildinggadgets.common.building;
 
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.PeekingIterator;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 class RegionIterator extends AbstractIterator<BlockPos> implements PeekingIterator<BlockPos> {
 

@@ -1,9 +1,9 @@
 package com.direwolf20.buildinggadgets.common.building;
 
 import com.direwolf20.buildinggadgets.common.tools.GadgetUtils;
-import com.direwolf20.buildinggadgets.common.tools.Vec3i;
+import com.direwolf20.buildinggadgets.backport.Vec3i;
 import com.google.common.collect.PeekingIterator;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 import java.util.Objects;
 import java.util.Spliterator;

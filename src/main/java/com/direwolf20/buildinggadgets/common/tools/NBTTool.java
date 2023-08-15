@@ -348,6 +348,7 @@ public class NBTTool {
 
     private static NBTBase bruhMomentGetFromNBTTagList(NBTTagList list, int i) {
         try {
+            // TODO: Obfuscation
             Field field = NBTTagList.class.getDeclaredField("tagList");
             field.setAccessible(true);
             return (NBTBase) ((List) field.get(list)).get(i);

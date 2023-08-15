@@ -4,10 +4,10 @@ import com.direwolf20.buildinggadgets.common.building.IPlacementSequence;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.AbstractIterator;
-import com.direwolf20.buildinggadgets.common.tools.IBlockState;
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.block.Block;
 import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 import javax.annotation.Nonnull;
@@ -46,7 +46,7 @@ public final class Surface implements IPlacementSequence {
     private Surface(IBlockAccess world, BlockPos center, Region searchingRegion, Function<BlockPos, BlockPos> searching2referenceMapper, boolean fuzzy) {
         this.world = world;
         BlockPos reference = searching2referenceMapper.apply(center);
-        this.selectedBase = IBlockState.create(world.getBlockMetadata(reference.getX(), reference.getY(), reference.getZ()));
+        this.selectedBase = IBlockState.getStateFromWorld(world, reference);
         this.searchingRegion = searchingRegion;
         this.searching2referenceMapper = searching2referenceMapper;
         this.fuzzy = fuzzy;

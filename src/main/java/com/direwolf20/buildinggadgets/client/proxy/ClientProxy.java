@@ -103,7 +103,8 @@ public class ClientProxy extends CommonProxy {
     }
 
     private static void registerSprite(TextureStitchEvent.Pre event, String loc) {
-        event.map.registerSprite(new ResourceLocation(loc));
+        // TODO: Doesn't exist
+//        event.map.registerSprite(new ResourceLocation(loc));
     }
 
     public static void playSound(String name, float pitch) {

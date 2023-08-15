@@ -36,14 +36,13 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.Rectangle;
 import org.lwjgl.util.glu.Project;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,7 +145,7 @@ public class TemplateManagerGUI extends GuiContainer {
     }
 
     public void drawTexturedModalRectReverseX(int x, int y, int textureX, int textureY, int width, int height, boolean reverse) {
-        Tessellator tessellator = Tessellator.getInstance();
+        Tessellator tessellator = Tessellator.instance;
         BufferBuilder bufferbuilder = tessellator.getBuffer();
         bufferbuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         if (reverse) {
@@ -236,9 +235,9 @@ public class TemplateManagerGUI extends GuiContainer {
                 if ((startPos.getX() - endPos.getX()) == 0) {
                     //GL11.rotate(270, 0, 1, 0);
                 }
-                //Tessellator.getInstance().getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
+                //Tessellator.instance.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
                 //dispatcher.renderBlockBrightness(Blocks.GLASS.getDefaultState(), 1f);
-                //Tessellator.getInstance().draw();
+                //Tessellator.instance.draw();
 
                 if (bufferBuilder.getVertexCount() > 0) {
                     VertexFormat vertexformat = bufferBuilder.getVertexFormat();
