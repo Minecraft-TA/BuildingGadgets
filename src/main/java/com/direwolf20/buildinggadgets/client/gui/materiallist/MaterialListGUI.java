@@ -16,7 +16,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -110,9 +109,9 @@ public class MaterialListGUI extends GuiBase {
         this.buttonSortingModes = new DireButton(BUTTON_SORTING_MODES_ID, 0, buttonY, 0, BUTTON_HEIGHT, sortingMode.getLocalizedName());
         this.buttonCopyList = new DireButton(BUTTON_COPY_LIST_ID, 0, buttonY, 0, BUTTON_HEIGHT, I18n.format("gui.buildinggadgets.materialList.button.copyList"));
 
-        this.addButton(buttonSortingModes);
-        this.addButton(buttonCopyList);
-        this.addButton(buttonClose);
+        this.buttonList.add(buttonSortingModes);
+        this.buttonList.add(buttonCopyList);
+        this.buttonList.add(buttonClose);
         this.calculateButtonsWidthAndX();
     }
 
@@ -128,7 +127,7 @@ public class MaterialListGUI extends GuiBase {
                 item.getDisplayName(),
                 item.stackSize,
                 item.getItem().getUnlocalizedName(), //TODO check if this is correct
-                InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.getCount())))
+                InventoryManipulation.formatItemCount(item.getMaxStackSize(), item.stackSize)))
             .collect(Collectors.joining("\n"));
     }
 
@@ -163,9 +162,10 @@ public class MaterialListGUI extends GuiBase {
     public void handleMouseInput() {
         super.handleMouseInput();
 
-        int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
+        // TODO: Seems to be handled by GuiScrollingList#drawScreen, needs testing
+        /*int mx = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int my = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-        this.scrollingList.handleMouseInput(mx, my);
+        this.scrollingList.handleMouseInput(mx, my);*/
     }
 
     @Override
@@ -188,7 +188,7 @@ public class MaterialListGUI extends GuiBase {
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.detailed");
                 else
                     type = I18n.format("gui.buildinggadgets.materialList.message.copiedMaterialList.simple");
-                mc.thePlayer.addChatMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type), true);
+                mc.thePlayer.addChatMessage(new ChatComponentTranslation("gui.buildinggadgets.materialList.message.copiedMaterialList", type));
                 return;
         }
         this.scrollingList.actionPerformed(button);

@@ -131,7 +131,7 @@ public class PasteGUI extends GuiScreen {
                 PacketHandler.INSTANCE.sendToServer(new PacketPasteGUI(Integer.parseInt(X.getText()), Integer.parseInt(Y.getText()), Integer.parseInt(Z.getText())));
                 this.mc.displayGuiScreen(null);
             } else {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()), true);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.destroysizeerror").getUnformattedTextForChat()));
             }
 
         } else if (b.id == 2) {
@@ -174,22 +174,22 @@ public class PasteGUI extends GuiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 1) {
-            if (this.X.mouseClicked(mouseX, mouseY, 0)) {
+            if (GuiUtils.textFieldMouseClicked(X, mouseX, mouseY, 0)) {
                 X.setText("");
-            } else if (this.Y.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(Y, mouseX, mouseY, 0)) {
                 Y.setText("");
-            } else if (this.Z.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(Z, mouseX, mouseY, 0)) {
                 Z.setText("");
             } else {
                 //startX.setFocused(false);
                 super.mouseClicked(mouseX, mouseY, mouseButton);
             }
         } else {
-            if (this.X.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (GuiUtils.textFieldMouseClicked(X, mouseX, mouseY, mouseButton)) {
                 X.setFocused(true);
-            } else if (this.Y.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(Y, mouseX, mouseY, mouseButton)) {
                 Y.setFocused(true);
-            } else if (this.Z.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(Z, mouseX, mouseY, mouseButton)) {
                 Z.setFocused(true);
             } else {
                 //startX.setFocused(false);

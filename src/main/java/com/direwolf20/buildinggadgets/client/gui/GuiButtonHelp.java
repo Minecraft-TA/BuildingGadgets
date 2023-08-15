@@ -35,16 +35,17 @@ public class GuiButtonHelp extends GuiButtonSelect {
             red = green = blue = 120;
         }
         Tessellator tessellator = Tessellator.instance;
-        BufferBuilder buffer = tessellator.getBuffer();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        buffer.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
-        buffer.pos(x, y, 0).color(red, green, blue, 255).endVertex();
+        tessellator.startDrawing(GL11.GL_TRIANGLE_FAN);
+        tessellator.setColorRGBA(red, green, blue, 255);
+        tessellator.addVertex(x, y, 0);
         double s = 30;
         for(int k = 0; k <= s; k++)  {
             double angle = (Math.PI * 2 * k / s) + Math.toRadians(180);
-            buffer.pos(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0).color(red, green, blue, 255).endVertex();
+            tessellator.setColorRGBA(red, green, blue, 255);
+            tessellator.addVertex(x + Math.sin(angle) * radius, y + Math.cos(angle) * radius, 0);
         }
         tessellator.draw();
         GL11.glEnable(GL11.GL_TEXTURE_2D);

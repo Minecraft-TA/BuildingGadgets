@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.function.Predicate;
@@ -72,8 +73,8 @@ public class GuiButtonActionable extends GuiButton {
     }
 
     @Override
-    public void playPressSound(SoundHandler soundHandlerIn) {
-        soundHandlerIn.playSound(PositionedSoundRecord.getMasterRecord(ModSounds.BEEP.getSound(), selected ? .6F : 1F));
+    public void func_146113_a(SoundHandler soundHandlerIn) {
+        soundHandlerIn.playSound(PositionedSoundRecord.func_147674_a(ModSounds.BEEP.getLocation(), selected ? .6F : 1F));
     }
 
     @Override
@@ -92,24 +93,24 @@ public class GuiButtonActionable extends GuiButton {
     }
 
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY, float partialTicks) {
+    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (!visible)
             return;
 
         GL11.glEnable(GL11.GL_BLEND);
-        GL14.glBlendFuncSeparate(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA, GL11.SourceFactor.ONE, GL11.DestFactor.ZERO);
-        GL11.glBlendFunc(GL11.SourceFactor.SRC_ALPHA, GL11.DestFactor.ONE_MINUS_SRC_ALPHA);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glColor4f(activeColor.getRed() / 255f, activeColor.getGreen() / 255f, activeColor.getBlue() / 255f, .15f);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
-        drawTexturedModalRect(this.x, this.y, 0, 0, this.width, this.height);
+        drawTexturedModalRect(this.xPosition, this.yPosition, 0, 0, this.width, this.height);
         GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         GL11.glColor4f(1, 1, 1, alpha);
         Minecraft.getMinecraft().getTextureManager().bindTexture(selected ? selectedTexture : deselectedTexture);
 //        blit(this.x, this.y, 0, 0, this.width, this.height, this.width, this.height);
-        drawModalRectWithCustomSizedTexture(this.xPosition, this.yPosition, 0, 0, this.width, this.height, this.width, this.height);
+        drawTexturedModalRect(this.xPosition, this.yPosition, 0, 0, this.width, this.height);
 
         ScaledResolution scaledresolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
         if (mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height)

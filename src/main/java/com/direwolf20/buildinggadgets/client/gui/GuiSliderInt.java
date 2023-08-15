@@ -6,13 +6,13 @@ import cpw.mods.fml.client.config.GuiSlider;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraftforge.client.event.sound.SoundEvent;
 
 import java.awt.*;
 import java.util.Collection;
 import java.util.function.BiConsumer;
 
 public class GuiSliderInt extends GuiSlider {
+
     private int colorBackground, colorSliderBackground, colorSlider;
     private BiConsumer<GuiSliderInt, Integer> increment;
     private int value;
@@ -43,7 +43,8 @@ public class GuiSliderInt extends GuiSlider {
     }
 
     private void playSound() {
-        ClientProxy.playSound(SoundEvent.BLOCK_DISPENSER_FAIL, 2F);
+        // TODO: Find dispenser sound "SoundEvent.BLOCK_DISPENSER_FAIL". Could be random.click
+//        ClientProxy.playSound("", 2F);
     }
 
     @Override
@@ -51,21 +52,21 @@ public class GuiSliderInt extends GuiSlider {
         if (!visible)
             return;
 
-        hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+        field_146123_n = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
         drawRect(xPosition, yPosition, xPosition + width, yPosition + height, colorBackground);
         mouseDragged(mc, mouseX, mouseY);
         renderText(mc, this);
     }
 
     private void renderText(Minecraft mc, GuiButton component) {
-        int color = !enabled ? 10526880 : (hovered ? 16777120 : -1);
+        int color = !enabled ? 10526880 : (field_146123_n ? 16777120 : -1);
         String buttonText = component.displayString;
         int strWidth = mc.fontRenderer.getStringWidth(buttonText);
         int ellipsisWidth = mc.fontRenderer.getStringWidth("...");
         if (strWidth > component.width - 6 && strWidth > ellipsisWidth)
             buttonText = mc.fontRenderer.trimStringToWidth(buttonText, component.width - 6 - ellipsisWidth).trim() + "...";
 
-        drawCenteredString(mc.fontRenderer, buttonText, component.x + component.width / 2, component.y + (component.height - 8) / 2, color);
+        drawCenteredString(mc.fontRenderer, buttonText, component.xPosition + component.width / 2, component.yPosition + (component.height - 8) / 2, color);
     }
 
     @Override
@@ -96,6 +97,7 @@ public class GuiSliderInt extends GuiSlider {
     }
 
     private static class GuiButtonIncrement extends GuiButton {
+
         private GuiSliderInt parent;
         private ActionPressed action;
 
@@ -110,7 +112,7 @@ public class GuiSliderInt extends GuiSlider {
             if (!visible)
                 return;
 
-            hovered = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
+            field_146123_n = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
             drawRect(xPosition, yPosition, xPosition + width, yPosition + height, parent.colorBackground);
             parent.drawBorderedRect(xPosition, yPosition, width, height);
             parent.renderText(mc, this);

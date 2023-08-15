@@ -6,6 +6,7 @@ import cpw.mods.fml.client.GuiScrollingList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -15,6 +16,7 @@ import java.awt.*;
 
 import static com.direwolf20.buildinggadgets.client.util.AlignmentUtil.SLOT_SIZE;
 import static com.direwolf20.buildinggadgets.client.util.RenderUtil.getFontRenderer;
+import static com.direwolf20.buildinggadgets.client.util.RenderUtil.getTextureManager;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 
@@ -46,7 +48,6 @@ class ScrollingMaterialList extends GuiScrollingList {
 
     @Override
     protected void elementClicked(int index, boolean doubleClick) {
-        selectedIndex = index;
     }
 
     @Override
@@ -105,14 +106,14 @@ class ScrollingMaterialList extends GuiScrollingList {
 
     private void drawHoveringText(ItemStack item, int slotX, int slotY) {
         if (mouseX > slotX && mouseY > slotY && mouseX <= slotX + 18 && mouseY <= slotY + 18) {
-            parent.setTaskHoveringText(mouseX, mouseY, parent.getItemToolTip(item));
+            parent.setTaskHoveringText(mouseX, mouseY, item.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips));
         }
     }
 
     private void drawIcon(ItemStack item, int slotX, int slotY) {
         GL11.glPushMatrix();
         RenderHelper.enableGUIStandardItemLighting();
-        Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(item, slotX, slotY);
+        RenderItem.getInstance().renderItemAndEffectIntoGUI(getFontRenderer(), getTextureManager(), item, slotX, slotY);
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glColor3f(1f, 1f, 1f);
         GL11.glPopMatrix();

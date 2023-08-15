@@ -1,38 +1,28 @@
 package com.direwolf20.buildinggadgets.client.events;
 
 import com.direwolf20.buildinggadgets.client.RemoteInventoryCache;
-
-/**
- * This class was adapted from code written by Vazkii
- * Thanks Vazkii!!
- */
-
 import com.direwolf20.buildinggadgets.common.items.ITemplate;
-import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.items.gadgets.GadgetCopyPaste;
-import com.direwolf20.buildinggadgets.common.tools.*;
-import com.google.common.collect.Multiset;
-
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import com.direwolf20.buildinggadgets.common.tools.BlockMap;
 import com.direwolf20.buildinggadgets.common.tools.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GL11;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import com.direwolf20.buildinggadgets.common.tools.InventoryManipulation;
+import com.direwolf20.buildinggadgets.common.tools.PasteToolBufferBuilder;
+import com.direwolf20.buildinggadgets.common.tools.UniqueItem;
+import com.google.common.collect.Multiset;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.ItemStack;
 import org.lwjgl.opengl.GL11;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@EventBusSubscriber(Side.CLIENT)
 public class EventTooltip {
 
     private static final int STACKS_PER_LINE = 8;
@@ -91,8 +81,9 @@ public class EventTooltip {
         }
     }
 
-    @SubscribeEvent
-    public static void onDrawTooltip(RenderTooltipEvent.PostText event) {
+    // TODO: Event doesn't exist, ItemTooltipEvent does
+    /*@SubscribeEvent
+    public void onDrawTooltip(TooltipEvent.PostText event) {
         //This method will draw items on the tooltip
         ItemStack stack = event.getStack();
 
@@ -152,15 +143,15 @@ public class EventTooltip {
                 j++;
             }
         }
-    }
+    }*/
 
     private static int renderRequiredBlocks(ItemStack itemStack, int x, int y, int count, int req) {
         Minecraft mc = Minecraft.getMinecraft();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
-        RenderItem render = mc.getRenderItem();
+        RenderItem render = RenderItem.getInstance();
 
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();
-        render.renderItemIntoGUI(itemStack, x, y);
+        render.renderItemIntoGUI(mc.fontRenderer, mc.getTextureManager(), itemStack, x, y);
 
         //String s1 = req == Integer.MAX_VALUE ? "\u221E" : EnumChatFormatting.BOLD + Integer.toString((int) ((float) req));
         String s1 = req == Integer.MAX_VALUE ? "\u221E" : Integer.toString(req);
@@ -209,18 +200,18 @@ public class EventTooltip {
         List<BlockMap> blockMapList = GadgetCopyPaste.getBlockMapList(PasteToolBufferBuilder.getTagFromUUID(UUID));
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = IntStackMap.get(blockMap.state);
-            NonNullList<ItemStack> drops = NonNullList.create();
-            blockMap.state.getBlock().getDrops(drops, Minecraft.getMinecraft().world, new BlockPos(0, 0, 0), blockMap.state, 0);
+            WorldClient world = Minecraft.getMinecraft().theWorld;
+            List<ItemStack> drops = world.getBlock(0, 0, 0).getDrops(world, 0, 0, 0, blockMap.state.getMeta(), 0);
             int neededItems = 0;
             for (ItemStack drop : drops) {
-                if (drop.getItem().equals(uniqueItem.item)) {
+                if (drop != null && drop.getItem().equals(uniqueItem.item)) {
                     neededItems++;
                 }
             }
             if (neededItems == 0) {
                 neededItems = 1;
             }
-            if (uniqueItem.item != Items.AIR) {
+            if (uniqueItem.item != null) {
                 boolean found = false;
                 for (Map.Entry<UniqueItem, Integer> entry : itemCountMap.entrySet()) {
                     if (entry.getKey().equals(uniqueItem)) {

@@ -10,6 +10,7 @@ import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.network.PacketCopyCoords;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
+import com.direwolf20.buildinggadgets.common.tools.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -19,8 +20,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import com.direwolf20.buildinggadgets.common.tools.BlockPos;
-import java.io.IOException;
 
 public class CopyPasteGUI extends GuiScreen {
 //     public static final int WIDTH = 256;
@@ -197,7 +196,7 @@ public class CopyPasteGUI extends GuiScreen {
                 }
                 PacketHandler.INSTANCE.sendToServer(new PacketCopyCoords(startPos, endPos));
             } catch (Throwable t) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.copyguierror").getUnformattedTextForChat()), true);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.copyguierror").getUnformattedTextForChat()));
             }
             this.mc.displayGuiScreen(null);
         } else if (b.id == 2) {
@@ -243,8 +242,8 @@ public class CopyPasteGUI extends GuiScreen {
     private void updateTextFields() {
         String x, y, z;
         if (absoluteCoords) {
-            BlockPos start = startX.getText() != "" ? new BlockPos(startPos.getX() + Integer.parseInt(startX.getText()), startPos.getY() + Integer.parseInt(startY.getText()), startPos.getZ() + Integer.parseInt(startZ.getText())) : startPos;
-            BlockPos end = endX.getText() != "" ? new BlockPos(startPos.getX() + Integer.parseInt(endX.getText()), startPos.getY() + Integer.parseInt(endY.getText()), startPos.getZ() + Integer.parseInt(endZ.getText())) : endPos;
+            BlockPos start = !"".equals(startX.getText()) ? new BlockPos(startPos.getX() + Integer.parseInt(startX.getText()), startPos.getY() + Integer.parseInt(startY.getText()), startPos.getZ() + Integer.parseInt(startZ.getText())) : startPos;
+            BlockPos end = !"".equals(endX.getText()) ? new BlockPos(startPos.getX() + Integer.parseInt(endX.getText()), startPos.getY() + Integer.parseInt(endY.getText()), startPos.getZ() + Integer.parseInt(endZ.getText())) : endPos;
             startX.setText(String.valueOf(start.getX()));
             startY.setText(String.valueOf(start.getY()));
             startZ.setText(String.valueOf(start.getZ()));
@@ -252,17 +251,17 @@ public class CopyPasteGUI extends GuiScreen {
             endY.setText(String.valueOf(end.getY()));
             endZ.setText(String.valueOf(end.getZ()));
         } else {
-            x = startX.getText() != "" ? String.valueOf(Integer.parseInt(startX.getText()) - startPos.getX()) : "0";
+            x = !"".equals(startX.getText()) ? String.valueOf(Integer.parseInt(startX.getText()) - startPos.getX()) : "0";
             startX.setText(x);
-            y = startY.getText() != "" ? String.valueOf(Integer.parseInt(startY.getText()) - startPos.getY()) : "0";
+            y = !"".equals(startY.getText()) ? String.valueOf(Integer.parseInt(startY.getText()) - startPos.getY()) : "0";
             startY.setText(y);
-            z = startZ.getText() != "" ? String.valueOf(Integer.parseInt(startZ.getText()) - startPos.getZ()) : "0";
+            z = !"".equals(startZ.getText()) ? String.valueOf(Integer.parseInt(startZ.getText()) - startPos.getZ()) : "0";
             startZ.setText(z);
-            x = endX.getText() != "" ? String.valueOf(Integer.parseInt(endX.getText()) - startPos.getX()) : String.valueOf(endPos.getX() - startPos.getX());
+            x = !"".equals(endX.getText()) ? String.valueOf(Integer.parseInt(endX.getText()) - startPos.getX()) : String.valueOf(endPos.getX() - startPos.getX());
             endX.setText(x);
-            y = endY.getText() != "" ? String.valueOf(Integer.parseInt(endY.getText()) - startPos.getY()) : String.valueOf(endPos.getY() - startPos.getY());
+            y = !"".equals(endY.getText()) ? String.valueOf(Integer.parseInt(endY.getText()) - startPos.getY()) : String.valueOf(endPos.getY() - startPos.getY());
             endY.setText(y);
-            z = endZ.getText() != "" ? String.valueOf(Integer.parseInt(endZ.getText()) - startPos.getZ()) : String.valueOf(endPos.getZ() - startPos.getZ());
+            z = !"".equals(endZ.getText()) ? String.valueOf(Integer.parseInt(endZ.getText()) - startPos.getZ()) : String.valueOf(endPos.getZ() - startPos.getZ());
             endZ.setText(z);
         }
     }
@@ -279,54 +278,40 @@ public class CopyPasteGUI extends GuiScreen {
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 1) {
-            if (this.startX.mouseClicked(mouseX, mouseY, 0)) {
+            if (GuiUtils.textFieldMouseClicked(startX, mouseX, mouseY, 0)) {
                 startX.setText("");
-            } else if (this.startY.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(startY, mouseX, mouseY, 0)) {
                 startY.setText("");
-            } else if (this.startZ.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(startZ, mouseX, mouseY, 0)) {
                 startZ.setText("");
-            } else if (this.endX.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(endX, mouseX, mouseY, 0)) {
                 endX.setText("");
-            } else if (this.endY.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(endY, mouseX, mouseY, 0)) {
                 endY.setText("");
-            } else if (this.endZ.mouseClicked(mouseX, mouseY, 0)) {
+            } else if (GuiUtils.textFieldMouseClicked(endZ, mouseX, mouseY, 0)) {
                 endZ.setText("");
             } else {
                 //startX.setFocused(false);
                 super.mouseClicked(mouseX, mouseY, mouseButton);
             }
         } else {
-            if (this.startX.mouseClicked(mouseX, mouseY, mouseButton)) {
+            if (GuiUtils.textFieldMouseClicked(startX, mouseX, mouseY, mouseButton)) {
                 startX.setFocused(true);
-            } else if (this.startY.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(startY, mouseX, mouseY, mouseButton)) {
                 startY.setFocused(true);
-            } else if (this.startZ.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(startZ, mouseX, mouseY, mouseButton)) {
                 startZ.setFocused(true);
-            } else if (this.endX.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(endX, mouseX, mouseY, mouseButton)) {
                 endX.setFocused(true);
-            } else if (this.endY.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(endY, mouseX, mouseY, mouseButton)) {
                 endY.setFocused(true);
-            } else if (this.endZ.mouseClicked(mouseX, mouseY, mouseButton)) {
+            } else if (GuiUtils.textFieldMouseClicked(endZ, mouseX, mouseY, mouseButton)) {
                 endZ.setFocused(true);
             } else {
                 //startX.setFocused(false);
                 super.mouseClicked(mouseX, mouseY, mouseButton);
             }
         }
-    }
-
-    //TODO: Check if I can remove this
-
-    @Override
-    public void handleMouseInput() {
-        super.handleMouseInput();
-        //System.out.println(Mouse.getEventDWheel());
-        //System.out.println(zoom);
-    }
-
-    @Override
-    public void updateScreen() {
-        super.updateScreen();
     }
 
     @Override

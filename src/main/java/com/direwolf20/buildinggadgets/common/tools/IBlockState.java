@@ -4,7 +4,7 @@ import net.minecraft.world.IBlockAccess;
 
 public class IBlockState {
 
-    private int meta;
+    private final int meta;
 
     public IBlockState(int meta) {
         this.meta = meta;
@@ -12,6 +12,10 @@ public class IBlockState {
 
     public static IBlockState getStateFromWorld(IBlockAccess world, BlockPos pos) {
         return new IBlockState(world.getBlockMetadata(pos.getX(), pos.getY(), pos.getZ()));
+    }
+
+    public int getMeta() {
+        return meta;
     }
 
     @Override

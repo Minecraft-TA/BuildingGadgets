@@ -1,18 +1,15 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GL11;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import java.awt.Color;
-
 import javax.annotation.Nullable;
+import java.awt.*;
 
 public class GuiButtonIcon extends GuiButtonColor {
     private Icon iconSelected, iconDeselected;
@@ -66,12 +63,11 @@ public class GuiButtonIcon extends GuiButtonColor {
 
     private void drawTexturedModalRect(int x, int y, int width, int height) {
         Tessellator tessellator = Tessellator.instance;
-        BufferBuilder buffer = tessellator.getBuffer();
-        buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        buffer.pos(x + 0, y + height, zLevel).tex(0, 1).endVertex();
-        buffer.pos(x + width, y + height, zLevel).tex(1, 1).endVertex();
-        buffer.pos(x + width, y + 0, zLevel).tex(1, 0).endVertex();
-        buffer.pos(x + 0, y + 0, zLevel).tex(0, 0).endVertex();
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(x, y + height, zLevel, 0, 1);
+        tessellator.addVertexWithUV(x + width, y + height, zLevel, 1, 1);
+        tessellator.addVertexWithUV(x + width, y, zLevel, 1, 0);
+        tessellator.addVertexWithUV(x, y, zLevel, 0, 0);
         tessellator.draw();
     }
 

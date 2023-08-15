@@ -17,27 +17,27 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.relauncher.Side;
 
-@EventBusSubscriber(Side.CLIENT)
 public class EventKeyInput {
 
     @SubscribeEvent
-    public static void onKeyInput(@SuppressWarnings("unused") InputEvent.KeyInputEvent event) {
+    public void onKeyInput(@SuppressWarnings("unused") InputEvent.KeyInputEvent event) {
         handleEventInput();
     }
 
     @SubscribeEvent
-    public static void onMouseInput(@SuppressWarnings("unused") InputEvent.MouseInputEvent event) {
+    public void onMouseInput(@SuppressWarnings("unused") InputEvent.MouseInputEvent event) {
         handleEventInput();
     }
 
     private static void handleEventInput() {
-        if (KeyBindings.menuSettings.isKeyDown() && ((KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) || KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE)) {
+        if (KeyBindings.menuSettings.getIsKeyPressed() /*&& // TODO: Modifiers don't exist, what does this code do?
+            ((KeyBindings.menuSettings.getKeyModifier() == KeyModifier.NONE && KeyModifier.getActiveModifier() == KeyModifier.NONE) ||
+             KeyBindings.menuSettings.getKeyModifier() != KeyModifier.NONE)*/) {
             //PacketHandler.INSTANCE.sendToServer(new PacketToggleMode());
             Minecraft mc = Minecraft.getMinecraft();
             ItemStack tool = GadgetGeneric.getGadget(mc.thePlayer);
-            if (!tool.isEmpty())
+            if (tool != null)
                 mc.displayGuiScreen(new ModeRadialMenu(tool));
         } else if (KeyBindings.range.isPressed())
             PacketHandler.INSTANCE.sendToServer(new PacketChangeRange());
@@ -53,7 +53,7 @@ public class EventKeyInput {
             PacketHandler.INSTANCE.sendToServer(new PacketToggleConnectedArea());
         else if (KeyBindings.materialList.isPressed()) {
             ItemStack held = InventoryManipulation.getStackInEitherHand(Minecraft.getMinecraft().thePlayer, ITemplate.class);
-            if( !held.isEmpty() )
+            if (held != null)
                 Minecraft.getMinecraft().displayGuiScreen(new MaterialListGUI(held));
         }
     }

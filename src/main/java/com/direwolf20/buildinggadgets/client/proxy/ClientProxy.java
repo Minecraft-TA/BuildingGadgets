@@ -106,8 +106,8 @@ public class ClientProxy extends CommonProxy {
         event.map.registerSprite(new ResourceLocation(loc));
     }
 
-    public static void playSound(SoundEvent sound, float pitch) {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(sound, pitch)); //TODO Check resource location
+    public static void playSound(String name, float pitch) {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(name), pitch));
     }
 
     public static Color getColor(Color color, int alpha) {

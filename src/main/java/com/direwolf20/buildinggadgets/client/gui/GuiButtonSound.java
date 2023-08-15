@@ -2,10 +2,10 @@ package com.direwolf20.buildinggadgets.client.gui;
 
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraftforge.client.event.sound.SoundEvent;
+import net.minecraft.util.ResourceLocation;
 
 public class GuiButtonSound extends GuiButtonSelect {
-    private SoundEvent soundSelect, soundDeselect;
+    private String soundSelect, soundDeselect;
     private float pitchSelect, pitchDeselect;
     private boolean silent;
 
@@ -18,11 +18,11 @@ public class GuiButtonSound extends GuiButtonSelect {
         this.silent = silent;
     }
 
-    public void setSounds(SoundEvent soundSelect, SoundEvent soundDeselect) {
+    public void setSounds(String soundSelect, String soundDeselect) {
         setSounds(soundSelect, soundDeselect, 1, 1);
     }
 
-    public void setSounds(SoundEvent soundSelect, SoundEvent soundDeselect, float pitchSelect, float pitchDeselect) {
+    public void setSounds(String soundSelect, String soundDeselect, float pitchSelect, float pitchDeselect) {
         this.soundSelect = soundSelect;
         this.soundDeselect = soundDeselect;
         this.pitchSelect = pitchSelect;
@@ -35,7 +35,7 @@ public class GuiButtonSound extends GuiButtonSelect {
         if (silent)
             return;
 
-        SoundEvent sound = soundSelect == null ? SoundEvents.UI_BUTTON_CLICK : (selected ? soundDeselect : soundSelect); //TODO How do sounds work?
-        soundHandler.playSound(PositionedSoundRecord.func_147674_a(sound, selected ? pitchDeselect : pitchSelect));
+        String sound = soundSelect == null ? "gui.button.click" : (selected ? soundDeselect : soundSelect);
+        soundHandler.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(sound), selected ? pitchDeselect : pitchSelect));
     }
 }

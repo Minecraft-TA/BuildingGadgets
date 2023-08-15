@@ -11,17 +11,14 @@ import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import cpw.mods.fml.relauncher.Side;
 
-@EventBusSubscriber(Side.CLIENT)
 public class EventClientTick {
 
     private static int counter = 0;
     private static boolean joinedWorld;
 
     @SubscribeEvent
-    public static void onClientTick(@SuppressWarnings("unused") TickEvent.ClientTickEvent event) {
+    public void onClientTick(@SuppressWarnings("unused") TickEvent.ClientTickEvent event) {
         counter++;
         if (counter > 600 || !joinedWorld) {
             if (!joinedWorld && counter > 200)
@@ -47,7 +44,7 @@ public class EventClientTick {
     }
 
     @SubscribeEvent
-    public static void onJoinWorld(@SuppressWarnings("unused") FMLNetworkEvent.ClientConnectedToServerEvent event) {
+    public void onJoinWorld(@SuppressWarnings("unused") FMLNetworkEvent.ClientConnectedToServerEvent event) {
         joinedWorld = false;
     }
 }

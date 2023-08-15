@@ -1,12 +1,10 @@
 package com.direwolf20.buildinggadgets.client.gui;
 
-import java.awt.Color;
+import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
+import net.minecraft.client.Minecraft;
 
 import javax.annotation.Nullable;
-
-import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
-
-import net.minecraft.client.Minecraft;
+import java.awt.*;
 
 public class GuiButtonColor extends GuiButtonSound {
     protected Color colorSelected, colorDeselected, colorHovered;
@@ -35,11 +33,11 @@ public class GuiButtonColor extends GuiButtonSound {
             return;
 
         selected = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
-        drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (hovered && colorHovered != null ? colorHovered : (selected ? colorSelected : colorDeselected)).getRGB());
+        drawRect(xPosition, yPosition, xPosition + width, yPosition + height, (field_146123_n && colorHovered != null ? colorHovered : (selected ? colorSelected : colorDeselected)).getRGB());
         mouseDragged(mc, mouseX, mouseY);
         if (!displayString.isEmpty()) {
-            int textColor = !enabled ? 10526880 : (hovered ? 16777120 : -1);
-            mc.fontRenderer.drawString(displayString, xPosition + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2, y + (height - 8) / 2, textColor);
+            int textColor = !enabled ? 10526880 : (field_146123_n ? 16777120 : -1);
+            mc.fontRenderer.drawString(displayString, xPosition + width / 2 - mc.fontRenderer.getStringWidth(displayString) / 2, yPosition + (height - 8) / 2, textColor);
         }
     }
 }

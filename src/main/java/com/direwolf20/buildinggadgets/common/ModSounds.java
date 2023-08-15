@@ -1,22 +1,19 @@
 package com.direwolf20.buildinggadgets.common;
 
 import com.direwolf20.buildinggadgets.client.proxy.ClientProxy;
-
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.sound.SoundEvent;
 
 public enum ModSounds {
     BEEP("beep");
 
-    private SoundEvent sound;
+    private final ResourceLocation location;
 
-    private ModSounds(String name) {
-        ResourceLocation loc = new ResourceLocation(BuildingGadgets.MODID, name);
-        sound = new SoundEvent(loc).setRegistryName(name);
+    ModSounds(String name) {
+        location = new ResourceLocation(BuildingGadgets.MODID, name);
     }
 
-    public SoundEvent getSound() {
-        return sound;
+    public ResourceLocation getLocation() {
+        return location;
     }
 
     public void playSound() {
@@ -24,6 +21,6 @@ public enum ModSounds {
     }
 
     public void playSound(float pitch) {
-        ClientProxy.playSound(sound, pitch);
+        ClientProxy.playSound(getLocation().toString(), pitch);
     }
 }
