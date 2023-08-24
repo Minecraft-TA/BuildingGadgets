@@ -27,7 +27,7 @@ public class PacketBlockMap implements IMessage {
     }
 
     public PacketBlockMap(NBTTagCompound tagCompound) {
-        tag = tagCompound.copy();
+        tag = (NBTTagCompound) tagCompound.copy();
     }
 
     public static class Handler implements IMessageHandler<PacketBlockMap, IMessage> {

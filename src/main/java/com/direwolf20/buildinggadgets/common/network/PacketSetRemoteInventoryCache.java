@@ -16,6 +16,7 @@ import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import cpw.mods.fml.relauncher.Side;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -80,15 +81,15 @@ public class PacketSetRemoteInventoryCache implements IMessage {
     public static class Handler implements IMessageHandler<PacketSetRemoteInventoryCache, IMessage> {
         @Override
         public IMessage onMessage(PacketSetRemoteInventoryCache message, MessageContext ctx) {
-            ctx.getServerHandler().proc essAnimation();
+            ctx.getServerHandler().processAnimation();
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
                 if (ctx.side == Side.SERVER) {
                     EntityPlayerMP player = ctx.getServerHandler().playerEntity;
                     Set<UniqueItem> itemTypes = new HashSet<>();
                     ImmutableMultiset.Builder<UniqueItem> builder = ImmutableMultiset.builder();
-                    IItemHandler remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);
+                    IInventory remoteInventory = GadgetUtils.getRemoteInventory(message.loc.getRight(), message.loc.getLeft(), player.worldObj, player);
                     if (remoteInventory != null) {
-                        for (int i = 0; i < remoteInventory.getSlots(); i++) {
+                        for (int i = 0; i < remoteInventory.getSizeInventory(); i++) { // TODO Check for correct usage of IInventory
                             ItemStack stack = remoteInventory.getStackInSlot(i);
                             if (stack != null) {
                                 Item item = stack.getItem();

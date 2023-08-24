@@ -54,8 +54,6 @@ public class PacketTemplateManagerSave implements IMessage {
             if (!(te instanceof TemplateManagerTileEntity)) return;
             TemplateManagerContainer container = ((TemplateManagerTileEntity) te).getContainer(player);
             TemplateManagerCommands.saveTemplate(container, player, message.name);
-
-
         }
     }
 }

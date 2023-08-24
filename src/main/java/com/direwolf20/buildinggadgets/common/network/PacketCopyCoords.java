@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 
 public class PacketCopyCoords implements IMessage {
@@ -47,7 +48,7 @@ public class PacketCopyCoords implements IMessage {
         }
 
         private void handle(PacketCopyCoords message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
             ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
             if (heldItem == null) return;
@@ -62,7 +63,7 @@ public class PacketCopyCoords implements IMessage {
             } else {
                 tool.setStartPos(heldItem, startPos);
                 tool.setEndPos(heldItem, endPos);
-                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.world, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
+                GadgetCopyPaste.copyBlocks(heldItem, playerEntity, playerEntity.worldObj, tool.getStartPos(heldItem), tool.getEndPos(heldItem));
             }
         }
     }

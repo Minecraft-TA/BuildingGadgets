@@ -2,13 +2,15 @@ package com.direwolf20.buildinggadgets.common.network;
 
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 public class PacketHandler {
     public static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(BuildingGadgets.MODID);
     private static int packetId = 0;
 
-    public static enum Side {
+    public enum Side {
         CLIENT, SERVER, BOTH;
     }
 
@@ -40,15 +42,15 @@ public class PacketHandler {
         registerMessage(PacketSetRemoteInventoryCache.Handler.class, PacketSetRemoteInventoryCache.class, Side.BOTH);
     }
 
-    private static void registerMessage(Class handler, Class packet, Side side) {
+    private static void registerMessage(Class<? extends IMessageHandler<?, IMessage>> handler, Class<? extends IMessage> packet, Side side) {
         if (side != Side.CLIENT)
-            registerMessage(handler, packet, net.minecraftforge.fml.relauncher.Side.SERVER);
+            registerMessage(handler, packet, cpw.mods.fml.relauncher.Side.SERVER);
 
         if (side != Side.SERVER)
-            registerMessage(handler, packet, net.minecraftforge.fml.relauncher.Side.CLIENT);
+            registerMessage(handler, packet, cpw.mods.fml.relauncher.Side.CLIENT);
     }
 
-    private static void registerMessage(Class handler, Class packet, net.minecraftforge.fml.relauncher.Side side) {
+    private static void registerMessage(Class handler, Class packet, cpw.mods.fml.relauncher.Side side) { // TODO: Check generics and wildcards
         INSTANCE.registerMessage(handler, packet, packetId++, side);
     }
 }

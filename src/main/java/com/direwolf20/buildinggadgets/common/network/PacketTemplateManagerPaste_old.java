@@ -38,7 +38,7 @@ public class PacketTemplateManagerPaste_old implements IMessage {
     }
 
     public PacketTemplateManagerPaste_old(NBTTagCompound tagCompound, BlockPos TMpos) {
-        tag = tagCompound.copy();
+        tag = (NBTTagCompound) tagCompound.copy();
         pos = TMpos;
     }
 

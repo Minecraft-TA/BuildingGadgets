@@ -21,7 +21,7 @@ public class PacketUndo extends PacketEmpty {
         }
 
         private void handle(MessageContext ctx) {
-            EntityPlayerMP player = ctx.getServerHandler().player;
+            EntityPlayerMP player = ctx.getServerHandler().playerEntity;
             ItemStack stack = GadgetGeneric.getGadget(player);
             GadgetGeneric item = (GadgetGeneric) stack.getItem();
             if (item instanceof GadgetBuilding)

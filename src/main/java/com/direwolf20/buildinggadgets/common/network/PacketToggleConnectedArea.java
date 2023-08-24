@@ -17,7 +17,7 @@ public class PacketToggleConnectedArea extends PacketEmpty {
         @Override
         public IMessage onMessage(PacketToggleConnectedArea message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> {
-                EntityPlayer player = ctx.getServerHandler().player;
+                EntityPlayer player = ctx.getServerHandler().playerEntity;
                 ItemStack stack = GadgetGeneric.getGadget(player);
                 GadgetGeneric item = (GadgetGeneric) stack.getItem();
                 if (item instanceof GadgetExchanger || item instanceof GadgetBuilding || item instanceof GadgetDestruction)

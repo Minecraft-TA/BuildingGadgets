@@ -45,7 +45,7 @@ public class PacketPasteGUI implements IMessage {
         }
 
         private void handle(PacketPasteGUI message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
 
             ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
             if (heldItem == null) return;

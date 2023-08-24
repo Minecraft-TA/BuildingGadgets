@@ -42,7 +42,7 @@ public class PacketChangeRange implements IMessage {
         }
 
         private void handle(PacketChangeRange message, MessageContext ctx) {
-            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
             if (heldItem == null)
                 return;
