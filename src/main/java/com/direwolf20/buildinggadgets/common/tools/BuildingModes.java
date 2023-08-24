@@ -20,6 +20,7 @@ import it.unimi.dsi.fastutil.doubles.DoubleRBTreeSet;
 import it.unimi.dsi.fastutil.doubles.DoubleSortedSet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -75,7 +76,7 @@ public enum BuildingModes {
         return VALUES[(this.ordinal() + 1) % VALUES.length];
     }
 
-    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool, BlockPos initial) {
+    public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, EnumFacing sideHit, ItemStack tool, BlockPos initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
 
         // stream, sort by closes to the player, collect, return

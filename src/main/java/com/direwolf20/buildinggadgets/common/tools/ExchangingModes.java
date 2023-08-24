@@ -1,6 +1,7 @@
 package com.direwolf20.buildinggadgets.common.tools;
 
 import com.direwolf20.buildinggadgets.backport.BlockPos;
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.backport.IBlockState;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.blocks.ConstructionBlockTileEntity;
@@ -76,7 +77,7 @@ public enum ExchangingModes {
 
     public static List<BlockPos> collectPlacementPos(World world, EntityPlayer player, BlockPos hit, int sideHit, ItemStack tool, BlockPos initial) {
         IBuildingMode mode = byName(NBTTool.getOrNewTag(tool).getString("mode")).getModeImplementation();
-        return mode.createExecutionContext(player, hit, sideHit, tool).collectFilteredSequence(world, tool, player, initial);
+        return mode.createExecutionContext(player, hit, EnumFacingPortUtil.fromSideHit(sideHit) /*TODO Check if this is correct*/, tool).collectFilteredSequence(world, tool, player, initial);
     }
 
     public static BiPredicate<BlockPos, IBlockState> combineTester(World world, ItemStack tool, EntityPlayer player, BlockPos initial) {

@@ -30,6 +30,7 @@ import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,7 @@ public class TemplateManagerCommands {
         ItemStack itemStack0 = container.getSlot(0).getStack();
         ItemStack itemStack1 = container.getSlot(1).getStack();
 
-        if (itemStack0.isEmpty() && itemStack1.getItem() instanceof Template && !templateName.isEmpty()) {
+        if (itemStack0 == null && itemStack1.getItem() instanceof Template && !templateName.isEmpty()) {
             Template.setName(itemStack1, templateName);
             container.putStackInSlot(1, itemStack1);
             return;
@@ -190,7 +191,7 @@ public class TemplateManagerCommands {
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = intStackMap.get(blockMap.state);
             if (!(uniqueItem == null)) {
-                NonNullList<ItemStack> drops = NonNullList.create();
+                List<ItemStack> drops = new ArrayList<>();
                 blockMap.state.getBlock().getDrops(drops, world, new BlockPos(0, 0, 0), blockMap.state, 0);
                 int neededItems = 0;
                 for (ItemStack drop : drops) {
