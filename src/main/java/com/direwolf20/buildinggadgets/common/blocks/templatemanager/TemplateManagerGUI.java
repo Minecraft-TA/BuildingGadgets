@@ -170,7 +170,7 @@ public class TemplateManagerGUI extends GuiContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
         //float rotX = 165, rotY = 0, zoom = 1;
-        if (!itemstack.isEmpty()) {
+        if (itemstack != null) {
             String UUID = ModItems.gadgetCopyPaste.getUUID(itemstack);
             ToolDireBuffer bufferBuilder = PasteToolBufferBuilder.getBufferFromMap(UUID);
             if (bufferBuilder != null) {

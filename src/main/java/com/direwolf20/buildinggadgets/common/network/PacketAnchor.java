@@ -21,7 +21,7 @@ public class PacketAnchor extends PacketEmpty {
         private void handle(MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
-            if (heldItem.isEmpty())
+            if (heldItem == null)
                 return;
 
             if (heldItem.getItem() instanceof GadgetBuilding) {

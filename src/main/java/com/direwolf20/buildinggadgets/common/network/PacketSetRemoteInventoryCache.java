@@ -90,7 +90,7 @@ public class PacketSetRemoteInventoryCache implements IMessage {
                     if (remoteInventory != null) {
                         for (int i = 0; i < remoteInventory.getSlots(); i++) {
                             ItemStack stack = remoteInventory.getStackInSlot(i);
-                            if (!stack.isEmpty()) {
+                            if (stack != null) {
                                 Item item = stack.getItem();
                                 int meta = stack.getItemDamage();
                                 UniqueItem uniqueItem = new UniqueItem(item, meta);

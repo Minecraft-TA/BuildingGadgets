@@ -48,7 +48,7 @@ public final class PatternList {
     }
 
     public boolean containsOre(ItemStack stack) {
-        return !stack.isEmpty() && (contains(stack.getItem()) || IntStream.of(OreDictionary.getOreIDs(stack)).mapToObj(OreDictionary::getOreName).anyMatch(this::contains));
+        return stack != null && (contains(stack.getItem()) || IntStream.of(OreDictionary.getOreIDs(stack)).mapToObj(OreDictionary::getOreName).anyMatch(this::contains));
     }
 
     public boolean contains(IForgeRegistryEntry<?> object) {

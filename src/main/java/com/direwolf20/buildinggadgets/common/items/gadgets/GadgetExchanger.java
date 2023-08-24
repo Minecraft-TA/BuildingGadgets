@@ -159,7 +159,7 @@ public class GadgetExchanger extends GadgetGeneric {
         Set<BlockPos> coordinates = new HashSet<BlockPos>(coords);
 
         ItemStack heldItem = getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem == null)
             return false;
 
         IBlockState blockState = getToolBlock(heldItem);

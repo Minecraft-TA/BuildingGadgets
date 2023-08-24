@@ -127,7 +127,7 @@ public class TemplateManager extends Block {
                 for (int i = 0; i < cap.getSlots(); i++)
                 {
                     ItemStack stack = cap.getStackInSlot(i);
-                    if (!stack.isEmpty())
+                    if (stack != null)
                         InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
                 }
             }

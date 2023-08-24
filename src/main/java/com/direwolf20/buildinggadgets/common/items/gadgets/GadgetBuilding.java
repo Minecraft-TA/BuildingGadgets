@@ -150,7 +150,7 @@ public class GadgetBuilding extends GadgetGeneric {
         Set<BlockPos> coordinates = new HashSet<BlockPos>(coords);
 
         ItemStack heldItem = getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem == null)
             return false;
 
         IBlockState blockState = getToolBlock(heldItem);
@@ -185,7 +185,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
     public boolean undoBuild(EntityPlayer player) {
         ItemStack heldItem = getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem == null)
             return false;
 
         UndoState undoState = popUndoList(heldItem); //Get the undo list off the tool, exit if empty
@@ -237,7 +237,7 @@ public class GadgetBuilding extends GadgetGeneric {
             return false;
 
         ItemStack heldItem = getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem == null)
             return false;
 
         boolean useConstructionPaste = false;

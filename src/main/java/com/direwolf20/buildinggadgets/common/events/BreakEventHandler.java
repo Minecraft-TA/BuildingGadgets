@@ -19,7 +19,7 @@ public class BreakEventHandler {
             return;
 
         ItemStack heldItem = GadgetGeneric.getGadget(player);
-        /*if (heldItem.isEmpty()) TODO Check for isEmpty implementation in 1.12.2
+        /*if (heldItem == null) TODO Check for isEmpty implementation in 1.12.2
             return;*/
 
         List<ItemStack> drops = event.drops;

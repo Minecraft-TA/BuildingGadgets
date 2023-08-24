@@ -48,7 +48,7 @@ public class PacketPasteGUI implements IMessage {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
 
             ItemStack heldItem = GadgetCopyPaste.getGadget(playerEntity);
-            if (heldItem.isEmpty()) return;
+            if (heldItem == null) return;
 
             GadgetCopyPaste.setX(heldItem, message.X);
             GadgetCopyPaste.setY(heldItem, message.Y);

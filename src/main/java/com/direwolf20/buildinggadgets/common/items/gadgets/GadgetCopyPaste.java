@@ -502,7 +502,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
             return;
 
         ItemStack heldItem = getGadget(player);
-        if (heldItem.isEmpty())
+        if (heldItem == null)
             return;
 
         if (ModItems.gadgetCopyPaste.getStartPos(heldItem) == null || ModItems.gadgetCopyPaste.getEndPos(heldItem) == null)

@@ -44,7 +44,7 @@ public class PacketChangeRange implements IMessage {
         private void handle(PacketChangeRange message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             ItemStack heldItem = GadgetGeneric.getGadget(playerEntity);
-            if (heldItem.isEmpty())
+            if (heldItem == null)
                 return;
 
             if (message.range >= 0)
