@@ -65,8 +65,8 @@ public class GadgetDestruction extends GadgetGeneric {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-        super.addInformation(stack, world, list, b);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        super.addInformation(stack, player, list, b);
         list.add(EnumChatFormatting.RED + I18n.format("tooltip.gadget.destroywarning"));
         list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.gadget.destroyshowoverlay") + ": " + getOverlay(stack));
         list.add(EnumChatFormatting.YELLOW + I18n.format("tooltip.gadget.connected_area") + ": " + getConnectedArea(stack));

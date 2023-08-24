@@ -97,8 +97,8 @@ public class GadgetExchanger extends GadgetGeneric {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-        super.addInformation(stack, world, list, b);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        super.addInformation(stack, player, list, b);
         list.add(EnumChatFormatting.DARK_GREEN + I18n.format("tooltip.gadget.block") + ": " + getToolBlock(stack).getBlock().getLocalizedName());
         ExchangingModes mode = getToolMode(stack);
         list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + (mode == ExchangingModes.Surface && getConnectedArea(stack) ? I18n.format("tooltip.gadget.connected") + " " : "") + mode);

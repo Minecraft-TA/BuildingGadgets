@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FakeRenderWorld implements IBlockAccess {
+public class FakeRenderWorld implements IBlockAccess { //TODO Porting issues with this class check out original source
     private final Map<BlockPos, Block> posMap = new HashMap<>();
     private IBlockAccess realWorld;
 

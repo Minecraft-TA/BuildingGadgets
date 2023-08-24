@@ -55,9 +55,9 @@ public class Template extends ItemModBase implements ITemplate {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         //Add tool information to the tooltip
-        super.addInformation(stack, world, list, b);
+        super.addInformation(stack, player, list, b);
         list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.template.name") + ": " + getName(stack));
         EventTooltip.addTemplatePadding(stack, list);
     }

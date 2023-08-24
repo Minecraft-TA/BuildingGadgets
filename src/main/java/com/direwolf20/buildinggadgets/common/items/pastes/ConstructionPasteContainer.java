@@ -65,7 +65,7 @@ public class ConstructionPasteContainer extends GenericPasteContainer {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         list.add(getAmountDisplayLocalized() + ": " + getPasteAmount(stack));
     }
 

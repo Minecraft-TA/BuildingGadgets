@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.common.blocks.ModBlocks;
 import com.direwolf20.buildinggadgets.common.config.SyncedConfig;
 import com.direwolf20.buildinggadgets.common.entities.BlockBuildEntity;
@@ -8,9 +9,7 @@ import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.tools.*;
 import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -75,9 +74,9 @@ public class GadgetBuilding extends GadgetGeneric {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         //Add tool information to the tooltip
-        super.addInformation(stack, world, list, b);
+        super.addInformation(stack, player, list, b);
         list.add(EnumChatFormatting.DARK_GREEN + I18n.format("tooltip.gadget.block") + ": " + getToolBlock(stack).getBlock().getLocalizedName());
         BuildingModes mode = getToolMode(stack);
         list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + (mode == BuildingModes.Surface && getConnectedArea(stack) ? I18n.format("tooltip.gadget.connected") + " " : "") + mode);
@@ -140,8 +139,8 @@ public class GadgetBuilding extends GadgetGeneric {
             if (lookingAt == null) { //If we aren't looking at anything, exit
                 return false;
             }
-            BlockPos startBlock = lookingAt.getBlockPos();
-            EnumFacing sideHit = lookingAt.sideHit;
+            BlockPos startBlock = new BlockPos(lookingAt);
+            EnumFacing sideHit = EnumFacingPortUtil.fromSideHit(lookingAt.sideHit);
             coords = BuildingModes.collectPlacementPos(world, player, startBlock, sideHit, stack, startBlock);
         } else { //If we do have an anchor, erase it (Even if the build fails)
             setAnchor(stack, new ArrayList<BlockPos>());
@@ -292,7 +291,7 @@ public class GadgetBuilding extends GadgetGeneric {
         }
         if (useItemSuccess) {
             this.applyDamage(heldItem, player);
-            world.spawnEntity(new BlockBuildEntity(world, pos, player, setBlock, 1, getToolActualBlock(heldItem), useConstructionPaste));
+            world.spawnEntityInWorld(new BlockBuildEntity(world, pos, player, setBlock, 1, getToolActualBlock(heldItem), useConstructionPaste));
             return true;
         }
         return false;

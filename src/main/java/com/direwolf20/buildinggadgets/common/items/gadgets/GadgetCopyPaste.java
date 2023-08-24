@@ -1,5 +1,6 @@
 package com.direwolf20.buildinggadgets.common.items.gadgets;
 
+import com.direwolf20.buildinggadgets.backport.EnumFacingPortUtil;
 import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
 import com.direwolf20.buildinggadgets.client.events.EventTooltip;
 import com.direwolf20.buildinggadgets.client.gui.GuiProxy;
@@ -19,7 +20,6 @@ import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import com.direwolf20.buildinggadgets.backport.IBlockState;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Enchantments;
@@ -31,10 +31,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.EnumFacing.Axis;
 import com.direwolf20.buildinggadgets.backport.BlockPos;
-import net.minecraft.util.math.MovingObjectPosition;
-import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.ChatComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.BlockSnapshot;
 
@@ -227,8 +223,8 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
-        super.addInformation(stack, world, list, b);
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
+        super.addInformation(stack, player, list, b);
         list.add(EnumChatFormatting.AQUA + I18n.format("tooltip.gadget.mode") + ": " + getToolMode(stack));
         addInformationRayTraceFluid(list, stack);
         addEnergyInformation(list, stack);
@@ -296,7 +292,7 @@ public class GadgetCopyPaste extends GadgetGeneric implements ITemplate {
 
     public static void rotateOrMirrorBlocks(ItemStack stack, EntityPlayer player, PacketRotateMirror.Operation operation) {
         if (!(getToolMode(stack) == ToolMode.Paste)) return;
-        if (player.world.isRemote) {
+        if (player.worldObj.isRemote) {
             return;
         }
         GadgetCopyPaste tool = ModItems.gadgetCopyPaste;

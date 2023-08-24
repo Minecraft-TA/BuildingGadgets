@@ -6,7 +6,7 @@ import com.direwolf20.buildinggadgets.common.items.ItemModBase;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.EnumChatFormatting;
+import net.minecraft.util.EnumChatFormatting;
 
 public abstract class GenericPasteContainer extends ItemModBase {
 

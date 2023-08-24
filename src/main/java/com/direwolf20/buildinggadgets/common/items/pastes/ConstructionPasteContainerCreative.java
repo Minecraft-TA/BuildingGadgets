@@ -1,10 +1,9 @@
 package com.direwolf20.buildinggadgets.common.items.pastes;
 
 import net.minecraft.client.resources.I18n;
-import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.EnumChatFormatting;
-import net.minecraft.world.World;
+import net.minecraft.util.EnumChatFormatting;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -16,7 +15,7 @@ public class ConstructionPasteContainerCreative extends GenericPasteContainer {
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World world, List<String> list, ITooltipFlag b) {
+    public void addInformation(ItemStack stack, EntityPlayer player, List<String> list, boolean b) {
         list.add(EnumChatFormatting.WHITE + I18n.format("tooltip.pasteContainer.creative.amountMsg"));
     }
 
