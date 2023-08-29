@@ -1,8 +1,8 @@
 package com.direwolf20.buildinggadgets.util;
 
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import com.direwolf20.buildinggadgets.common.building.Region;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.block.state.IBlockState;
 import com.direwolf20.buildinggadgets.backport.BlockPos;
 
 import java.util.Iterator;
@@ -32,8 +32,8 @@ public class CasedBlockView extends RegionBlockView {
         return world;
     }
 
-    private IBlockState otherState;
-    private Set<BlockPos> otherPositions;
+    private final IBlockState otherState;
+    private final Set<BlockPos> otherPositions;
 
     public CasedBlockView(Region region, IBlockState state, IBlockState otherState) {
         super(region, state);
@@ -47,11 +47,11 @@ public class CasedBlockView extends RegionBlockView {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
-        if (otherPositions.contains(pos)) {
-            return otherState;
+    public int getBlockMetadata(int x, int y, int z) {
+        if (otherPositions.contains(new BlockPos(x, y, z))) {
+            return otherState.getMeta();
         }
-        return IBlockState.getStateFromWorld(super, pos);
+        return super.getBlockMetadata(x, y, z);
     }
 
 }
