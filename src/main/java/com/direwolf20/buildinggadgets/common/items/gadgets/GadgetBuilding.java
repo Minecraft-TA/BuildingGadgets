@@ -70,7 +70,7 @@ public class GadgetBuilding extends GadgetGeneric {
     public static void togglePlaceAtop(EntityPlayer player, ItemStack stack) {
         NBTTool.getOrNewTag(stack).setBoolean("start_inside", shouldPlaceAtop(stack));
         String prefix = "message.gadget.building.placement";
-        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation(prefix, new ChatComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedTextForChat()), true);
+        player.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation(prefix, new ChatComponentTranslation(prefix + (shouldPlaceAtop(stack) ? ".atop" : ".inside"))).getUnformattedTextForChat()));
     }
 
     @Override
@@ -93,7 +93,7 @@ public class GadgetBuilding extends GadgetGeneric {
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
-        //On item use, if sneaking, select the block clicked on, else build -- This is called when you right click a tool NOT on a block.
+        //On item use, if sneaking, select the block clicked on, else build -- This is called when you right-click a tool NOT on a block.
         /*NBTTagCompound tagCompound = itemstack.getTagCompound();
         ByteBuf buf = Unpooled.buffer(16);
         ByteBufUtils.writeTag(buf,tagCompound);
@@ -210,9 +210,9 @@ public class GadgetBuilding extends GadgetGeneric {
 
                 if (distance < 64 && sameDim && currentBlock != ModBlocks.effectBlock.getDefaultState() && !cancelled) { //Don't allow us to undo a block while its still being placed or too far away
                     if (currentBlock != IBlockState.AIR_STATE) {
-                        if( !player.capabilities.isCreativeMode )
+                        if (!player.capabilities.isCreativeMode)
                             currentBlock.getBlock().harvestBlock(world, player, coord, currentBlock, world.getTileEntity(coord), silkTool);
-                        world.spawnEntity(new BlockBuildEntity(world, coord, player, currentBlock, 2, getToolActualBlock(heldItem), false));
+                        world.spawnEntityInWorld(new BlockBuildEntity(world, coord, player, currentBlock, 2, getToolActualBlock(heldItem), false));
                     }
                 } else { //If you're in the wrong dimension or too far away, fail the undo.
                     player.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.undofailed").getUnformattedTextForChat()), true);
@@ -232,7 +232,7 @@ public class GadgetBuilding extends GadgetGeneric {
         if (!player.isAllowEdit())
             return false;
 
-        if( world.isOutsideBuildHeight(pos) )
+        if (world.isOutsideBuildHeight(pos))
             return false;
 
         ItemStack heldItem = getGadget(player);
@@ -300,7 +300,7 @@ public class GadgetBuilding extends GadgetGeneric {
     public static ItemStack getGadget(EntityPlayer player) {
         ItemStack stack = GadgetGeneric.getGadget(player);
         if (!(stack.getItem() instanceof GadgetBuilding))
-            return ItemStack.EMPTY;
+            return null;
 
         return stack;
     }

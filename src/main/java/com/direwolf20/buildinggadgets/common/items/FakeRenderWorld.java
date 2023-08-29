@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FakeRenderWorld implements IBlockAccess { //TODO Porting issues with this class check out original source
-    private final Map<BlockPos, Block> posMap = new HashMap<>();
+    private final Map<BlockPos, IBlockState> posMap = new HashMap<>();
     private IBlockAccess realWorld;
 
 
@@ -46,7 +46,7 @@ public class FakeRenderWorld implements IBlockAccess { //TODO Porting issues wit
     @Override
     public Block getBlock(int x, int y, int z) {
         BlockPos pos = new BlockPos(x, y, z); //TODO: Meh
-        return posMap.containsKey(pos) ? posMap.get(pos) : realWorld.getBlock(x, y, z);
+        return posMap.containsKey(pos) ? posMap.get(pos).getBlock() : realWorld.getBlock(x, y, z);
     }
 
     @Override
