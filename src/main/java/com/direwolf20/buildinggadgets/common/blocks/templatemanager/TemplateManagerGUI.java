@@ -5,10 +5,7 @@
 
 package com.direwolf20.buildinggadgets.common.blocks.templatemanager;
 
-import com.direwolf20.buildinggadgets.client.gui.AreaHelpText;
-import com.direwolf20.buildinggadgets.client.gui.GuiButtonHelp;
-import com.direwolf20.buildinggadgets.client.gui.GuiButtonHelpText;
-import com.direwolf20.buildinggadgets.client.gui.IHoverHelpText;
+import com.direwolf20.buildinggadgets.client.gui.*;
 import com.direwolf20.buildinggadgets.common.BuildingGadgets;
 import com.direwolf20.buildinggadgets.common.items.ModItems;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
@@ -23,15 +20,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
-import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.JsonToNBT;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
@@ -231,7 +225,7 @@ public class TemplateManagerGUI extends GuiContainer {
                 GL11.glRotatef(rotY, 0, 1, 0);
                 GL11.glTranslatef(((startPos.getX() - endPos.getX()) / 2), ((startPos.getY() - endPos.getY()) / 2), ((startPos.getZ() - endPos.getZ()) / 2));
 
-                mc.getTextureManager().bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
+                mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
                 if ((startPos.getX() - endPos.getX()) == 0) {
                     //GL11.rotate(270, 0, 1, 0);
                 }
@@ -292,9 +286,9 @@ public class TemplateManagerGUI extends GuiContainer {
         if (b.id == buttonHelp.id) {
             buttonHelp.toggleSelected();
         } else if (b.id == 0) {
-            PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerSave(te.getPos(), nameField.getText()));
+            PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerSave(new BlockPos(te.xCoord, te.yCoord, te.zCoord), nameField.getText()));
         } else if (b.id == 1) {
-            PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerLoad(te.getPos()));
+            PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerLoad(new BlockPos(te.xCoord, te.yCoord, te.zCoord)));
         } else if (b.id == 2) {
             TemplateManagerCommands.copyTemplate(container);
         } else if (b.id == 3) {
@@ -302,21 +296,21 @@ public class TemplateManagerGUI extends GuiContainer {
             //System.out.println("CBString Length: " + CBString.length());
             //System.out.println(CBString);
             if (GadgetUtils.mightBeLink(CBString)) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastefailed.linkcopied").getUnformattedTextForChat()),false);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastefailed.linkcopied").getUnformattedTextForChat()));
                 return;
             }
             try {
                 //Anything larger than below is likely to overflow the max packet size, crashing your client.
-                ByteArrayOutputStream pasteStream = GadgetUtils.getPasteStream(JsonToNBT.getTagFromJson(CBString), nameField.getText());
+                ByteArrayOutputStream pasteStream = GadgetUtils.getPasteStream((NBTTagCompound) JsonToNBT.func_150315_a(CBString), nameField.getText()); // Valid cast?
                 if (pasteStream != null) {
                     PacketHandler.INSTANCE.sendToServer(new PacketTemplateManagerPaste(pasteStream, new BlockPos(te.xCoord, te.yCoord, te.zCoord), nameField.getText()));
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.pastesuccess").getUnformattedTextForChat()), false);
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.AQUA + new ChatComponentTranslation("message.gadget.pastesuccess").getUnformattedTextForChat()));
                 } else {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig").getUnformattedTextForChat()), false);
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastetoobig").getUnformattedTextForChat()));
                 }
             } catch (Throwable t) {
                 BuildingGadgets.logger.error(t);
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()), false);
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(EnumChatFormatting.RED + new ChatComponentTranslation("message.gadget.pastefailed").getUnformattedTextForChat()));
             }
         }
     }
@@ -337,7 +331,7 @@ public class TemplateManagerGUI extends GuiContainer {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        if (this.nameField.mouseClicked(mouseX, mouseY, mouseButton)) {
+        if (GuiUtils.textFieldMouseClicked(this.nameField, mouseX, mouseY, mouseButton)) {
             nameField.setFocused(true);
         } else {
             nameField.setFocused(false);
@@ -390,7 +384,7 @@ public class TemplateManagerGUI extends GuiContainer {
         }
 
         if (!nameField.isFocused() && nameField.getText().isEmpty())
-            fontRendererObj.drawString("template name", nameField.x - guiLeft + 4, nameField.y - guiTop, -10197916);
+            fontRendererObj.drawString("template name", nameField.xPosition - guiLeft + 4, nameField.yPosition - guiTop, -10197916);
 
         if (buttonSave.func_146115_a() || buttonLoad.func_146115_a() || buttonPaste.func_146115_a())
             drawSlotOverlay(buttonLoad.func_146115_a() ? container.getSlot(0) : container.getSlot(1));

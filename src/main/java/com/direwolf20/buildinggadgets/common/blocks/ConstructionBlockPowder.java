@@ -30,14 +30,16 @@ public class ConstructionBlockPowder extends BlockFalling {
         list.add(I18n.format("tooltip.constructionblockpowder.helptext"));
     }*/
 
-    @Override
+  /*  @Override
     public void onEndFalling(World worldIn, BlockPos pos, IBlockState p_176502_3_, IBlockState p_176502_4_) {
 
-    }
+    }*/
+
+
 
     @Override
     public void func_149828_a(World world, int x, int y, int z, int p_149828_5_) {
-        if (p_176502_4_.getMaterial().isLiquid()) { //TODO Get material from blockstate that is an int :(
+        if (this.getMaterial().isLiquid()) {
             world.spawnEntityInWorld(new ConstructionBlockEntity(world, new BlockPos(x, y, z), true));
         }
     }
@@ -49,7 +51,7 @@ public class ConstructionBlockPowder extends BlockFalling {
             if (enumfacing != EnumFacing.DOWN) {
                 BlockPos blockpos = pos.offset(enumfacing);
 
-                if (IBlockState.getStateFromWorld(worldIn, blockpos).getMaterial() == Material.water) { //TODO Get material from blockstate that is an int :(
+                if (IBlockState.getStateFromWorld(worldIn, blockpos).getBlock().getMaterial() == Material.water) { //TODO Get material from blockstate that is an int :(
                     flag = true;
                     break;
                 }
@@ -92,11 +94,9 @@ public class ConstructionBlockPowder extends BlockFalling {
         return false;
     }
 
-
-
-    /*@Override TODO: Doesnt exist?
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }*/
+    @Override
+    public boolean isNormalCube() {
+        return false; // TODO check if this is the correct method
+    }
 
 }

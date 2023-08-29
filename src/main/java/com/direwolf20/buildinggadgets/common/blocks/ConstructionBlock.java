@@ -48,7 +48,7 @@ public class ConstructionBlock extends BlockModBase implements IFacade {
     public static final IUnlistedProperty<IBlockState> FACADE_EXT_STATE = new BlockstateProperty("facadeextstate");
 
     public ConstructionBlock() {
-        super(Material.ROCK, 2F, "constructionblock");
+        super(Material.rock, 2F, "constructionblock");
         setDefaultState(blockState.getBaseState().withProperty(BRIGHT, true).withProperty(NEIGHBOR_BRIGHTNESS, false));
     }
 

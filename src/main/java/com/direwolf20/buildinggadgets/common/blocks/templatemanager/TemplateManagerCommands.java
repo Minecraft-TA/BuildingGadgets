@@ -22,15 +22,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.NonNullList;
 import com.direwolf20.buildinggadgets.backport.BlockPos;
-import net.minecraft.util.text.ChatComponentText;
-import net.minecraft.util.text.ChatComponentTranslation;
-import net.minecraft.util.text.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -191,8 +186,7 @@ public class TemplateManagerCommands {
         for (BlockMap blockMap : blockMapList) {
             UniqueItem uniqueItem = intStackMap.get(blockMap.state);
             if (!(uniqueItem == null)) {
-                List<ItemStack> drops = new ArrayList<>();
-                blockMap.state.getBlock().getDrops(drops, world, new BlockPos(0, 0, 0), blockMap.state, 0);
+                List<ItemStack> drops = blockMap.state.getBlock().getDrops(world, 0, 0, 0, blockMap.state.getMeta(), 0);
                 int neededItems = 0;
                 for (ItemStack drop : drops) {
                     if (drop.getItem().equals(uniqueItem.item)) {
@@ -202,8 +196,8 @@ public class TemplateManagerCommands {
                 if (neededItems == 0) {
                     neededItems = 1;
                 }
-                if (uniqueItem.item != Items.AIR) {
-                    itemCountMap.add(uniqueItem,neededItems);
+                if (uniqueItem.item != null) { //TODO check if item.AIR is equal to null
+                    itemCountMap.add(uniqueItem, neededItems);
                 }
             }
         }

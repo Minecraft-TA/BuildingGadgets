@@ -9,10 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -74,7 +70,7 @@ public class TemplateManagerTileEntity extends TileEntity {
 
     public boolean canInteractWith(EntityPlayer playerIn) {
         // If we are too far away from this tile entity you cannot use it
-        return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+        return !isInvalid() && playerIn.getDistanceSq(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5) <= 64D;
     }
 
     @Override
@@ -92,6 +88,7 @@ public class TemplateManagerTileEntity extends TileEntity {
         }
         return super.getCapability(capability, facing);
     }
+
 
     public TemplateManagerContainer getContainer(EntityPlayer playerIn) {
         return new TemplateManagerContainer(playerIn.inventory, this);

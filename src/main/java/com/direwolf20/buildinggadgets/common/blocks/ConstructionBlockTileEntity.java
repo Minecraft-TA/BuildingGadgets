@@ -1,6 +1,8 @@
 package com.direwolf20.buildinggadgets.common.blocks;
 
+import com.direwolf20.buildinggadgets.backport.BlockPos;
 import com.direwolf20.buildinggadgets.backport.IBlockState;
+import com.direwolf20.buildinggadgets.backport.NBTPortUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -52,17 +54,17 @@ public class ConstructionBlockTileEntity extends TileEntity {
     private void markDirtyClient() {
         markDirty();
         if (worldObj != null) {
-            IBlockState state = IBlockState.getStateFromWorld(worldObj, getPos());
-            worldObj.notifyBlockUpdate(getPos(), state, state, 3);
+            IBlockState state = IBlockState.getStateFromWorld(worldObj, new BlockPos(xCoord, yCoord, zCoord));
+            worldObj.notifyBlockChange(xCoord, yCoord, zCoord, state.getBlock()); // Todo what is the 3 in the original?
         }
     }
 
-    @Override
+    /*@Override // Todo what is this?
     public NBTTagCompound getUpdateTag() {
         NBTTagCompound updateTag = super.getUpdateTag();
         writeToNBT(updateTag);
         return updateTag;
-    }
+    }*/
 
     @Override
     public Packet getDescriptionPacket() {

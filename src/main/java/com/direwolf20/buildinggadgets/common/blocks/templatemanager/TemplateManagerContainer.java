@@ -6,8 +6,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 public class TemplateManagerContainer extends Container {
     public static final String TEXTURE_LOC_SLOT_TOOL = BuildingGadgets.MODID + ":gui/slot_copypastetool";
@@ -60,7 +58,7 @@ public class TemplateManagerContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack itemstack = ItemStack.EMPTY;
+        ItemStack itemstack = null;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -71,14 +69,14 @@ public class TemplateManagerContainer extends Container {
 
             if (index < TemplateManagerTileEntity.SIZE) {
                 if (!this.mergeItemStack(itemstack1, TemplateManagerTileEntity.SIZE, this.inventorySlots.size(), true)) {
-                    return ItemStack.EMPTY;
+                    return null;
                 }
             } else if (!this.mergeItemStack(itemstack1, 0, TemplateManagerTileEntity.SIZE, false)) {
-                return ItemStack.EMPTY;
+                return null;
             }
 
-            if (itemstack1.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+            if (itemstack1 == null) {
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }

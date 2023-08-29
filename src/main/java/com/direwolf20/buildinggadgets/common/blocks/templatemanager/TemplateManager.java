@@ -6,30 +6,20 @@ import com.direwolf20.buildinggadgets.common.network.PacketBlockMap;
 import com.direwolf20.buildinggadgets.common.network.PacketHandler;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.state.BlockStateContainer;
 import com.direwolf20.buildinggadgets.backport.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
 import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 
 public class TemplateManager extends Block {
     private static final int GUI_ID = 1;
@@ -38,10 +28,10 @@ public class TemplateManager extends Block {
     public static final PropertyDirection FACING_HORIZ = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 
     public TemplateManager() {
-        super(Material.ROCK);
+        super(Material.rock);
         setHardness(2.0f);
-        setUnlocalizedName(BuildingGadgets.MODID + ".templatemanager");
-        setRegistryName("templatemanager");
+        setBlockName(BuildingGadgets.MODID + ".templatemanager");
+        setBlockTextureName("templatemanager");
         setCreativeTab(BuildingGadgets.BUILDING_CREATIVE_TAB);
         this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
     }
@@ -78,22 +68,21 @@ public class TemplateManager extends Block {
 
 
     @Override
-    public boolean hasTileEntity(IBlockState state) {
+    public boolean hasTileEntity(int metadata) {
         return true;
     }
 
     @Override
-    public TileEntity createTileEntity(World worldin, IBlockState state) {
+    public TileEntity createTileEntity(World world, int metadata) {
         return new TemplateManagerTileEntity();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ) {
-        // Only execute on the server
+    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float subX, float subY, float subZ) {
         if (world.isRemote) {
             return true;
         }
-        TileEntity te = world.getTileEntity(pos);
+        TileEntity te = world.getTileEntity(x, y, z);
         if (!(te instanceof TemplateManagerTileEntity)) {
             return false;
         }
@@ -111,27 +100,25 @@ public class TemplateManager extends Block {
                 PacketHandler.INSTANCE.sendTo(new PacketBlockMap(tagCompound), (EntityPlayerMP) player);
             }
         }
-        player.openGui(BuildingGadgets.instance, GUI_ID, world, pos.getX(), pos.getY(), pos.getZ());
+        player.openGui(BuildingGadgets.instance, GUI_ID, world, x, y, z);
         return true;
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state)
-    {
-        TileEntity tileEntity = world.getTileEntity(pos);
-        if (tileEntity instanceof TemplateManagerTileEntity)
-        {
-            IItemHandler cap = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            if (cap != null)
-            {
-                for (int i = 0; i < cap.getSlots(); i++)
-                {
+    public void breakBlock(World world, int x, int y, int z, Block blockBroken, int meta) {
+        TileEntity tileEntity = world.getTileEntity(x, y, z);
+        if (tileEntity instanceof TemplateManagerTileEntity) {
+            /*IItemHandler cap = tileEntity.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null); TODO Inventories are impossible in 1.7.
+            if (cap != null) {
+                for (int i = 0; i < cap.getSlots(); i++) {
                     ItemStack stack = cap.getStackInSlot(i);
-                    if (stack != null)
+                    if (stack != null) {
                         InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), stack);
+                    }
                 }
-            }
+            }*/
         }
-        super.breakBlock(world, pos, state);
+        super.breakBlock(world, x, y, z, blockBroken, meta);
     }
+
 }
