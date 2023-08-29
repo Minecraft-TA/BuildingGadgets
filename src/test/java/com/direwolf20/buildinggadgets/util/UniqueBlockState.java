@@ -37,12 +37,12 @@ import java.util.Objects;
  * about identity and hashing even if they are different objects.
  * </p>
  */
-public class UniqueBlockState implements IBlockState {
+public class UniqueBlockState extends IBlockState {
 
     public static final IBlockState AIR = new UniqueBlockState(-1) {
         @Override
         public Material getMaterial() {
-            return Material.AIR;
+            return Material.air;
         }
     };
 

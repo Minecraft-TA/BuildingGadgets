@@ -1,13 +1,12 @@
 package com.direwolf20.buildinggadgets.util;
 
+import com.direwolf20.buildinggadgets.backport.IBlockState;
 import com.direwolf20.buildinggadgets.common.building.Region;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
-import com.direwolf20.buildinggadgets.backport.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nullable;
 
@@ -28,47 +27,62 @@ public class RegionBlockView implements IBlockAccess {
     }
 
     @Override
-    public IBlockState getBlockState(BlockPos pos) {
-        return region.contains(pos) ? state : UniqueBlockState.AIR;
+    public Block getBlock(int x, int y, int z) {
+        return region.contains(x, y, z) ? state.getBlock() : UniqueBlockState.AIR.getBlock();
     }
 
     @Override
-    public boolean isAirBlock(BlockPos pos) {
-        return !region.contains(pos);
+    public boolean isAirBlock(int x, int y, int z) {
+        return !region.contains(x, y, z);
     }
 
     @Override
-    public int getStrongPower(BlockPos pos, EnumFacing facing) {
-        return getBlockState(pos).getStrongPower(this, pos, facing);
+    public int isBlockProvidingPowerTo(int x, int y, int z, int directionIn) {
+        // getBlockState(pos).getStrongPower(this, pos, facing); TODO Fix
+        return 0;
     }
 
-    @Override
+
+    /* @Override TODO doesnt exist
     public WorldType getWorldType() {
         return WorldType.DEBUG_ALL_BLOCK_STATES;
-    }
+    }*/
 
     @Override
-    public boolean isSideSolid(BlockPos pos, EnumFacing facing, boolean b) {
-        return getBlockState(pos).isSideSolid(this, pos, facing);
+    public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
+        return getBlock(x, y, z).isSideSolid(this, x, y, z, side); // TODO IDKDKDKDKD
     }
 
     @Deprecated
     @Nullable
     @Override
-    public TileEntity getTileEntity(BlockPos pos) {
+    public TileEntity getTileEntity(int x, int y, int z) {
         return null;
     }
 
-    @Deprecated
     @Override
-    public int getCombinedLight(BlockPos pos, int i) {
+    public int getLightBrightnessForSkyBlocks(int p_72802_1_, int p_72802_2_, int p_72802_3_, int p_72802_4_) {
         return 0;
     }
 
-    @Deprecated
     @Override
-    public Biome getBiome(BlockPos pos) {
+    public BiomeGenBase getBiomeGenForCoords(int x, int z) {
         return null;
     }
 
+    // TODO These are new so idk what to do with them
+    @Override
+    public int getBlockMetadata(int p_72805_1_, int p_72805_2_, int p_72805_3_) {
+        return 0;
+    }
+
+    @Override
+    public int getHeight() {
+        return 0;
+    }
+
+    @Override
+    public boolean extendedLevelsInChunkCache() {
+        return false;
+    }
 }

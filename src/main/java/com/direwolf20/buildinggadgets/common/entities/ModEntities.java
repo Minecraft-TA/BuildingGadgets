@@ -10,8 +10,8 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 public class ModEntities {
     public static void init() {
         int id = 1;
-        EntityRegistry.registerModEntity(new ResourceLocation(BuildingGadgets.MODID, "BlockBuildEntity"), BlockBuildEntity.class, "LaserGunEntity", id++, BuildingGadgets.instance, 64, 1, true);
-        EntityRegistry.registerModEntity(new ResourceLocation(BuildingGadgets.MODID, "ConstructionBlockEntity"), ConstructionBlockEntity.class, "ConstructionBlockEntity", id++, BuildingGadgets.instance, 64, 1, true);
+        EntityRegistry.registerModEntity(BlockBuildEntity.class, "BlockBuildEntity", id++, BuildingGadgets.instance, 64, 1, true);
+        EntityRegistry.registerModEntity(ConstructionBlockEntity.class, "ConstructionBlockEntity", id++, BuildingGadgets.instance, 64, 1, true);
     }
 
     public static void initModels() {
